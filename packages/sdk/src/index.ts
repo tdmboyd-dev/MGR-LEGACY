@@ -25,3 +25,4 @@ export class LegacyClient {
 }
 
 export * from "@mgr/legacy-contracts";
+export * from "./extensions.js";
