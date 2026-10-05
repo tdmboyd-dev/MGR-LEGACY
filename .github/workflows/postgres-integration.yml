@@ -42,8 +42,13 @@ jobs:
       - run: npm install
       - run: npm run typecheck
       - run: npm test
+      - run: npm run test:reset-postgres
       - run: npm run test:postgres
+      - run: npm run test:reset-postgres
       - run: npm run test:api-postgres
+      - run: npm run test:reset-postgres
       - run: npm run test:upgrade-path
+      - run: npm run test:reset-postgres
       - run: npm run test:backup-restore
+      - run: npm run test:reset-postgres
       - run: npm run test:concurrency
