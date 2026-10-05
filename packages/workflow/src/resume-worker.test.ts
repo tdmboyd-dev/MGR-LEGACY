@@ -25,7 +25,7 @@ test("resume worker processes due workflow", async()=>{
       correlationId:"c1",
       triggerPayload:{}
     })},
-    {run:async(_workflow,context)=>{
+    {run:async(_workflow:unknown,context:{runId:string})=>{
       calls.push(context.runId);
       return {status:"succeeded",completedNodeIds:[],totalRetries:0};
     }} as any,
