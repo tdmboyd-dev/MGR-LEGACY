@@ -14,3 +14,4 @@ export * from "./outbox-publisher.js";
 export * from "./ownership-preferences.js";
 export * from "./schema-lifecycle.js";
 export * from "./audit-retention.js";
+export * from "./observability.js";
