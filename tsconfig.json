@@ -7,6 +7,8 @@
     { "path": "./packages/workflow" },
     { "path": "./packages/communications" },
     { "path": "./packages/intelligence" },
+    { "path": "./packages/tax-pack" },
+    { "path": "./packages/extensions" },
     { "path": "./packages/sdk" }
   ]
 }
