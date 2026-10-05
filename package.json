@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "description": "Shared MGR relationship, automation, intelligence, and vertical-pack platform",
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "typecheck": "tsc -b",
     "build": "tsc -b",
@@ -11,10 +13,12 @@
   },
   "devDependencies": {
     "@types/node": "^24.7.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@types/pg": "^8.15.5"
   },
   "dependencies": {
-    "zod": "^4.1.11"
+    "zod": "^4.1.11",
+    "pg": "^8.16.3"
   },
   "engines": {
     "node": ">=22"
