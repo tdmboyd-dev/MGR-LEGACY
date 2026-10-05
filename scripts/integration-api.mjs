@@ -96,6 +96,51 @@ try{
   });
   assert.equal(invalidJson.status,400);
 
+  const spoofedMetadata=await fetch(`${base}/v1/commands`,{
+    method:"POST",
+    headers:{
+      authorization:`Bearer ${token}`,
+      "content-type":"application/json",
+      "x-tenant-id":tenantA
+    },
+    body:JSON.stringify({
+      action:"crm.create_contact",
+      payload:{firstName:"HeaderWins"},
+      metadata:{
+        tenantId:tenantB,
+        userId:"spoof-test",
+        correlationId:randomUUID(),
+        idempotencyKey:`spoof-meta:${randomUUID()}`
+      }
+    })
+  });
+  assert.equal(spoofedMetadata.status,200);
+
+  const tenantBCountAfterSpoof=await db.query(
+    "SELECT count(*)::int AS count FROM entities WHERE tenant_id=$1 AND entity_type='person'",
+    [tenantB]
+  );
+  assert.equal(Number(tenantBCountAfterSpoof.rows[0]?.count),0,"body metadata tenant must not override request tenant");
+
+  const canonicalSpoof=await fetch(`${base}/v1/commands`,{
+    method:"POST",
+    headers:{
+      authorization:`Bearer ${token}`,
+      "content-type":"application/json",
+      "x-tenant-id":tenantA
+    },
+    body:JSON.stringify({
+      commandId:randomUUID(),
+      action:"crm.create_contact",
+      actor:{actorType:"service",actorId:"spoof",tenantId:tenantB},
+      scope:{tenantId:tenantB,scopeType:"organization",scopeId:tenantB},
+      payload:{firstName:"ShouldFail"},
+      idempotencyKey:`spoof-canonical:${randomUUID()}`,
+      correlationId:randomUUID()
+    })
+  });
+  assert.equal(canonicalSpoof.status,403);
+
   const missingOwner=await fetch(`${base}/v1/today`,{
     headers:{authorization:`Bearer ${token}`,"x-tenant-id":tenantA}
   });
