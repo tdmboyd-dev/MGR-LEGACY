@@ -74,7 +74,7 @@ try{
 
   assert.equal(Number(baseline.rows[0]?.count),1,"baseline data must survive restore");
   assert.equal(Number(mutation.rows[0]?.count),0,"post-backup mutation must disappear after restore");
-  assert.equal(Number(migrations.rows[0]?.count),17,"all migration records must survive restore");
+  assert.equal(Number(migrations.rows[0]?.count),18,"all migration records must survive restore");
 
   console.log(JSON.stringify({
     ok:true,
