@@ -11,12 +11,29 @@
     "skipLibCheck": true
   },
   "references": [
-    { "path": "../contracts" },
-    { "path": "../core" },
-    { "path": "../crm" },
-    { "path": "../workflow" },
-    { "path": "../communications" },
-    { "path": "../intelligence" }
+    {
+      "path": "../contracts"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../crm"
+    },
+    {
+      "path": "../workflow"
+    },
+    {
+      "path": "../communications"
+    },
+    {
+      "path": "../intelligence"
+    },
+    {
+      "path": "../adapters"
+    }
   ],
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ]
 }
