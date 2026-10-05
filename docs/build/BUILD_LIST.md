@@ -37,7 +37,8 @@ Updated: 2026-10-05
 - [x] consent/preferences
 - [x] audit/outbox/idempotency
 - [x] schema lifecycle / governance repositories
-- [ ] real PostgreSQL integration/upgrade-path verification
+- [x] real PostgreSQL clean-database integration verification
+- [ ] upgrade-path verification from earlier schema states
 - [ ] dedicated tenant-isolation integration tests
 
 ## Gate 3 — Core CRM/work
@@ -158,7 +159,7 @@ Updated: 2026-10-05
 - [x] TypeScript typecheck
 - [x] current unit test suite
 - [x] branch parity check at verified checkpoint
-- [ ] PostgreSQL integration tests
+- [x] PostgreSQL integration smoke against PostgreSQL 16
 - [ ] API integration tests
 - [ ] end-to-end tests
 - [ ] tenant/permission isolation tests
@@ -168,7 +169,7 @@ Updated: 2026-10-05
 - [ ] observability/alerting validation
 - [ ] load/performance/concurrency tests
 - [ ] security review
-- [ ] deployment and disaster-recovery runbooks
+- [x] deployment and disaster-recovery runbooks
 
 ## Current verdict
 
@@ -181,10 +182,10 @@ Core platform implementation is substantially built and CI-green, but production
 - [x] Document anti-duplication rules and integration contract
 - [x] add typed Legacy client inside MGR-API-MCP
 - [x] add tenant/actor/correlation/idempotency propagation in the Legacy client
-- [ ] bind that context directly to verified MCP HTTP authentication so callers cannot spoof identity
-- [ ] convert side-effecting MCP tools into governed Legacy capability calls
-- [ ] return Legacy Action Receipt IDs/evidence through MCP responses
-- [ ] back MCP tool discovery with Legacy capability/connector registries
-- [ ] route creation-domain capabilities to Creation OS rather than duplicating execution
+- [x] bind that context directly to verified MCP HTTP authentication so callers cannot spoof identity
+- [x] convert side-effecting MCP tools into governed Legacy capability calls
+- [x] return Legacy Action Receipt IDs/evidence through MCP responses
+- [x] back MCP tool discovery with Legacy capability/connector registries
+- [x] route creation-domain capabilities to Creation OS rather than duplicating execution
 - [ ] add cross-boundary restart/idempotency/reconciliation tests
 - [ ] complete remote MCP auth integration and hosted ChatGPT MCP verification
