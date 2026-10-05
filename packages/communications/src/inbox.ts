@@ -35,7 +35,7 @@ export interface IdentityCandidate {
 export class ThreadIdentityResolver {
   resolve(address:string,channel:Channel,candidates:IdentityCandidate[]):IdentityCandidate|null{
     const normalized=channel==="email" ? address.trim().toLowerCase() : address.replace(/\D/g,"");
-    const matches=candidates
+    return [...candidates]
       .filter(item=>item.channel===channel)
       .filter(item=>{
         const candidate=channel==="email"
@@ -46,7 +46,6 @@ export class ThreadIdentityResolver {
       .sort((a,b)=>{
         if(a.verified!==b.verified) return a.verified?-1:1;
         return b.confidence-a.confidence;
-      });
-    return matches[0] ?? null;
+      })[0] ?? null;
   }
 }
