@@ -11,6 +11,7 @@
     { "path": "./packages/tax-pack" },
     { "path": "./packages/extensions" },
     { "path": "./packages/database" },
+    { "path": "./packages/adapters" },
     { "path": "./packages/sdk" }
   ]
 }
