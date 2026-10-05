@@ -174,3 +174,16 @@ Updated: 2026-10-05
 
 Core platform implementation is substantially built and CI-green, but production completion is still blocked by live-system adoption and production-grade integration/hardening evidence. See `docs/build/REMAINING_WORK.md` for the exact remaining work.
 
+
+## Gate 12 — MGR API/MCP shared edge integration
+- [x] Locate and audit `tdmboyd-dev/MGR-API-MCP`
+- [x] Define service boundary: API-MCP=edge/Brain, Legacy=business system of record, Creation OS=creation engine
+- [x] Document anti-duplication rules and integration contract
+- [ ] add typed Legacy client inside MGR-API-MCP
+- [ ] propagate authenticated tenant/actor/correlation/idempotency context into Legacy calls
+- [ ] convert side-effecting MCP tools into governed Legacy capability calls
+- [ ] return Legacy Action Receipt IDs/evidence through MCP responses
+- [ ] back MCP tool discovery with Legacy capability/connector registries
+- [ ] route creation-domain capabilities to Creation OS rather than duplicating execution
+- [ ] add cross-boundary restart/idempotency/reconciliation tests
+- [ ] complete remote MCP auth integration and hosted ChatGPT MCP verification
