@@ -54,7 +54,8 @@ It is **not** a copy of MGR Agents CRM, MGR Elite Hub CRM, or a conventional CRM
 - MGR-LEGACY GitHub repository: initialized as the new source of truth.
 - MGR Agents CRM: re-audited and mapped for reuse/rebuild.
 - MGR Elite Hub CRM/tax/bureau modules: re-audited and mapped for reuse/rebuild.
-- Floot project identified as **MGR Sales Dashboard**.
-- Full Floot file export is still pending because Floot is currently refusing file-read/build actions after the account reached its daily action cap. The code has **not** been represented here as migrated until it is actually readable and copied.
+- Floot project **MGR Sales Dashboard** is no longer a product dependency or completion gate.
+- Its previously assigned scope has been reclaimed into MGR Legacy and is tracked in `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md`.
+- Any future Floot export is optional historical salvage/provenance only; it cannot override canonical Legacy architecture.
 
-See `docs/build/BUILD_LIST.md` for the code path.
+See `docs/build/BUILD_LIST.md` and `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md` for the current code path.
