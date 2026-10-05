@@ -46,3 +46,4 @@ export * from "./runtime.js";
 export * from "./workflow-node-runtime.js";
 export * from "./ui-provider-contracts.js";
 export * from "./connector-registry.js";
+export * from "./provider-registry.js";
