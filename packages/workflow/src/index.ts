@@ -12,3 +12,4 @@ export * from "./scheduling.js";
 export * from "./approvals-subflows.js";
 export * from "./trace.js";
 export * from "./activation.js";
+export * from "./flowspec.js";
