@@ -3,9 +3,17 @@ import { URL } from "node:url";
 import { authorize } from "./auth.js";
 import type { ApiAuthConfig, LegacyApiServices } from "./types.js";
 
-async function readJson(req:IncomingMessage):Promise<any>{
+class PayloadTooLargeError extends Error {}
+
+async function readJson(req:IncomingMessage,maxBytes=1_048_576):Promise<any>{
   const chunks:Buffer[]=[];
-  for await(const chunk of req) chunks.push(Buffer.isBuffer(chunk)?chunk:Buffer.from(chunk));
+  let total=0;
+  for await(const chunk of req){
+    const buffer=Buffer.isBuffer(chunk)?chunk:Buffer.from(chunk);
+    total+=buffer.length;
+    if(total>maxBytes) throw new PayloadTooLargeError("Request body exceeds 1 MiB limit");
+    chunks.push(buffer);
+  }
   if(!chunks.length) return {};
   return JSON.parse(Buffer.concat(chunks).toString("utf8"));
 }
@@ -193,6 +201,7 @@ export function createLegacyServer(
       return json(res,404,{error:"Not found"});
     }catch(error){
       const message=error instanceof Error?error.message:String(error);
+      if(error instanceof PayloadTooLargeError) return json(res,413,{error:error.message});
       if(error instanceof SyntaxError) return json(res,400,{error:"Invalid JSON"});
       if(/is required|Invalid|Unsupported|cannot|must/i.test(message)) return json(res,400,{error:message});
       if(/not found/i.test(message)) return json(res,404,{error:message});
