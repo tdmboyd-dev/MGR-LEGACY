@@ -10,7 +10,7 @@
 - [ ] Reconcile Floot research files against these canonical docs
 - [ ] Preserve provenance for imported code; do not silently overwrite
 
-## Gate 1 — Contracts first
+## Gate 1 — Contracts first ✅
 Create versioned contracts for:
 - tenant/hierarchy
 - identity/entity graph
@@ -33,7 +33,7 @@ Acceptance:
 - idempotency keys defined
 - audit requirements defined
 
-## Gate 2 — Core data plane
+## Gate 2 — Core data plane 🚧
 Build:
 - organizations/workspaces/hierarchy
 - customer graph
@@ -44,7 +44,7 @@ Build:
 - consent/preferences
 - audit ledger
 
-## Gate 3 — Core CRM/work
+## Gate 3 — Core CRM/work 🚧
 Port/rebuild from MGR Agents:
 - contacts
 - companies
@@ -56,7 +56,7 @@ Port/rebuild from MGR Agents:
 - agent CRM actions
 - import/export
 
-## Gate 4 — Workflow runtime
+## Gate 4 — Workflow runtime 🚧
 Build hardened orchestration:
 - triggers/conditions/actions
 - scheduling/waits
@@ -71,7 +71,7 @@ Build hardened orchestration:
 - self-audit
 - execution trace
 
-## Gate 5 — Communications
+## Gate 5 — Communications 🚧
 - unified inbox/thread model
 - email/SMS/voice adapters
 - templates
@@ -80,7 +80,7 @@ Build hardened orchestration:
 - provider health
 - Comms Command intelligence
 
-## Gate 6 — Intelligence
+## Gate 6 — Intelligence 🚧
 - Signal Graph
 - TODAY/Next Action
 - Revenue Leak Scanner
@@ -90,7 +90,7 @@ Build hardened orchestration:
 - Growth Loop
 - Data Medic
 
-## Gate 7 — Analytics
+## Gate 7 — Analytics 🚧
 - semantic metric layer
 - dashboards
 - reports
@@ -102,7 +102,7 @@ Build hardened orchestration:
 - automation ROI
 - agent contribution
 
-## Gate 8 — Tax & Service Bureau Pack
+## Gate 8 — Tax & Service Bureau Pack 🚧
 Extract/rebuild from Elite Hub:
 - bureau hierarchy
 - preparer/office concepts
@@ -118,7 +118,7 @@ Extract/rebuild from Elite Hub:
 
 Do not move tax calculation/MeF complexity into the horizontal core.
 
-## Gate 9 — Extension Foundry
+## Gate 9 — Extension Foundry 🚧
 - SDK
 - webhooks/events
 - manifests/scopes
@@ -128,7 +128,7 @@ Do not move tax calculation/MeF complexity into the horizontal core.
 - UI extension points
 - sandbox/testing
 
-## Gate 10 — Consumer integrations
+## Gate 10 — Consumer integrations 🚧
 ### MGR Agents
 - replace local CRM writes with Legacy SDK
 - agents become governed Legacy power users
