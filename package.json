@@ -18,7 +18,8 @@
     "test:api-postgres": "npm run build && node scripts/integration-api.mjs",
     "test:upgrade-path": "npm run build && node scripts/integration-upgrade-path.mjs",
     "test:backup-restore": "npm run build && node scripts/integration-backup-restore.mjs",
-    "test:concurrency": "npm run build && node scripts/integration-concurrency.mjs"
+    "test:concurrency": "npm run build && node scripts/integration-concurrency.mjs",
+    "test:reset-postgres": "node scripts/reset-integration-postgres.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.7.0",
