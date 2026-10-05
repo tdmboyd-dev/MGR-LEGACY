@@ -73,6 +73,70 @@ export function createLegacyServer(
         return json(res,200,await services.listExtensions(tenant));
       }
 
+      if(req.method==="POST" && url.pathname==="/v1/analytics/reports"){
+        await services.saveReport(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
+      if(req.method==="GET" && url.pathname==="/v1/analytics/reports"){
+        return json(res,200,await services.listReports(tenant));
+      }
+
+      if(req.method==="POST" && url.pathname==="/v1/analytics/goals"){
+        await services.saveGoal(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
+      if(req.method==="GET" && url.pathname==="/v1/analytics/goals"){
+        return json(res,200,await services.listGoals(
+          tenant,
+          url.searchParams.get("scopeType") ?? undefined,
+          url.searchParams.get("scopeId") ?? undefined
+        ));
+      }
+
+      if(req.method==="GET" && url.pathname==="/v1/analytics/series"){
+        const metricKey=url.searchParams.get("metricKey");
+        if(!metricKey) return json(res,400,{error:"metricKey is required"});
+        return json(res,200,await services.metricSeries({
+          metricKey,
+          from:url.searchParams.get("from") ?? undefined,
+          to:url.searchParams.get("to") ?? undefined,
+          scopeType:url.searchParams.get("scopeType") ?? undefined,
+          scopeId:url.searchParams.get("scopeId") ?? undefined
+        },tenant));
+      }
+
+      if(req.method==="POST" && url.pathname==="/v1/tax/required-documents"){
+        await services.saveTaxRequiredDocuments(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
+      if(req.method==="POST" && url.pathname==="/v1/tax/returns"){
+        await services.saveTaxReturn(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
+      if(req.method==="POST" && url.pathname==="/v1/tax/signatures"){
+        await services.saveTaxSignature(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
+      if(req.method==="POST" && url.pathname==="/v1/tax/bank-products"){
+        await services.saveTaxBankProduct(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
+      if(req.method==="POST" && url.pathname==="/v1/tax/credentials"){
+        await services.saveTaxCredential(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
+      if(req.method==="POST" && url.pathname==="/v1/tax/portal-requests"){
+        await services.createTaxPortalRequest(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
       const webhookMatch=url.pathname.match(/^\/v1\/extensions\/([^/]+)\/webhooks$/);
       if(req.method==="POST" && webhookMatch){
         const body=await readJson(req);
