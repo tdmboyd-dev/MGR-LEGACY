@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { Command, LegacyEvent, NextAction, WorkflowDefinition } from "@mgr/legacy-contracts";
 import type { Goal, ReportDefinition } from "@mgr/legacy-analytics";
 import type { BankProductApplication, ClientPortalRequest, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
-import { NextActionEngine } from "@mgr/legacy-core";
+import { NextActionEngine, TruthConsoleProjector, type ActionReceipt, type ActionReceiptStatus } from "@mgr/legacy-core";
 import {
   PostgresAnalyticsRepository,
   PostgresAuditStore,
@@ -11,6 +11,7 @@ import {
   PostgresIdempotencyStore,
   PostgresOperationalTodayRepository,
   PostgresOutbox,
+  PostgresActionReceiptRepository,
   PostgresShadowIngestRepository,
   PostgresTaxPackRepository,
   PostgresWorkflowRepository,
@@ -92,10 +93,28 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
 
   private async executeCanonical(command:Command):Promise<unknown>{
     const tx=await this.db.begin();
+    const receipt:ActionReceipt={
+      receiptId:randomUUID(),
+      tenantId:command.scope.tenantId,
+      correlationId:command.correlationId,
+      actor:command.actor,
+      scope:command.scope,
+      action:command.action,
+      target:command.target,
+      executionMode:"ask",
+      status:"executing",
+      argumentSummary:command.payload,
+      policyDecision:"allowed",
+      approvals:[],
+      evidence:{commandId:command.commandId,idempotencyKey:command.idempotencyKey},
+      startedAt:new Date().toISOString(),
+      reversible:true
+    };
     const idempotency=new PostgresIdempotencyStore(tx);
     const audit=new PostgresAuditStore(tx);
     const events=new PostgresEventLedger(tx);
     const outbox=new PostgresOutbox(tx);
+    const receipts=new PostgresActionReceiptRepository(tx);
 
     try{
       const existing=await idempotency.get(command.scope.tenantId,command.idempotencyKey);
@@ -144,11 +163,23 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
       });
 
       const response={accepted:true,event,result:mutation.after};
+      await receipts.append({
+        ...receipt,
+        status:"succeeded",
+        completedAt:new Date().toISOString(),
+        outcome:{eventId:event.eventId,result:mutation.after}
+      });
       await idempotency.complete(command.scope.tenantId,command.idempotencyKey,response);
       await tx.commit();
       return response;
     }catch(error){
       await tx.rollback();
+      await new PostgresActionReceiptRepository(this.db).append({
+        ...receipt,
+        status:"failed",
+        completedAt:new Date().toISOString(),
+        error:error instanceof Error ? error.message : String(error)
+      });
       throw error;
     }
   }
@@ -427,5 +458,27 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
   async createTaxPortalRequest(request:ClientPortalRequest,tenantId?:string):Promise<void>{
     const tenant=this.requireTenant(tenantId);
     await new PostgresTaxPackRepository(this.db).createPortalRequest({...request,tenantId:tenant});
+  }
+
+  async listActionReceipts(input:{
+    correlationId?:string;actorId?:string;action?:string;status?:ActionReceiptStatus;limit?:number;
+  },tenantId?:string):Promise<ActionReceipt[]>{
+    return new PostgresActionReceiptRepository(this.db).list({
+      tenantId:this.requireTenant(tenantId),...input
+    });
+  }
+
+  async truthConsole(input:{
+    correlationId?:string;actorId?:string;action?:string;status?:ActionReceiptStatus;limit?:number;
+  },tenantId?:string){
+    const receipts=await this.listActionReceipts(input,tenantId);
+    return new TruthConsoleProjector().project(receipts);
+  }
+
+  async truthSummary(input:{
+    correlationId?:string;actorId?:string;action?:string;status?:ActionReceiptStatus;limit?:number;
+  },tenantId?:string){
+    const receipts=await this.listActionReceipts(input,tenantId);
+    return new TruthConsoleProjector().summary(receipts);
   }
 }
