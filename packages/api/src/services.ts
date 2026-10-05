@@ -5,6 +5,7 @@ import type { BankProductApplication, ClientPortalRequest, PreparerCredentialSta
 import { NextActionEngine, TruthConsoleProjector, type ActionReceipt, type ActionReceiptStatus } from "@mgr/legacy-core";
 import {
   PostgresAnalyticsRepository,
+  PostgresConnectorManifestRepository,
   PostgresAuditStore,
   PostgresEventLedger,
   PostgresExtensionRepository,
@@ -464,6 +465,10 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
   async createTaxPortalRequest(request:ClientPortalRequest,tenantId?:string):Promise<void>{
     const tenant=this.requireTenant(tenantId);
     await new PostgresTaxPackRepository(this.db).createPortalRequest({...request,tenantId:tenant});
+  }
+
+  async listConnectors(){
+    return new PostgresConnectorManifestRepository(this.db).list();
   }
 
   async listActionReceipts(input:{
