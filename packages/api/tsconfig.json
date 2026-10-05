@@ -16,7 +16,9 @@
     { "path": "../core" },
     { "path": "../database" },
     { "path": "../workflow" },
-    { "path": "../extensions" }
+    { "path": "../extensions" },
+    { "path": "../analytics" },
+    { "path": "../tax-pack" }
   ],
   "include": ["src/**/*.ts"]
 }
