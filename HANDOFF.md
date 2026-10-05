@@ -3,197 +3,91 @@
 Last updated: 2026-10-05
 
 ## Active implementation lane
-Branch: `staging/legacy-foundation`
-
-`main` contains the research/design source of truth. The staging branch contains live implementation and is the branch future work should continue from until verified and intentionally merged.
+`main` is the current verified source of truth. `staging/legacy-foundation` must be fast-forwarded to the same checkpoint after this documentation refresh.
 
 ## Cost-control rule for GitHub Actions
-Normal staging pushes MUST NOT run GitHub Actions.
+Normal pushes MUST NOT run GitHub Actions.
 
-Current CI triggers:
+Current CI triggers after verification:
 - manual `workflow_dispatch`
 - pull requests targeting `main`
 
-Do not re-enable push-triggered CI on staging. Batch verification deliberately instead of burning Actions on every file/commit.
+Push-triggered CI was enabled only for one deliberate verification batch and then removed after the Node 22 install/typecheck/test run passed.
 
-## Locked product direction
-MGR Legacy is the shared MGR relationship, automation, communications, intelligence, analytics and vertical-pack platform. It is not a renamed conventional CRM and it is not dependent on Floot for its architecture.
+## Current verified checkpoint
+- dependency install: passed
+- TypeScript typecheck: passed
+- full `npm test`: passed
+- verification commit: `1095b359c3c4d65bdab24ec52da1e06f9db29cc2`
+- repository migrations: `0001` through `0017`
+- Floot is no longer a dependency or completion gate.
 
-## Research/design source of truth
-- `docs/research/INTERNAL_CRM_BEAST_AUDIT.md`
-- `docs/research/MIGRATION_PROVENANCE.md`
-- `docs/architecture/MASTER_ARCHITECTURE.md`
-- `docs/architecture/CAPABILITY_MAP.md`
-- `docs/native/NATIVE_SYSTEMS.md`
-- `docs/build/BUILD_LIST.md`
-- `docs/build/SHARED_ADOPTION_PLAN.md`
+## Floot scope reclamation
+The known MGR Sales Dashboard/Floot assignment has been reclaimed directly into MGR Legacy and is tracked in:
+- `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md`
 
-## Implemented packages
+New first-class modules include:
+- Action Receipts
+- Truth Console
+- Shadow Autopilot
+- FlowSpec
+- Jev decision fabric
+- Context Mesh
+- Tool Map
+- Policy Compiler
+- privacy/untrusted-memory isolation
+- managed secret references
+- command palette
+- agent memory graph
+- voice/perception contracts
+- focus/accountability engine
+- governed subagents/collections
+- dead-letter recovery
+- Local Bridge / exact-target computer control
+- realtime + mobile/Telegram control contracts
+- model/cost routing
+- Creation Factory + Media Job Ledger
+- MCP/connector registry
+- external provider registry
+- TEVV harness
+- operator UI package/renderers
+- provider integration package for voice/transcription, embeddings, image generation, and creation jobs
+- CRM playbook registry
+- IntakeIQ
+- ClientPulse
+- RevenueRadar
+- FlowGenius
 
-### `@mgr/legacy-contracts`
-- tenant/scope contracts
-- actors
-- entity references/relationships
-- universal events
-- policy rules
-- approval requirements
-- commands
-- next actions
-- workflow definitions
+## Persistent control/runtime additions
+- migration `0016_operator_control_plane.sql`: Action Receipts + autonomy profiles
+- migration `0017_reclaimed_runtime.sql`: creation jobs + workflow dead letters + connector manifests
+- Postgres repositories for receipts/autonomy, media jobs, dead letters, and connector manifests
+- canonical API commands automatically write success/failure Action Receipts
+- Truth Console/receipt API routes and SDK methods are available
 
-### `@mgr/legacy-core`
-- in-memory event ledger with idempotency
-- hierarchy graph with tenant isolation
-- policy engine with explicit deny/default deny/high-risk approval
-- command bus
-- customer relationship graph
-- Object Forge registry
-- Next Action ranking engine
+## Operations/hardening tooling
+- `scripts/verify-migrations.mjs`
+- `scripts/backup-postgres.mjs`
+- `scripts/restore-postgres.mjs`
+- `scripts/load-smoke.mjs`
+- `docs/operations/PRODUCTION_RUNBOOK.md`
+- `docs/security/THREAT_MODEL.md`
 
-### `@mgr/legacy-crm`
-- contacts
-- companies
-- pipelines
-- pipeline stages
-- opportunities
-- tasks
-- bookings
-- tenant-aware in-memory repositories
-- CRM service with pipeline-stage integrity enforcement
-- tests
+## What is still not production-proven
+Core and reclaimed modules are built and current CI is green, but completion still requires evidence that cannot be honestly fabricated in this repository alone:
+- execute all migrations against real PostgreSQL, including upgrade paths
+- API/database integration and end-to-end tests against a real test database
+- cross-tenant/security boundary tests
+- real provider credentialed sends/generation/transcription/embedding tests and outage/failover drills
+- deployed queue/worker soak/recovery tests
+- live backup/restore drill
+- load/concurrency results
+- MGR Agents live backfill/dual-write/reconciliation/cutover
+- MGR Elite Hub live backfill/dual-write/reconciliation/cutover
+- security review/TEVV execution in the deployed environment
 
-### `@mgr/legacy-workflow`
-- graph validation
-- workflow simulator
-- duplicate/competing automation conflict detection
-- runtime executor
-- automation self-audit / health scoring
-- tests
+Floot recovery is optional historical salvage only; it is not on the completion critical path.
 
-### `@mgr/legacy-communications`
-- channel contracts
-- threads/messages
-- consent records
-- consent guard
-- provider adapter contract
-- tests
+## Source-of-truth rule
+Read `AGENTS.md`, `AI_START_HERE.md`, this file, `docs/build/BUILD_LIST.md`, `docs/build/REMAINING_WORK.md`, and `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md` before further implementation.
 
-### `@mgr/legacy-intelligence`
-- Signal Graph
-- Revenue Leak Scanner
-- Data Medic
-- Forecast Brain
-- tests for signal/leak behavior
-
-### `@mgr/legacy-analytics`
-- semantic metric registry
-- metric aggregation
-- ratio support
-- attribution engine
-- tests
-
-### `@mgr/legacy-tax-pack`
-- service bureau / child bureau / ERO-office / preparer domain contracts
-- tax client lifecycle
-- hierarchy health / activation engine
-- tests
-
-### `@mgr/legacy-extensions`
-- extension manifests
-- scoped permissions
-- custom workflow-node manifests
-- extension registry
-- tests
-
-### `@mgr/legacy-sdk`
-- command execution
-- TODAY retrieval
-- workflow staging
-- workflow simulation transport contracts
-
-## PostgreSQL migrations
-- `0001_foundation.sql`: tenants, hierarchy, actors, entities, relationships, Object Forge definitions, idempotency, event ledger, outbox, audit
-- `0002_crm_work.sql`: pipelines, stages, opportunities, tasks, bookings
-- `0003_automation_comms.sql`: workflow definitions/runs, communication threads/messages, consent
-- `0004_tax_pack.sql`: tax office profiles + tax client lifecycle
-- `0005_analytics_intelligence.sql`: metric definitions/points, signals, data-quality issues
-
-## Immediate next build sequence
-1. Postgres repository implementations
-2. transactional command bus with DB idempotency + audit + outbox
-3. workflow version repository + activation/replay
-4. provider-independent communication service
-5. TODAY orchestration across tasks/signals/leaks/workflows
-6. Deal Coach
-7. Service Brain
-8. Growth Loop
-9. stronger workflow conflict analysis
-10. hierarchy rollup analytics
-11. MGR Agents adapter/cutover
-12. MGR Elite Hub adapter/cutover
-13. Extension Foundry sandbox/version compatibility
-14. one deliberate verification run after a large coherent batch
-
-## Verification status
-A local network-free container could not clone GitHub because outbound DNS/network is disabled in that runtime. Do not compensate by turning on push-triggered Actions. Use one deliberate CI run only after a large batch, or another non-billed/local environment when available.
-
-## Floot
-Project: MGR Sales Dashboard
-ID: `3294f9f9-d5e0-450d-b777-79cfa6bbd433`
-
-Floot code is not yet migrated because its file-read/build actions were blocked by the daily account cap. Do not wait on Floot. Continue building here. When readable, import under `legacy-import/floot/`, compare against canonical contracts, and mine reusable code without allowing it to overwrite the architecture.
-
-## Working rule
-Every pass should finish the largest coherent vertical slice possible: code + tests + docs + migration notes + acceptance criteria. Do not spend a pass only re-explaining the plan.
-
-## Current cutover and safety implementation
-- Postgres event ledger, idempotency, audit, outbox, and unit-of-work ports are implemented.
-- Transactional commands now support idempotency, policy/approval, event emission, outbox enqueue, audit evidence, and atomic completion.
-- Workflow version repository supports staging, activation, retirement, and replay-source access.
-- Communications send service is provider-independent and consent-gated.
-- MGR Agents and MGR Elite Hub source adapters are present with reconciliation utilities.
-- Dual-write coordination and a cutover gate are implemented.
-- TODAY orchestration ranks work tasks and revenue leaks into one action feed.
-- Automation conflict detection now checks recursive triggers, duplicate actions, field-level competing updates, overlapping communication audiences, and blocks activation on critical conflicts.
-
-
-## Latest completed checkpoint
-- Postgres CRM repositories now persist contacts, companies, pipelines, stages, opportunities, tasks, and bookings.
-- Postgres workflow repository persists workflow versions and activation state.
-- Postgres communication repositories persist consent and outbound/inbound messages.
-- Persistent hierarchy repository supports child/descendant queries.
-- Persistent workflow-run repository tracks execution state, retries, cost, and errors.
-- Hierarchy rollup analytics aggregate descendant metrics into bureau/organization totals.
-- Extension Foundry compatibility checker and sandbox permission enforcement are implemented.
-- AGENTS.md and AI_START_HERE.md are mandatory repository entrypoints for coding AIs.
-- Main is synchronized after every coherent checkpoint.
-
-
-## Latest durability/provider checkpoint
-- DurableWorkflowRunner now persists node checkpoints while executing and moves failed retryable nodes into a resumable waiting state.
-- Retry policy is integrated with workflow execution rather than existing only as a helper.
-- Provider health persistence is implemented with health samples, routing state, circuit state, failure counters, and open/half-open/closed behavior.
-- ProviderCircuitBreaker tests cover threshold opening and reset/probe behavior.
-- PostgreSQL migration `0007_provider_health.sql` adds provider health samples and routing state.
-- Database exports include persistent workflow checkpoints/replays and provider-health storage.
-
-
-## Latest live-execution checkpoint
-- WorkflowResumeWorker scans due checkpoints and resumes persisted workflow runs.
-- ManagedProviderRouter uses persisted provider health/circuit state for failover decisions.
-- Operational TODAY sources surface waiting automations and provider incidents as ranked work.
-- PostgresOperationalTodayRepository feeds waiting-workflow and provider-incident data into TODAY.
-- Resume-worker and managed-provider failover tests are implemented.
-- PostgresWorkflowContextLoader reconstructs workflow execution context directly from persisted run state.
-- Workflow/database/core/communications exports have been updated for these components.
-
-
-## Latest continuous-build checkpoint
-- Workflow resume worker scans due checkpoints and resumes persisted runs.
-- Managed provider router uses persisted health and circuit state for health-aware failover.
-- Operational TODAY sources surface waiting workflows and provider incidents.
-- PostgresOperationalTodayRepository feeds those live operational signals into TODAY.
-- Workflow execution context can be reconstructed from persisted run state.
-- Resume/failover tests are present.
-- ReliableOutboxPublisher is implemented with exponential retry scheduling and success/failure accounting.
-- Main is synchronized after coherent checkpoints; do not allow long-lived drift.
