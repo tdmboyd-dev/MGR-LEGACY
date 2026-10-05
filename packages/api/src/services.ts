@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
 import type { Command, LegacyEvent, NextAction, WorkflowDefinition } from "@mgr/legacy-contracts";
+import type { Goal, ReportDefinition } from "@mgr/legacy-analytics";
+import type { BankProductApplication, ClientPortalRequest, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
 import { NextActionEngine } from "@mgr/legacy-core";
 import {
+  PostgresAnalyticsRepository,
   PostgresAuditStore,
   PostgresEventLedger,
   PostgresExtensionRepository,
@@ -9,6 +12,7 @@ import {
   PostgresOperationalTodayRepository,
   PostgresOutbox,
   PostgresShadowIngestRepository,
+  PostgresTaxPackRepository,
   PostgresWorkflowRepository,
   type PostgresDatabase
 } from "@mgr/legacy-database";
@@ -353,5 +357,74 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
       tenantId:tenantId ?? this.defaultTenantId,extensionId,eventType,url
     });
     return {subscriptionId};
+  }
+
+  private requireTenant(tenantId?:string):string{
+    const tenant=tenantId ?? this.defaultTenantId;
+    if(!tenant) throw new Error("tenantId is required");
+    return tenant;
+  }
+
+  async saveReport(definition:ReportDefinition,tenantId?:string):Promise<void>{
+    const tenant=this.requireTenant(tenantId);
+    await new PostgresAnalyticsRepository(this.db).saveReport({...definition,tenantId:tenant});
+  }
+
+  async listReports(tenantId?:string):Promise<ReportDefinition[]>{
+    return new PostgresAnalyticsRepository(this.db).listReports(this.requireTenant(tenantId));
+  }
+
+  async saveGoal(goal:Goal,tenantId?:string):Promise<void>{
+    const tenant=this.requireTenant(tenantId);
+    await new PostgresAnalyticsRepository(this.db).saveGoal({...goal,tenantId:tenant});
+  }
+
+  async listGoals(tenantId?:string,scopeType?:string,scopeId?:string):Promise<Goal[]>{
+    return new PostgresAnalyticsRepository(this.db).listGoals(
+      this.requireTenant(tenantId),scopeType,scopeId
+    );
+  }
+
+  async metricSeries(input:{
+    metricKey:string;from?:string;to?:string;scopeType?:string;scopeId?:string;
+  },tenantId?:string){
+    return new PostgresAnalyticsRepository(this.db).metricSeries({
+      tenantId:this.requireTenant(tenantId),
+      ...input
+    });
+  }
+
+  async saveTaxRequiredDocuments(input:{
+    clientEntityId:string;taxYear:number;documents:RequiredTaxDocument[];
+  },tenantId?:string):Promise<void>{
+    await new PostgresTaxPackRepository(this.db).saveRequiredDocuments({
+      tenantId:this.requireTenant(tenantId),...input
+    });
+  }
+
+  async saveTaxReturn(state:TaxReturnLifecycleState,tenantId?:string):Promise<void>{
+    const tenant=this.requireTenant(tenantId);
+    await new PostgresTaxPackRepository(this.db).saveReturn({...state,tenantId:tenant});
+  }
+
+  async saveTaxSignature(auth:SignatureAuthorization,tenantId?:string):Promise<void>{
+    const tenant=this.requireTenant(tenantId);
+    await new PostgresTaxPackRepository(this.db).saveSignature({...auth,tenantId:tenant});
+  }
+
+  async saveTaxBankProduct(app:BankProductApplication,tenantId?:string):Promise<void>{
+    const tenant=this.requireTenant(tenantId);
+    await new PostgresTaxPackRepository(this.db).saveBankProduct({...app,tenantId:tenant});
+  }
+
+  async saveTaxCredential(status:PreparerCredentialStatus,tenantId?:string):Promise<void>{
+    await new PostgresTaxPackRepository(this.db).saveCredential(
+      this.requireTenant(tenantId),status
+    );
+  }
+
+  async createTaxPortalRequest(request:ClientPortalRequest,tenantId?:string):Promise<void>{
+    const tenant=this.requireTenant(tenantId);
+    await new PostgresTaxPackRepository(this.db).createPortalRequest({...request,tenantId:tenant});
   }
 }
