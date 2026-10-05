@@ -1,6 +1,6 @@
 import type { Command, NextAction, WorkflowDefinition } from "@mgr/legacy-contracts";
 import type { Goal, ReportDefinition } from "@mgr/legacy-analytics";
-import type { BankProductApplication, ClientPortalRequest, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
+import type { BankProductApplication, ClientPortalRequest, FilingApproval, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxFact, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
 import type { ActionReceipt, ActionReceiptStatus, TruthConsoleRow } from "@mgr/legacy-core";
 import type { ConnectorManifest } from "@mgr/legacy-extensions";
 
@@ -58,6 +58,12 @@ export interface LegacyApiServices {
   saveTaxBankProduct(app:BankProductApplication,tenantId?:string):Promise<void>;
   saveTaxCredential(status:PreparerCredentialStatus,tenantId?:string):Promise<void>;
   createTaxPortalRequest(request:ClientPortalRequest,tenantId?:string):Promise<void>;
+  saveTaxFact(fact:TaxFact,tenantId?:string):Promise<void>;
+  listTaxFacts(input:{clientEntityId:string;taxYear:number},tenantId?:string):Promise<TaxFact[]>;
+  reviewTaxFact(input:{factId:string;reviewerId:string;decision:"accept"|"correct"|"reject";correctedValue?:unknown;reviewedAt?:string},tenantId?:string):Promise<TaxFact>;
+  taxFactReadiness(input:{clientEntityId:string;taxYear:number},tenantId?:string):Promise<{ready:boolean;unreviewed:string[];rejected:string[]}>;
+  saveTaxFilingApproval(approval:FilingApproval,tenantId?:string):Promise<void>;
+  getTaxFilingApproval(returnId:string,tenantId?:string):Promise<FilingApproval|null>;
   listConnectors():Promise<ConnectorManifest[]>;
   listActionReceipts(input:{
     correlationId?:string;
