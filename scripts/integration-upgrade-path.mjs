@@ -42,10 +42,10 @@ try{
 
   const fullRunner=new MigrationRunner(db,allDir);
   const secondApplied=await fullRunner.runPending();
-  assert.equal(secondApplied.length,10,"expected migrations 0008-0017 in phase two");
+  assert.equal(secondApplied.length,11,"expected migrations 0008-0018 in phase two");
 
   const applied=await fullRunner.applied();
-  assert.equal(applied.size,17);
+  assert.equal(applied.size,18);
 
   const entity=await db.query(
     "SELECT id,tenant_id,display_name,attributes FROM entities WHERE id=$1 AND tenant_id=$2",
