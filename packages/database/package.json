@@ -1,5 +1,12 @@
 {
   "name": "@mgr/legacy-database",
   "version": "0.1.0",
-  "private": true
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@mgr/legacy-contracts": "0.1.0",
+    "@mgr/legacy-core": "0.1.0"
+  }
 }
