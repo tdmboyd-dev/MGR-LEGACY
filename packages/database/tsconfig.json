@@ -12,7 +12,10 @@
   },
   "references": [
     { "path": "../contracts" },
-    { "path": "../core" }
+    { "path": "../core" },
+    { "path": "../crm" },
+    { "path": "../workflow" },
+    { "path": "../communications" }
   ],
   "include": ["src/**/*.ts"]
 }
