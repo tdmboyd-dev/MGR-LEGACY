@@ -1,10 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type {
-  Channel,
-  ConsentRecord,
-  Message,
-  ProviderAdapter
-} from "./index.js";
+import type { Channel, ConsentRecord, Message, ProviderAdapter } from "./index.js";
 import { ConsentGuard } from "./index.js";
 
 export interface ConsentRepository {
