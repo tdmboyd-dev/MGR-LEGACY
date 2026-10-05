@@ -55,8 +55,7 @@ export class MetricEngine {
       case "avg": value = values.reduce((a, b) => a + b, 0) / rows.length; break;
       case "min": value = Math.min(...values); break;
       case "max": value = Math.max(...values); break;
-      case "ratio":
-        throw new Error("Use aggregateRatio for ratio metrics");
+      case "ratio": throw new Error("Use aggregateRatio for ratio metrics");
     }
     return { metricKey: definition.key, value, sampleSize: rows.length };
   }
@@ -99,3 +98,5 @@ export class AttributionEngine {
     return touches.map((touch) => ({ ...structuredClone(touch), credit }));
   }
 }
+
+export * from "./hierarchy-rollup.js";
