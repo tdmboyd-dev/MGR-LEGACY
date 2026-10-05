@@ -1,47 +1,20 @@
 {
   "files": [],
   "references": [
-    {
-      "path": "./packages/contracts"
-    },
-    {
-      "path": "./packages/core"
-    },
-    {
-      "path": "./packages/crm"
-    },
-    {
-      "path": "./packages/workflow"
-    },
-    {
-      "path": "./packages/communications"
-    },
-    {
-      "path": "./packages/intelligence"
-    },
-    {
-      "path": "./packages/analytics"
-    },
-    {
-      "path": "./packages/tax-pack"
-    },
-    {
-      "path": "./packages/extensions"
-    },
-    {
-      "path": "./packages/database"
-    },
-    {
-      "path": "./packages/adapters"
-    },
-    {
-      "path": "./packages/api"
-    },
-    {
-      "path": "./packages/sdk"
-    },
-    {
-      "path": "./packages/operator-ui"
-    }
+    { "path": "./packages/contracts" },
+    { "path": "./packages/core" },
+    { "path": "./packages/crm" },
+    { "path": "./packages/workflow" },
+    { "path": "./packages/communications" },
+    { "path": "./packages/intelligence" },
+    { "path": "./packages/analytics" },
+    { "path": "./packages/tax-pack" },
+    { "path": "./packages/extensions" },
+    { "path": "./packages/database" },
+    { "path": "./packages/adapters" },
+    { "path": "./packages/api" },
+    { "path": "./packages/sdk" },
+    { "path": "./packages/operator-ui" },
+    { "path": "./packages/providers" }
   ]
 }
