@@ -2,3 +2,7 @@ export * from "./types.js";
 export * from "./repository.js";
 export * from "./service.js";
 export * from "./deal-room.js";
+export * from "./activity.js";
+export * from "./cases.js";
+export * from "./import-export.js";
+export * from "./bulk-merge.js";
