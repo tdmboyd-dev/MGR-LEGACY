@@ -2,158 +2,224 @@
 
 Updated: 2026-10-05
 
-Current repository state:
-- main and staging/legacy-foundation synchronized
-- 12 implementation packages
-- 7 PostgreSQL migrations
-- 25 test files
-- 173 tracked files
+## Current verified repository state
 
-## Remaining major completion blocks
+- `main` and `staging/legacy-foundation` were synchronized through the latest verified build checkpoint before this documentation refresh.
+- 13 implementation packages.
+- 15 PostgreSQL migrations (`0001` through `0015`).
+- 25 test files.
+- 212 tracked files in the current tree.
+- 0 open GitHub issues.
+- 0 TODO markers found by repository code search.
+- 0 FIXME markers found by repository code search.
+- Node 22 CI verification passed on commit `e4b2bea072b954aaa3d4fc1f3fd566fa54114ff8`:
+  - dependency install passed
+  - TypeScript typecheck passed
+  - full `npm test` command passed
+- Push-triggered CI was removed again after verification so normal pushes do not consume Actions minutes.
 
-### 1. Core data plane completion
-- persistent activity timeline
-- persistent ownership/assignment service
-- consent/preference service completion
-- object schema persistence/version lifecycle
-- audit-query/read APIs
-- data retention/archive rules
-- tenant isolation tests
+## What is implemented
 
-### 2. CRM/work completion
-- activities service
-- cases/tickets
-- agent-facing CRM action handlers
-- import/export framework
-- bulk operations
-- merge/dedup flows
-- CRM reconciliation tests
+### Shared core/data plane
+- tenancy, hierarchy, actors, entities, relationships
+- Object Forge definitions
+- event ledger
+- idempotency
+- audit
+- outbox
+- activity/case persistence
+- ownership/assignment
+- preferences/schema lifecycle
+- retention/audit repositories
+- Postgres database adapter + migration runner
+- API service/bootstrap layer
 
-### 3. Workflow engine completion
-- condition evaluation
-- scheduling/waits
-- parallel branches
-- subflows
-- approvals inside workflows
-- durable resume execution wiring
-- persistent checkpoint/replay integration
-- reliable outbox delivery persistence
-- workflow execution trace query APIs
-- workflow version activation safety integration
+### CRM/work
+- contacts, companies, pipelines, stages, opportunities, tasks, bookings
+- activities/cases
+- bulk/import-export/merge planning utilities
+- persistent CRM repositories
+- governed command ingress for core CRM mutations
 
-### 4. Communications completion
-- unified inbox service
-- thread identity resolution
-- concrete email adapter
-- concrete SMS adapter
-- concrete voice/call adapter
-- templates/snippets
-- sequences/cadences
-- provider-health-aware managed routing
-- quiet-hour enforcement
-- deliverability telemetry
-- Comms Command execution wiring
+### Workflow
+- validation, simulation, runtime execution
+- conditions, scheduling/waits
+- approvals/subflows
+- versioning/staging/activation
+- retry policy
+- persistent checkpoints/replay state
+- durable runner
+- resume worker
+- execution traces
+- conflict detection
+- activation safeguards
+- reliable outbox publisher
 
-### 5. Intelligence completion
-- TODAY source aggregation across every operational domain
-- Signal Graph persistence/query APIs
-- Revenue Leak Scanner production sources
-- Forecast Brain production data wiring
-- Deal Coach production wiring
-- Service Brain production wiring
-- Growth Loop production wiring
-- Data Medic repair plans + reversible fixes
-- Universal Command execution path
-- explanation/evidence surfaces
+### Communications
+- provider-independent send contracts
+- consent enforcement
+- unified inbox/thread helpers
+- templates/sequences
+- quiet-hour/policy/telemetry helpers
+- HTTP provider adapters for email/SMS/voice channels
+- provider health tracking
+- circuit breaker
+- managed health-aware failover routing
+- persistent communication/delivery repositories
+- Comms Command layer
 
-### 6. Analytics completion
-- dashboards/report query layer
-- cohort analytics
-- lifecycle/funnel analytics
-- hierarchy rollups wired to real metrics
-- goals/quotas
-- forecasting dashboards
+### Intelligence
+- Signal Graph
+- Revenue Leak Scanner
+- Forecast Brain
+- Deal Coach
+- Service Brain
+- Growth Loop
+- Data Medic + reversible repair planning
+- evidence helpers
+- production-source adapters
+- operational TODAY inputs
+
+### Analytics
+- semantic metrics
+- attribution
+- reporting
+- cohort/funnel analytics
+- hierarchy rollups
+- goals
 - automation ROI
-- agent contribution metrics
-- data-quality health reporting
+- agent contribution
+- data-health reporting
+- persistent reports/goals/metric-series access
+- analytics API routes
 
-### 7. Tax & Service Bureau Pack completion
-- client portal bridge
+### Tax & Service Bureau Pack
+- bureau/office/preparer domain contracts
+- tax client lifecycle
 - document chase
-- return lifecycle events
-- signature/Form 8879 integration hooks
+- return/signature lifecycle
 - bank-product lifecycle
-- fee/split/commission/reconciliation
-- credential/compliance status
-- bureau/office/preparer analytics
-- tax-specific workflow nodes
-- office activation/health production wiring
+- fees/splits/reconciliation
+- credential readiness
+- bureau analytics
+- tax workflow nodes/events
+- client portal bridge contracts
+- persistent tax repositories
+- tax API routes
 
-### 8. Extension Foundry completion
-- webhook/event subscription runtime
-- extension SDK completion
-- app/pack registration lifecycle
+### Extension Foundry
+- manifests/scopes
+- compatibility checks
+- sandbox permission enforcement
+- extension runtime
 - custom workflow-node runtime
-- provider adapter registration
-- vertical-pack registry
-- UI extension contracts
-- sandbox/version compatibility enforcement
+- UI/provider contracts
+- persistent extension registration/webhooks
+- SDK extension surface
 
-### 9. MGR Agents live adoption
-- Legacy SDK adapter behind current CRM tools
-- dual-write
-- historical backfill
+### Adoption/cutover tooling
+- MGR Agents source mappers
+- MGR Elite Hub source mappers
+- backfill utilities
+- dual-write/cutover gates
 - reconciliation telemetry
-- agent identity/audit propagation
-- read cutover
-- rollback
-- duplicate CRM retirement only after parity
+- rollback state
+- cutover orchestration
+- adoption persistence
 
-### 10. MGR Elite Hub live adoption
-- customer graph mapping
-- bureau/office/preparer hierarchy mapping
-- tax pack registration
-- shared communication/workflow/analytics cutover
-- historical backfill
-- dual-write + reconciliation
-- read cutover
-- rollback
-- duplicate CRM retirement only after parity
+## What is genuinely still left
 
-### 11. Floot recovery/reconciliation
-- import MGR Sales Dashboard under legacy-import/floot/
-- compare imported code/research against canonical contracts
-- mine reusable code
+The codebase is feature-built and currently typecheck/test green, but it is **not yet 100% production-finished**. The remaining work is mostly production proof, live-system adoption, and operational hardening rather than missing core feature modules.
+
+### 1. Production database verification
+- run all 15 migrations against a real clean PostgreSQL database
+- run upgrade-path migration tests from earlier schema states
+- verify rollback/recovery procedures
+- verify foreign keys/indexes/constraints with representative production-scale data
+- add dedicated database integration tests (currently no database package test files)
+
+### 2. API integration and end-to-end verification
+- add API package integration tests (currently no API package test files)
+- boot the real API against PostgreSQL in test/staging
+- exercise auth, tenant headers, command ingress, TODAY, workflow, extension, analytics, and tax routes end to end
+- verify error mapping/status codes and malformed-input handling
+- verify API restart/recovery behavior
+
+### 3. Tenant/security hardening
+- dedicated cross-tenant isolation tests
+- permission/approval boundary tests against persisted state
+- secrets/configuration review
+- dependency/security review
+- rate limiting / abuse controls where the deployed API requires them
+- threat-model review for extension execution and webhooks
+
+### 4. Real communications provider proof
+- configure real provider credentials/endpoints for the chosen email/SMS/voice vendors
+- execute sandbox/live provider sends
+- verify callbacks/delivery receipts
+- verify failover with actual provider failures
+- verify quiet hours/consent against real delivery paths
+- add provider-specific integration tests
+
+### 5. Live MGR Agents adoption
+The adapter/cutover machinery exists, but the actual MGR Agents repo has not been cut over.
+- install/use Legacy SDK/API behind current CRM tools
+- run historical backfill against real MGR Agents data
+- run dual-write in a controlled environment
+- compare reconciliation telemetry
+- propagate real agent identity/audit context
+- cut reads over only after parity
+- exercise rollback
+- retire duplicate CRM authority only after a proven rollback window
+
+### 6. Live MGR Elite Hub adoption
+The tax/Elite Hub mapping and cutover machinery exists, but the actual Elite Hub repo has not been cut over.
+- map real customer/bureau/office/preparer records
+- run historical backfill
+- enable dual-write and reconciliation
+- wire shared communications/workflow/analytics to Legacy
+- prove Tax Pack integration against real Elite Hub flows
+- cut reads over only after parity
+- exercise rollback
+- retire duplicate CRM authority only after a proven rollback window
+
+### 7. Floot recovery/reconciliation
+Still externally blocked until the MGR Sales Dashboard project can be read/exported.
+- import under `legacy-import/floot/`
+- compare against canonical contracts
+- mine reusable code/research
 - preserve provenance
-- never let Floot overwrite canonical architecture
+- do not allow imported Floot code to overwrite canonical architecture
 
-This block depends on Floot being readable; it is not a blocker for continuing Legacy implementation.
+### 8. Operational production hardening
+- observability validation in a deployed environment
+- structured logs/metrics/alerts with real sinks
+- backup and restore drill
+- queue/worker deployment proof
+- load/performance testing
+- concurrency/race testing
+- long-running workflow soak tests
+- provider outage drills
+- disaster-recovery runbook
+- deployment/rollback runbook
 
-### 12. Production verification and hardening
-- complete unit tests
-- integration tests
-- end-to-end tests
-- tenant/permission isolation tests
-- migration/reconciliation tests
-- workflow retry/replay tests
-- provider failure/failover tests
-- data import/export tests
-- audit completeness tests
-- observability/logging/metrics
-- backup/recovery plan
-- load/performance tests
-- security review
-- one deliberate CI verification batch
-- final staging-to-main parity check
+### 9. Documentation/source-of-truth closure
+- keep `HANDOFF.md`, `BUILD_LIST.md`, and this file synchronized with every production proof/cutover
+- replace historical wording that says features are merely planned when they are already built
+- record live-adoption evidence once MGR Agents and Elite Hub cutovers actually occur
 
-## Definition of complete
-MGR Legacy is complete only when:
-1. shared core capabilities are persistent and production-safe,
-2. MGR Agents and Elite Hub consume Legacy without duplicate authoritative CRM truth,
-3. Tax Pack works as a vertical extension rather than contaminating core,
-4. workflows are durable, replayable, observable, and governed,
-5. communications are provider-independent and failover-safe,
-6. native intelligence systems operate on real production data,
-7. migrations reconcile without unexplained data loss,
-8. tests and operational hardening pass,
-9. main is current and AI handoff/source-of-truth docs are accurate.
+## Definition of 100% complete
+
+MGR Legacy is 100% complete only when all of the following are true:
+
+1. all 15 migrations are proven against real PostgreSQL and upgrade paths,
+2. API/database integration and end-to-end tests pass,
+3. tenant/security boundaries are explicitly tested,
+4. real communication providers are proven including failover,
+5. MGR Agents consumes Legacy as the authoritative shared CRM/action layer,
+6. MGR Elite Hub consumes Legacy shared layers + Tax Pack with reconciled data,
+7. rollback/backfill/reconciliation paths are proven,
+8. backup/restore, observability, load, and security hardening are validated,
+9. Floot is reconciled when external access becomes available,
+10. source-of-truth docs match the deployed reality.
+
