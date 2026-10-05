@@ -5,3 +5,4 @@ export * from "./next-action.js";
 export * from "./customer-graph.js";
 export * from "./object-forge.js";
 export * from "./command-bus.js";
+export * from "./transactional-command.js";
