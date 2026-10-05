@@ -14,7 +14,7 @@ try{
   const appliedNow=await runner.runPending();
   const applied=await runner.applied();
 
-  assert.equal(applied.size,17,"expected all 17 migrations to be applied");
+  assert.equal(applied.size,18,"expected all 18 migrations to be applied");
 
   const tenantId=randomUUID();
   await db.query(
