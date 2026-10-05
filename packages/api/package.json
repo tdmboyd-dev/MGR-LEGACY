@@ -1,0 +1,15 @@
+{
+  "name": "@mgr/legacy-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@mgr/legacy-contracts": "0.1.0",
+    "@mgr/legacy-core": "0.1.0",
+    "@mgr/legacy-database": "0.1.0",
+    "@mgr/legacy-workflow": "0.1.0",
+    "@mgr/legacy-extensions": "0.1.0"
+  }
+}
