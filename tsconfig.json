@@ -39,6 +39,9 @@
     },
     {
       "path": "./packages/sdk"
+    },
+    {
+      "path": "./packages/operator-ui"
     }
   ]
 }
