@@ -1,5 +1,12 @@
-import { Pool, type PoolClient } from "pg";
+import { Pool, type PoolClient, type QueryResult } from "pg";
 import type { SqlDatabase, SqlResult, SqlTransaction } from "./sql.js";
+
+function normalizeResult<T>(result:QueryResult|QueryResult[]):SqlResult<T>{
+  const final=Array.isArray(result) ? result.at(-1) : result;
+  if(!final) return {rows:[],rowCount:0};
+  const rows=(final.rows ?? []) as T[];
+  return {rows,rowCount:final.rowCount ?? rows.length};
+}
 
 class PgTransaction implements SqlTransaction {
   constructor(private readonly client:PoolClient){}
@@ -9,7 +16,7 @@ class PgTransaction implements SqlTransaction {
     params:unknown[]=[]
   ):Promise<SqlResult<T>>{
     const result=await this.client.query(sql,params as any[]);
-    return {rows:result.rows as T[],rowCount:result.rowCount ?? result.rows.length};
+    return normalizeResult<T>(result);
   }
 
   async commit():Promise<void>{
@@ -39,7 +46,7 @@ export class PostgresDatabase implements SqlDatabase {
     params:unknown[]=[]
   ):Promise<SqlResult<T>>{
     const result=await this.pool.query(sql,params as any[]);
-    return {rows:result.rows as T[],rowCount:result.rowCount ?? result.rows.length};
+    return normalizeResult<T>(result);
   }
 
   async begin():Promise<SqlTransaction>{
