@@ -20,3 +20,5 @@ export * from "./workflow-governance-repository.js";
 export * from "./inbox-template-repository.js";
 export * from "./delivery-repository.js";
 export * from "./intelligence-repository.js";
+export * from "./adoption-repository.js";
+export * from "./observability-repository.js";
