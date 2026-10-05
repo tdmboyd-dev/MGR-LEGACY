@@ -2,6 +2,10 @@ import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import type { SqlDatabase } from "./sql.js";
 
+function sqlLiteral(value:string):string{
+  return "'" + value.replace(/'/g,"''") + "'";
+}
+
 export class MigrationRunner {
   constructor(
     private readonly db:SqlDatabase,
@@ -36,20 +40,26 @@ export class MigrationRunner {
 
     for(const name of files){
       if(applied.has(name)) continue;
-      const sql=await readFile(join(this.directory,name),"utf8");
-      const tx=await this.db.begin();
-      try{
-        await tx.query(sql);
-        await tx.query(
-          "INSERT INTO legacy_migrations (name) VALUES ($1)",
-          [name]
-        );
-        await tx.commit();
-        completed.push(name);
-      }catch(error){
-        await tx.rollback();
-        throw new Error(`Migration ${name} failed: ${error instanceof Error?error.message:String(error)}`);
+
+      const raw=await readFile(join(this.directory,name),"utf8");
+      const marker=`INSERT INTO legacy_migrations (name) VALUES (${sqlLiteral(name)});`;
+
+      if(/^\s*BEGIN\s*;/i.test(raw) && /COMMIT\s*;\s*$/i.test(raw)){
+        const sql=raw.replace(/COMMIT\s*;\s*$/i,`${marker}\nCOMMIT;`);
+        await this.db.query(sql);
+      }else{
+        const tx=await this.db.begin();
+        try{
+          await tx.query(raw);
+          await tx.query("INSERT INTO legacy_migrations (name) VALUES ($1)",[name]);
+          await tx.commit();
+        }catch(error){
+          await tx.rollback();
+          throw error;
+        }
       }
+
+      completed.push(name);
     }
 
     return completed;
