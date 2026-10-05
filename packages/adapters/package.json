@@ -1,0 +1,12 @@
+{
+  "name": "@mgr/legacy-adapters",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@mgr/legacy-crm": "0.1.0",
+    "@mgr/legacy-tax-pack": "0.1.0"
+  }
+}
