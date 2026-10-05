@@ -37,9 +37,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - run: npm install
       - run: npm run typecheck
       - run: npm test
       - run: npm run test:postgres
       - run: npm run test:api-postgres
       - run: npm run test:upgrade-path
+      - run: npm run test:backup-restore
