@@ -1,0 +1,12 @@
+{
+  "name": "@mgr/legacy-operator-ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@mgr/legacy-core": "0.1.0",
+    "@mgr/legacy-contracts": "0.1.0"
+  }
+}
