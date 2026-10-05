@@ -167,3 +167,12 @@ Every pass should finish the largest coherent vertical slice possible: code + te
 - Extension Foundry compatibility checker and sandbox permission enforcement are implemented.
 - AGENTS.md and AI_START_HERE.md are mandatory repository entrypoints for coding AIs.
 - Main is synchronized after every coherent checkpoint.
+
+
+## Latest durability/provider checkpoint
+- DurableWorkflowRunner now persists node checkpoints while executing and moves failed retryable nodes into a resumable waiting state.
+- Retry policy is integrated with workflow execution rather than existing only as a helper.
+- Provider health persistence is implemented with health samples, routing state, circuit state, failure counters, and open/half-open/closed behavior.
+- ProviderCircuitBreaker tests cover threshold opening and reset/probe behavior.
+- PostgreSQL migration `0007_provider_health.sql` adds provider health samples and routing state.
+- Database exports include persistent workflow checkpoints/replays and provider-health storage.
