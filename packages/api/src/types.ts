@@ -1,6 +1,7 @@
 import type { Command, NextAction, WorkflowDefinition } from "@mgr/legacy-contracts";
 import type { Goal, ReportDefinition } from "@mgr/legacy-analytics";
 import type { BankProductApplication, ClientPortalRequest, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
+import type { ActionReceipt, ActionReceiptStatus, TruthConsoleRow } from "@mgr/legacy-core";
 
 export interface CommandIngressInput {
   action:string;
@@ -56,6 +57,34 @@ export interface LegacyApiServices {
   saveTaxBankProduct(app:BankProductApplication,tenantId?:string):Promise<void>;
   saveTaxCredential(status:PreparerCredentialStatus,tenantId?:string):Promise<void>;
   createTaxPortalRequest(request:ClientPortalRequest,tenantId?:string):Promise<void>;
+  listActionReceipts(input:{
+    correlationId?:string;
+    actorId?:string;
+    action?:string;
+    status?:ActionReceiptStatus;
+    limit?:number;
+  },tenantId?:string):Promise<ActionReceipt[]>;
+  truthConsole(input:{
+    correlationId?:string;
+    actorId?:string;
+    action?:string;
+    status?:ActionReceiptStatus;
+    limit?:number;
+  },tenantId?:string):Promise<TruthConsoleRow[]>;
+  truthSummary(input:{
+    correlationId?:string;
+    actorId?:string;
+    action?:string;
+    status?:ActionReceiptStatus;
+    limit?:number;
+  },tenantId?:string):Promise<{
+    total:number;
+    succeeded:number;
+    failed:number;
+    blocked:number;
+    approvalRate:number;
+    totalProviderCost:number;
+  }>;
 }
 
 export interface ApiAuthConfig {
