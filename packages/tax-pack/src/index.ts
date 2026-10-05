@@ -68,7 +68,7 @@ export class HierarchyHealthEngine {
     const compliancePenalty = Math.min(signals.unresolvedComplianceIssues * 0.08, 0.32);
     const responsePenalty = signals.leadResponseHours && signals.leadResponseHours > 24 ? 0.12 : 0;
     const score = Math.max(0, Math.min(1, passed / checks.length - compliancePenalty - responsePenalty));
-    const blockers = checks.filter(([, value]) => !value).map(([, , action]) => action);
+    const blockers: string[] = checks.filter(([, value]) => !value).map(([, , action]) => action);
 
     if (signals.unresolvedComplianceIssues > 0) blockers.push("Resolve compliance issues");
 
