@@ -160,9 +160,9 @@ Updated: 2026-10-05
 - [x] current unit test suite
 - [x] branch parity check at verified checkpoint
 - [x] PostgreSQL integration smoke against PostgreSQL 16
-- [ ] API integration tests
+- [x] API integration smoke against real PostgreSQL
 - [ ] end-to-end tests
-- [ ] tenant/permission isolation tests
+- [x] tenant isolation smoke for authenticated API/Truth Console
 - [ ] migration/upgrade/reconciliation tests
 - [ ] real provider failure/failover tests
 - [ ] backup/restore drill
