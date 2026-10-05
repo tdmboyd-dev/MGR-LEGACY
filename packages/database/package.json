@@ -14,6 +14,7 @@
     "@mgr/legacy-intelligence": "0.1.0",
     "@mgr/legacy-adapters": "0.1.0",
     "@mgr/legacy-analytics": "0.1.0",
-    "@mgr/legacy-tax-pack": "0.1.0"
+    "@mgr/legacy-tax-pack": "0.1.0",
+    "@mgr/legacy-extensions": "0.1.0"
   }
 }
