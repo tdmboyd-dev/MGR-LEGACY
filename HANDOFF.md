@@ -145,3 +145,13 @@ Floot code is not yet migrated because its file-read/build actions were blocked 
 
 ## Working rule
 Every pass should finish the largest coherent vertical slice possible: code + tests + docs + migration notes + acceptance criteria. Do not spend a pass only re-explaining the plan.
+
+## Current cutover and safety implementation
+- Postgres event ledger, idempotency, audit, outbox, and unit-of-work ports are implemented.
+- Transactional commands now support idempotency, policy/approval, event emission, outbox enqueue, audit evidence, and atomic completion.
+- Workflow version repository supports staging, activation, retirement, and replay-source access.
+- Communications send service is provider-independent and consent-gated.
+- MGR Agents and MGR Elite Hub source adapters are present with reconciliation utilities.
+- Dual-write coordination and a cutover gate are implemented.
+- TODAY orchestration ranks work tasks and revenue leaks into one action feed.
+- Automation conflict detection now checks recursive triggers, duplicate actions, field-level competing updates, overlapping communication audiences, and blocks activation on critical conflicts.
