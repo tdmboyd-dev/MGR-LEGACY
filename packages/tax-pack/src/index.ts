@@ -88,3 +88,4 @@ export * from "./credentials-analytics.js";
 export * from "./workflow-nodes.js";
 export * from "./client-portal.js";
 export * from "./events.js";
+export * from "./tax-facts.js";
