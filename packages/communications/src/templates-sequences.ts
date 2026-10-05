@@ -13,14 +13,11 @@ export interface MessageTemplate {
 
 export class TemplateRenderer {
   render(template:MessageTemplate,variables:Record<string,unknown>):{subject?:string;body:string}{
-    const replace=(input:string)=>input.replace(/\{\{\s*([a-zA-Z0-9_.-]+)\s*\}\}/g,(_match,key)=>{
+    const replace=(input:string)=>input.replace(/\{\{\s*([a-zA-Z0-9_.-]+)\s*\}\}/g,(_m,key)=>{
       if(!(key in variables)) throw new Error(`Missing template variable: ${key}`);
       return String(variables[key] ?? "");
     });
-    return {
-      subject:template.subject ? replace(template.subject) : undefined,
-      body:replace(template.body)
-    };
+    return {subject:template.subject ? replace(template.subject):undefined,body:replace(template.body)};
   }
 }
 
@@ -65,10 +62,6 @@ export class SequencePlanner {
     }
     const step=[...definition.steps].sort((a,b)=>a.order-b.order)[enrollment.currentStep];
     if(!step) return {status:"completed"};
-    return {
-      step,
-      nextRunAt:new Date(now.getTime()+step.delayMs).toISOString(),
-      status:"active"
-    };
+    return {step,nextRunAt:new Date(now.getTime()+step.delayMs).toISOString(),status:"active"};
   }
 }
