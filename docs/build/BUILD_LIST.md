@@ -8,9 +8,9 @@ Updated: 2026-10-05
 - [x] Map MGR Elite Hub CRM/tax/bureau assets
 - [x] Define canonical shared architecture
 - [x] Define MGR-native systems
-- [ ] Copy complete Floot project into `legacy-import/floot/` when external access is available
-- [ ] Reconcile Floot research/files against canonical docs
-- [ ] Preserve provenance for imported Floot code
+- [x] Reclaim known Floot-assigned scope directly into MGR Legacy
+- [x] Remove Floot from the product completion critical path
+- [x] Preserve Floot provenance and optional future salvage rules
 
 ## Gate 1 — Contracts
 - [x] tenant/hierarchy contracts
@@ -179,8 +179,9 @@ Core platform implementation is substantially built and CI-green, but production
 - [x] Locate and audit `tdmboyd-dev/MGR-API-MCP`
 - [x] Define service boundary: API-MCP=edge/Brain, Legacy=business system of record, Creation OS=creation engine
 - [x] Document anti-duplication rules and integration contract
-- [ ] add typed Legacy client inside MGR-API-MCP
-- [ ] propagate authenticated tenant/actor/correlation/idempotency context into Legacy calls
+- [x] add typed Legacy client inside MGR-API-MCP
+- [x] add tenant/actor/correlation/idempotency propagation in the Legacy client
+- [ ] bind that context directly to verified MCP HTTP authentication so callers cannot spoof identity
 - [ ] convert side-effecting MCP tools into governed Legacy capability calls
 - [ ] return Legacy Action Receipt IDs/evidence through MCP responses
 - [ ] back MCP tool discovery with Legacy capability/connector registries
