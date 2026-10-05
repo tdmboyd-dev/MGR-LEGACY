@@ -1,9 +1,6 @@
 import type { Channel } from "./index.js";
 
-export interface QuietHours {
-  startHour:number;
-  endHour:number;
-}
+export interface QuietHours { startHour:number; endHour:number; }
 
 export class SendPolicy {
   canSendAt(now:Date,quiet?:QuietHours):{allowed:boolean;reason?:string}{
@@ -34,7 +31,6 @@ export class DeliverabilityAggregator {
     const delivered=events.filter(e=>e.event==="delivered").length;
     const bounced=events.filter(e=>e.event==="bounced").length;
     const failed=events.filter(e=>e.event==="failed").length;
-    const denominator=Math.max(1,accepted);
-    return {accepted,delivered,bounced,failed,deliveryRate:delivered/denominator};
+    return {accepted,delivered,bounced,failed,deliveryRate:accepted===0?0:delivered/accepted};
   }
 }
