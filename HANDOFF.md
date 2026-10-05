@@ -186,3 +186,14 @@ Every pass should finish the largest coherent vertical slice possible: code + te
 - Resume-worker and managed-provider failover tests are implemented.
 - PostgresWorkflowContextLoader reconstructs workflow execution context directly from persisted run state.
 - Workflow/database/core/communications exports have been updated for these components.
+
+
+## Latest continuous-build checkpoint
+- Workflow resume worker scans due checkpoints and resumes persisted runs.
+- Managed provider router uses persisted health and circuit state for health-aware failover.
+- Operational TODAY sources surface waiting workflows and provider incidents.
+- PostgresOperationalTodayRepository feeds those live operational signals into TODAY.
+- Workflow execution context can be reconstructed from persisted run state.
+- Resume/failover tests are present.
+- ReliableOutboxPublisher is implemented with exponential retry scheduling and success/failure accounting.
+- Main is synchronized after coherent checkpoints; do not allow long-lived drift.
