@@ -4,7 +4,9 @@ import type {
   RequiredTaxDocument,
   SignatureAuthorization,
   TaxReturnLifecycleState,
-  PreparerCredentialStatus
+  PreparerCredentialStatus,
+  TaxFact,
+  FilingApproval
 } from "@mgr/legacy-tax-pack";
 import type { SqlExecutor } from "./sql.js";
 
@@ -89,6 +91,126 @@ export class PostgresTaxPackRepository {
         status.expiresAt ?? null,status.issues
       ]
     );
+  }
+
+  async saveTaxFact(fact:TaxFact):Promise<void>{
+    await this.db.query(
+      `INSERT INTO tax_facts
+       (id,tenant_id,client_entity_id,tax_year,form_type,canonical_field,value,confidence,source,extraction,
+        review_status,reviewed_by,reviewed_at,original_value)
+       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8,$9::jsonb,$10::jsonb,$11,$12,$13,$14::jsonb)
+       ON CONFLICT (id)
+       DO UPDATE SET value=EXCLUDED.value,confidence=EXCLUDED.confidence,source=EXCLUDED.source,
+       extraction=EXCLUDED.extraction,review_status=EXCLUDED.review_status,reviewed_by=EXCLUDED.reviewed_by,
+       reviewed_at=EXCLUDED.reviewed_at,original_value=EXCLUDED.original_value,updated_at=now()`,
+      [
+        fact.id,fact.tenantId,fact.clientEntityId,fact.taxYear,fact.formType,fact.canonicalField,
+        JSON.stringify(fact.value),fact.confidence,JSON.stringify(fact.source),JSON.stringify(fact.extraction),
+        fact.reviewStatus,fact.reviewedBy ?? null,fact.reviewedAt ?? null,
+        fact.originalValue===undefined?null:JSON.stringify(fact.originalValue)
+      ]
+    );
+  }
+
+  async listTaxFacts(input:{tenantId:string;clientEntityId:string;taxYear:number}):Promise<TaxFact[]>{
+    const result=await this.db.query<any>(
+      `SELECT * FROM tax_facts
+       WHERE tenant_id=$1 AND client_entity_id=$2 AND tax_year=$3
+       ORDER BY form_type,canonical_field,id`,
+      [input.tenantId,input.clientEntityId,input.taxYear]
+    );
+    return result.rows.map(row=>({
+      id:row.id,
+      tenantId:row.tenant_id,
+      clientEntityId:row.client_entity_id,
+      taxYear:Number(row.tax_year),
+      formType:row.form_type,
+      canonicalField:row.canonical_field,
+      value:row.value,
+      confidence:Number(row.confidence),
+      source:row.source,
+      extraction:row.extraction,
+      reviewStatus:row.review_status,
+      ...(row.reviewed_by?{reviewedBy:row.reviewed_by}:{}),
+      ...(row.reviewed_at?{reviewedAt:new Date(row.reviewed_at).toISOString()}:{}),
+      ...(row.original_value!==null?{originalValue:row.original_value}:{})
+    }));
+  }
+
+  async reviewTaxFact(input:{
+    tenantId:string;factId:string;reviewerId:string;decision:"accept"|"correct"|"reject";correctedValue?:unknown;reviewedAt?:string;
+  }):Promise<TaxFact>{
+    const current=await this.db.query<any>(
+      "SELECT * FROM tax_facts WHERE tenant_id=$1 AND id=$2 LIMIT 1",
+      [input.tenantId,input.factId]
+    );
+    const row=current.rows[0];
+    if(!row) throw new Error("Tax fact not found");
+    if(input.decision==="correct" && input.correctedValue===undefined){
+      throw new Error("correctedValue is required for a correction");
+    }
+    const reviewedAt=input.reviewedAt ?? new Date().toISOString();
+    const nextValue=input.decision==="correct"?input.correctedValue:row.value;
+    const nextStatus=input.decision==="accept"?"accepted":input.decision==="correct"?"corrected":"rejected";
+    const originalValue=input.decision==="correct"?(row.original_value ?? row.value):row.original_value;
+
+    await this.db.query(
+      `UPDATE tax_facts
+       SET value=$3::jsonb,review_status=$4,reviewed_by=$5,reviewed_at=$6,
+           original_value=$7::jsonb,updated_at=now()
+       WHERE tenant_id=$1 AND id=$2`,
+      [
+        input.tenantId,input.factId,JSON.stringify(nextValue),nextStatus,input.reviewerId,reviewedAt,
+        originalValue===null?null:JSON.stringify(originalValue)
+      ]
+    );
+    await this.db.query(
+      `INSERT INTO tax_fact_review_events
+       (tenant_id,fact_id,reviewer_id,decision,before_value,after_value,reviewed_at)
+       VALUES ($1,$2,$3,$4,$5::jsonb,$6::jsonb,$7)`,
+      [
+        input.tenantId,input.factId,input.reviewerId,input.decision,
+        JSON.stringify(row.value),JSON.stringify(nextValue),reviewedAt
+      ]
+    );
+
+    const [updated]=await this.listTaxFacts({
+      tenantId:input.tenantId,
+      clientEntityId:row.client_entity_id,
+      taxYear:Number(row.tax_year)
+    }).then(rows=>rows.filter(f=>f.id===input.factId));
+    if(!updated) throw new Error("Tax fact not found after review");
+    return updated;
+  }
+
+  async saveFilingApproval(tenantId:string,approval:FilingApproval):Promise<void>{
+    await this.db.query(
+      `INSERT INTO tax_filing_approvals
+       (tenant_id,return_id,preparer_id,approved_at,evidence_receipt_id,metadata)
+       VALUES ($1,$2,$3,$4,$5,$6::jsonb)
+       ON CONFLICT (tenant_id,return_id)
+       DO UPDATE SET preparer_id=EXCLUDED.preparer_id,approved_at=EXCLUDED.approved_at,
+       evidence_receipt_id=EXCLUDED.evidence_receipt_id,metadata=EXCLUDED.metadata`,
+      [
+        tenantId,approval.returnId,approval.preparerId,approval.approvedAt,
+        approval.evidenceReceiptId ?? null,JSON.stringify({})
+      ]
+    );
+  }
+
+  async getFilingApproval(tenantId:string,returnId:string):Promise<FilingApproval|null>{
+    const result=await this.db.query<any>(
+      "SELECT * FROM tax_filing_approvals WHERE tenant_id=$1 AND return_id=$2 LIMIT 1",
+      [tenantId,returnId]
+    );
+    const row=result.rows[0];
+    if(!row) return null;
+    return {
+      returnId:row.return_id,
+      preparerId:row.preparer_id,
+      approvedAt:new Date(row.approved_at).toISOString(),
+      ...(row.evidence_receipt_id?{evidenceReceiptId:row.evidence_receipt_id}:{})
+    };
   }
 
   async createPortalRequest(request:ClientPortalRequest):Promise<void>{
