@@ -9,7 +9,11 @@
   "scripts": {
     "typecheck": "tsc -b",
     "build": "tsc -b",
-    "test": "npm run build && node --test packages/*/dist/**/*.test.js"
+    "test": "npm run build && node --test packages/*/dist/**/*.test.js",
+    "verify:migrations": "npm run build && node scripts/verify-migrations.mjs",
+    "backup:db": "node scripts/backup-postgres.mjs",
+    "restore:db": "node scripts/restore-postgres.mjs",
+    "load:smoke": "node scripts/load-smoke.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.7.0",
