@@ -6,10 +6,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
+    "@mgr/legacy-analytics": "0.1.0",
     "@mgr/legacy-contracts": "0.1.0",
     "@mgr/legacy-core": "0.1.0",
     "@mgr/legacy-database": "0.1.0",
-    "@mgr/legacy-workflow": "0.1.0",
-    "@mgr/legacy-extensions": "0.1.0"
+    "@mgr/legacy-extensions": "0.1.0",
+    "@mgr/legacy-tax-pack": "0.1.0",
+    "@mgr/legacy-workflow": "0.1.0"
   }
 }
