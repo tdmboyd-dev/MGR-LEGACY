@@ -40,3 +40,5 @@ export class ExtensionRegistry {
     return structuredClone(candidates.at(-1) ?? null);
   }
 }
+
+export * from "./compatibility.js";
