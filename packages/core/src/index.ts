@@ -11,3 +11,6 @@ export * from "./today-sources.js";
 export * from "./universal-command.js";
 export * from "./operational-today.js";
 export * from "./outbox-publisher.js";
+export * from "./ownership-preferences.js";
+export * from "./schema-lifecycle.js";
+export * from "./audit-retention.js";
