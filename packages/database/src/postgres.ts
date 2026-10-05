@@ -1,15 +1,15 @@
-import { Pool, type PoolClient, type QueryResultRow } from "pg";
+import { Pool, type PoolClient } from "pg";
 import type { SqlDatabase, SqlResult, SqlTransaction } from "./sql.js";
 
 class PgTransaction implements SqlTransaction {
   constructor(private readonly client:PoolClient){}
 
-  async query<T extends QueryResultRow = QueryResultRow>(
+  async query<T = Record<string,unknown>>(
     sql:string,
     params:unknown[]=[]
   ):Promise<SqlResult<T>>{
-    const result=await this.client.query<T>(sql,params as any[]);
-    return {rows:result.rows,rowCount:result.rowCount ?? result.rows.length};
+    const result=await this.client.query(sql,params as any[]);
+    return {rows:result.rows as T[],rowCount:result.rowCount ?? result.rows.length};
   }
 
   async commit():Promise<void>{
@@ -34,12 +34,12 @@ export class PostgresDatabase implements SqlDatabase {
     });
   }
 
-  async query<T extends QueryResultRow = QueryResultRow>(
+  async query<T = Record<string,unknown>>(
     sql:string,
     params:unknown[]=[]
   ):Promise<SqlResult<T>>{
-    const result=await this.pool.query<T>(sql,params as any[]);
-    return {rows:result.rows,rowCount:result.rowCount ?? result.rows.length};
+    const result=await this.pool.query(sql,params as any[]);
+    return {rows:result.rows as T[],rowCount:result.rowCount ?? result.rows.length};
   }
 
   async begin():Promise<SqlTransaction>{
