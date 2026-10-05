@@ -6,3 +6,4 @@ export * from "./health.js";
 export * from "./repository.js";
 export * from "./durability.js";
 export * from "./durable-runner.js";
+export * from "./resume-worker.js";
