@@ -2,6 +2,7 @@ import type { Command, NextAction, WorkflowDefinition } from "@mgr/legacy-contra
 import type { Goal, ReportDefinition } from "@mgr/legacy-analytics";
 import type { BankProductApplication, ClientPortalRequest, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
 import type { ActionReceipt, ActionReceiptStatus, TruthConsoleRow } from "@mgr/legacy-core";
+import type { ConnectorManifest } from "@mgr/legacy-extensions";
 
 export interface CommandIngressInput {
   action:string;
@@ -57,6 +58,7 @@ export interface LegacyApiServices {
   saveTaxBankProduct(app:BankProductApplication,tenantId?:string):Promise<void>;
   saveTaxCredential(status:PreparerCredentialStatus,tenantId?:string):Promise<void>;
   createTaxPortalRequest(request:ClientPortalRequest,tenantId?:string):Promise<void>;
+  listConnectors():Promise<ConnectorManifest[]>;
   listActionReceipts(input:{
     correlationId?:string;
     actorId?:string;
