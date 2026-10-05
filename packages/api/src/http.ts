@@ -137,6 +137,39 @@ export function createLegacyServer(
         return json(res,201,{ok:true});
       }
 
+      if(req.method==="GET" && url.pathname==="/v1/truth/receipts"){
+        const status=url.searchParams.get("status") ?? undefined;
+        return json(res,200,await services.listActionReceipts({
+          correlationId:url.searchParams.get("correlationId") ?? undefined,
+          actorId:url.searchParams.get("actorId") ?? undefined,
+          action:url.searchParams.get("action") ?? undefined,
+          status:status as any,
+          limit:url.searchParams.get("limit") ? Number(url.searchParams.get("limit")) : undefined
+        },tenant));
+      }
+
+      if(req.method==="GET" && url.pathname==="/v1/truth/console"){
+        const status=url.searchParams.get("status") ?? undefined;
+        return json(res,200,await services.truthConsole({
+          correlationId:url.searchParams.get("correlationId") ?? undefined,
+          actorId:url.searchParams.get("actorId") ?? undefined,
+          action:url.searchParams.get("action") ?? undefined,
+          status:status as any,
+          limit:url.searchParams.get("limit") ? Number(url.searchParams.get("limit")) : undefined
+        },tenant));
+      }
+
+      if(req.method==="GET" && url.pathname==="/v1/truth/summary"){
+        const status=url.searchParams.get("status") ?? undefined;
+        return json(res,200,await services.truthSummary({
+          correlationId:url.searchParams.get("correlationId") ?? undefined,
+          actorId:url.searchParams.get("actorId") ?? undefined,
+          action:url.searchParams.get("action") ?? undefined,
+          status:status as any,
+          limit:url.searchParams.get("limit") ? Number(url.searchParams.get("limit")) : undefined
+        },tenant));
+      }
+
       const webhookMatch=url.pathname.match(/^\/v1\/extensions\/([^/]+)\/webhooks$/);
       if(req.method==="POST" && webhookMatch){
         const body=await readJson(req);
