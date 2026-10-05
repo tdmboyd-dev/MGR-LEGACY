@@ -6,10 +6,11 @@
   "workspaces": ["packages/*"],
   "scripts": {
     "typecheck": "tsc -b",
-    "test": "npm run build && node --test packages/*/dist/**/*.test.js",
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "test": "npm run build && node --test packages/*/dist/**/*.test.js"
   },
   "devDependencies": {
+    "@types/node": "^24.7.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
