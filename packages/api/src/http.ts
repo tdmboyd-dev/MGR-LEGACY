@@ -152,6 +152,57 @@ export function createLegacyServer(
         return json(res,201,{ok:true});
       }
 
+      if(req.method==="POST" && url.pathname==="/v1/tax/facts"){
+        await services.saveTaxFact(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
+      if(req.method==="GET" && url.pathname==="/v1/tax/facts"){
+        const clientEntityId=url.searchParams.get("clientEntityId");
+        const taxYear=url.searchParams.get("taxYear");
+        if(!clientEntityId || !taxYear) return json(res,400,{error:"clientEntityId and taxYear are required"});
+        return json(res,200,await services.listTaxFacts({
+          clientEntityId,
+          taxYear:Number(taxYear)
+        },tenant));
+      }
+
+      if(req.method==="GET" && url.pathname==="/v1/tax/facts/readiness"){
+        const clientEntityId=url.searchParams.get("clientEntityId");
+        const taxYear=url.searchParams.get("taxYear");
+        if(!clientEntityId || !taxYear) return json(res,400,{error:"clientEntityId and taxYear are required"});
+        return json(res,200,await services.taxFactReadiness({
+          clientEntityId,
+          taxYear:Number(taxYear)
+        },tenant));
+      }
+
+      const taxFactReviewMatch=url.pathname.match(/^\/v1\/tax\/facts\/([^/]+)\/review$/);
+      if(req.method==="POST" && taxFactReviewMatch){
+        const body=await readJson(req);
+        return json(res,200,await services.reviewTaxFact({
+          factId:decodeURIComponent(taxFactReviewMatch[1]!),
+          reviewerId:String(body.reviewerId ?? ""),
+          decision:String(body.decision) as any,
+          ...(body.correctedValue!==undefined?{correctedValue:body.correctedValue}:{}),
+          ...(body.reviewedAt?{reviewedAt:String(body.reviewedAt)}:{})
+        },tenant));
+      }
+
+      if(req.method==="POST" && url.pathname==="/v1/tax/filing-approvals"){
+        await services.saveTaxFilingApproval(await readJson(req),tenant);
+        return json(res,201,{ok:true});
+      }
+
+      const filingApprovalMatch=url.pathname.match(/^\/v1\/tax\/filing-approvals\/([^/]+)$/);
+      if(req.method==="GET" && filingApprovalMatch){
+        const approval=await services.getTaxFilingApproval(
+          decodeURIComponent(filingApprovalMatch[1]!),tenant
+        );
+        if(!approval) return json(res,404,{error:"Filing approval not found"});
+        return json(res,200,approval);
+      }
+
       if(req.method==="POST" && url.pathname==="/v1/tax/portal-requests"){
         await services.createTaxPortalRequest(await readJson(req),tenant);
         return json(res,201,{ok:true});
