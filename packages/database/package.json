@@ -11,6 +11,7 @@
     "@mgr/legacy-crm": "0.1.0",
     "@mgr/legacy-workflow": "0.1.0",
     "@mgr/legacy-communications": "0.1.0",
-    "@mgr/legacy-intelligence": "0.1.0"
+    "@mgr/legacy-intelligence": "0.1.0",
+    "@mgr/legacy-adapters": "0.1.0"
   }
 }
