@@ -8,3 +8,4 @@ export * from "./workflow-repository.js";
 export * from "./communications-repository.js";
 export * from "./hierarchy-repository.js";
 export * from "./workflow-run-repository.js";
+export * from "./workflow-checkpoint-repository.js";
