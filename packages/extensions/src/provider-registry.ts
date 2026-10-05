@@ -1,4 +1,4 @@
-export interface ProviderRegistration {
+export interface ExternalProviderRegistration {
   id:string;
   channel:string;
   capabilities:string[];
@@ -10,21 +10,21 @@ export interface ProviderRegistration {
 }
 
 export class ProviderRegistry {
-  private readonly providers=new Map<string,ProviderRegistration>();
+  private readonly providers=new Map<string,ExternalProviderRegistration>();
 
-  register(provider:ProviderRegistration):void{
+  register(provider:ExternalProviderRegistration):void{
     if(this.providers.has(provider.id)) throw new Error(`Provider already registered: ${provider.id}`);
     this.providers.set(provider.id,structuredClone(provider));
   }
 
-  list(channel?:string):ProviderRegistration[]{
+  list(channel?:string):ExternalProviderRegistration[]{
     return [...this.providers.values()]
       .filter(provider=>provider.enabled && (!channel || provider.channel===channel))
       .sort((a,b)=>a.priority-b.priority)
       .map(provider=>structuredClone(provider));
   }
 
-  resolve(channel:string,capability?:string):ProviderRegistration|null{
+  resolve(channel:string,capability?:string):ExternalProviderRegistration|null{
     return this.list(channel).find(provider=>!capability || provider.capabilities.includes(capability)) ?? null;
   }
 }
