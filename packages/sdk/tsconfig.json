@@ -10,6 +10,15 @@
     "composite": true,
     "skipLibCheck": true
   },
-  "references": [{ "path": "../contracts" }],
-  "include": ["src/**/*.ts"]
+  "references": [
+    {
+      "path": "../contracts"
+    },
+    {
+      "path": "../core"
+    }
+  ],
+  "include": [
+    "src/**/*.ts"
+  ]
 }
