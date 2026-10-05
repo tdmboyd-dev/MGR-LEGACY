@@ -184,7 +184,12 @@ export function createLegacyServer(
 
       return json(res,404,{error:"Not found"});
     }catch(error){
-      return json(res,500,{error:error instanceof Error?error.message:String(error)});
+      const message=error instanceof Error?error.message:String(error);
+      if(error instanceof SyntaxError) return json(res,400,{error:"Invalid JSON"});
+      if(/is required|Invalid|Unsupported|cannot|must/i.test(message)) return json(res,400,{error:message});
+      if(/not found/i.test(message)) return json(res,404,{error:message});
+      if(/already in progress|conflict|duplicate/i.test(message)) return json(res,409,{error:message});
+      return json(res,500,{error:message});
     }
   });
 }
