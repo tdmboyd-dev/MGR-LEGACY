@@ -176,3 +176,13 @@ Every pass should finish the largest coherent vertical slice possible: code + te
 - ProviderCircuitBreaker tests cover threshold opening and reset/probe behavior.
 - PostgreSQL migration `0007_provider_health.sql` adds provider health samples and routing state.
 - Database exports include persistent workflow checkpoints/replays and provider-health storage.
+
+
+## Latest live-execution checkpoint
+- WorkflowResumeWorker scans due checkpoints and resumes persisted workflow runs.
+- ManagedProviderRouter uses persisted provider health/circuit state for failover decisions.
+- Operational TODAY sources surface waiting automations and provider incidents as ranked work.
+- PostgresOperationalTodayRepository feeds waiting-workflow and provider-incident data into TODAY.
+- Resume-worker and managed-provider failover tests are implemented.
+- PostgresWorkflowContextLoader reconstructs workflow execution context directly from persisted run state.
+- Workflow/database/core/communications exports have been updated for these components.
