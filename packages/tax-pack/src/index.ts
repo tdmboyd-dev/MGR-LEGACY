@@ -89,3 +89,4 @@ export * from "./workflow-nodes.js";
 export * from "./client-portal.js";
 export * from "./events.js";
 export * from "./tax-facts.js";
+export * from "./tax-software-adapters.js";
