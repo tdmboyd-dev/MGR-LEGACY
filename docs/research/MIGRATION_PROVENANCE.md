@@ -8,9 +8,11 @@ Project ID: `3294f9f9-d5e0-450d-b777-79cfa6bbd433`
 
 Status on 2026-10-05:
 - Project was located successfully.
-- Floot refused the file-tree read because the account had exhausted its daily build-action allowance.
-- Therefore no Floot source file is marked migrated yet.
-- Destination reserved: `legacy-import/floot/`.
+- Floot did not complete the assigned build/export path.
+- MGR Legacy has reclaimed the known Floot-assigned scope directly; Floot is no longer a product dependency or completion gate.
+- The recovered scope inventory is preserved in `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md`.
+- No Floot source bytes are claimed as migrated. If an export becomes available later, it is optional historical salvage and provenance review only.
+- `legacy-import/floot/` remains reserved only for such future archival import.
 
 ### MGR Agents
 Repository: `tdmboyd-dev/MGR-Agents`
