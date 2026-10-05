@@ -7,3 +7,8 @@ export * from "./repository.js";
 export * from "./durability.js";
 export * from "./durable-runner.js";
 export * from "./resume-worker.js";
+export * from "./conditions.js";
+export * from "./scheduling.js";
+export * from "./approvals-subflows.js";
+export * from "./trace.js";
+export * from "./activation.js";
