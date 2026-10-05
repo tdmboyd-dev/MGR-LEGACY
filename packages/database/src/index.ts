@@ -11,3 +11,4 @@ export * from "./workflow-run-repository.js";
 export * from "./workflow-checkpoint-repository.js";
 
 export * from "./provider-health-repository.js";
+export * from "./operational-today-repository.js";
