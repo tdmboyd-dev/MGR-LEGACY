@@ -15,3 +15,7 @@ export * from "./ownership-preferences.js";
 export * from "./schema-lifecycle.js";
 export * from "./audit-retention.js";
 export * from "./observability.js";
+export * from "./action-receipts.js";
+export * from "./shadow-autopilot.js";
+export * from "./truth-console.js";
+export * from "./jev-decision-fabric.js";
