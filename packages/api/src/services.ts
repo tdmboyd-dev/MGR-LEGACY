@@ -162,7 +162,13 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
         evidence:{eventId:event.eventId}
       });
 
-      const response={accepted:true,event,result:mutation.after};
+      const response={
+        accepted:true,
+        event,
+        result:mutation.after,
+        receiptId:receipt.receiptId,
+        correlationId:command.correlationId
+      };
       await receipts.append({
         ...receipt,
         status:"succeeded",
