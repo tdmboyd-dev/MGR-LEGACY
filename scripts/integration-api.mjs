@@ -146,6 +146,20 @@ try{
   });
   assert.equal(missingOwner.status,400);
 
+  const oversized=await fetch(`${base}/v1/commands`,{
+    method:"POST",
+    headers:{
+      authorization:`Bearer ${token}`,
+      "content-type":"application/json",
+      "x-tenant-id":tenantA
+    },
+    body:JSON.stringify({
+      action:"crm.create_contact",
+      payload:{firstName:"TooBig",blob:"x".repeat(1_100_000)}
+    })
+  });
+  assert.equal(oversized.status,413);
+
   const rowsA=await db.query(
     "SELECT count(*)::int AS count FROM entities WHERE tenant_id=$1 AND entity_type='person'",
     [tenantA]
