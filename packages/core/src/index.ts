@@ -7,4 +7,5 @@ export * from "./object-forge.js";
 export * from "./command-bus.js";
 export * from "./transactional-command.js";
 export * from "./today-orchestrator.js";
+export * from "./today-sources.js";
 export * from "./universal-command.js";
