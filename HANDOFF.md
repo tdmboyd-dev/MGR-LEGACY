@@ -18,7 +18,8 @@ Push-triggered CI was enabled only for one deliberate verification batch and the
 - dependency install: passed
 - TypeScript typecheck: passed
 - full `npm test`: passed
-- verification commit: `1095b359c3c4d65bdab24ec52da1e06f9db29cc2`
+- unit/type verification commit: `1095b359c3c4d65bdab24ec52da1e06f9db29cc2`
+- real PostgreSQL integration verification commit: `d379bc1662a4e666ba3fc3345a9c04ea11697070`
 - repository migrations: `0001` through `0017`
 - Floot is no longer a dependency or completion gate.
 
@@ -75,7 +76,8 @@ New first-class modules include:
 
 ## What is still not production-proven
 Core and reclaimed modules are built and current CI is green, but completion still requires evidence that cannot be honestly fabricated in this repository alone:
-- execute all migrations against real PostgreSQL, including upgrade paths
+- clean-database execution of all 17 migrations is proven on PostgreSQL 16
+- upgrade-path migration verification from earlier schema states remains
 - API/database integration and end-to-end tests against a real test database
 - cross-tenant/security boundary tests
 - real provider credentialed sends/generation/transcription/embedding tests and outage/failover drills
