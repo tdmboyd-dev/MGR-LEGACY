@@ -22,3 +22,7 @@ export * from "./delivery-repository.js";
 export * from "./intelligence-repository.js";
 export * from "./adoption-repository.js";
 export * from "./observability-repository.js";
+export * from "./postgres.js";
+export * from "./migrations.js";
+export * from "./shadow-ingest-repository.js";
+export * from "./extension-repository.js";
