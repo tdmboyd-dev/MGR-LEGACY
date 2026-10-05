@@ -42,3 +42,6 @@ export class ExtensionRegistry {
 }
 
 export * from "./compatibility.js";
+export * from "./runtime.js";
+export * from "./workflow-node-runtime.js";
+export * from "./ui-provider-contracts.js";
