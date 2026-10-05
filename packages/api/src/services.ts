@@ -14,7 +14,8 @@ import {
   PostgresShadowIngestRepository,
   PostgresTaxPackRepository,
   PostgresWorkflowRepository,
-  type PostgresDatabase
+  type PostgresDatabase,
+  type SqlExecutor
 } from "@mgr/legacy-database";
 import { WorkflowSimulator, WorkflowVersionService } from "@mgr/legacy-workflow";
 import type { CommandIngressInput, LegacyApiServices } from "./types.js";
@@ -152,7 +153,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
     }
   }
 
-  private async applyAction(tx:any,command:Command):Promise<{
+  private async applyAction(tx:SqlExecutor,command:Command):Promise<{
     subject:LegacyEvent["subject"];
     before?:unknown;
     after?:unknown;
