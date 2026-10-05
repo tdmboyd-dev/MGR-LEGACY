@@ -16,6 +16,11 @@ function json(res:ServerResponse,status:number,body:unknown):void{
   res.end(JSON.stringify(body));
 }
 
+function tenantId(req:IncomingMessage):string|undefined{
+  const value=req.headers["x-tenant-id"];
+  return Array.isArray(value)?value[0]:value;
+}
+
 export function createLegacyServer(
   services:LegacyApiServices,
   auth:ApiAuthConfig={}
@@ -31,40 +36,48 @@ export function createLegacyServer(
 
       if(!authorize(req,auth)) return json(res,401,{error:"Unauthorized"});
 
+      const tenant=tenantId(req);
+
       if(req.method==="POST" && url.pathname==="/v1/commands"){
-        return json(res,200,await services.executeCommand(await readJson(req)));
+        const body=await readJson(req);
+        if(tenant && body && typeof body==="object" && !body.scope){
+          body.metadata={...(body.metadata ?? {}),tenantId:body.metadata?.tenantId ?? tenant};
+        }
+        return json(res,200,await services.executeCommand(body));
       }
 
       if(req.method==="GET" && url.pathname==="/v1/today"){
         const ownerId=url.searchParams.get("ownerId");
         if(!ownerId) return json(res,400,{error:"ownerId is required"});
-        return json(res,200,await services.today(ownerId,url.searchParams.get("tenantId") ?? undefined));
+        return json(res,200,await services.today(ownerId,tenant ?? url.searchParams.get("tenantId") ?? undefined));
       }
 
       if(req.method==="POST" && url.pathname==="/v1/workflows/stage"){
-        return json(res,201,await services.stageWorkflow(await readJson(req)));
+        return json(res,201,await services.stageWorkflow(await readJson(req),tenant));
       }
 
       if(req.method==="POST" && url.pathname==="/v1/workflows/simulate"){
         const body=await readJson(req);
         return json(res,200,await services.simulateWorkflow(
-          String(body.workflowId),Number(body.version),Array.isArray(body.eventIds)?body.eventIds.map(String):[]
+          String(body.workflowId),Number(body.version),
+          Array.isArray(body.eventIds)?body.eventIds.map(String):[],
+          tenant
         ));
       }
 
       if(req.method==="POST" && url.pathname==="/v1/extensions"){
-        return json(res,201,await services.installExtension(await readJson(req)));
+        return json(res,201,await services.installExtension(await readJson(req),tenant));
       }
 
       if(req.method==="GET" && url.pathname==="/v1/extensions"){
-        return json(res,200,await services.listExtensions());
+        return json(res,200,await services.listExtensions(tenant));
       }
 
       const webhookMatch=url.pathname.match(/^\/v1\/extensions\/([^/]+)\/webhooks$/);
       if(req.method==="POST" && webhookMatch){
         const body=await readJson(req);
         return json(res,201,await services.registerWebhook(
-          decodeURIComponent(webhookMatch[1]!),String(body.eventType),String(body.url)
+          decodeURIComponent(webhookMatch[1]!),String(body.eventType),String(body.url),tenant
         ));
       }
 
