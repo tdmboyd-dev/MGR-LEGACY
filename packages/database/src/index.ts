@@ -29,3 +29,4 @@ export * from "./extension-repository.js";
 export * from "./analytics-repository.js";
 export * from "./tax-pack-repository.js";
 export * from "./operator-control-repository.js";
+export * from "./reclaimed-runtime-repository.js";
