@@ -155,3 +155,15 @@ Every pass should finish the largest coherent vertical slice possible: code + te
 - Dual-write coordination and a cutover gate are implemented.
 - TODAY orchestration ranks work tasks and revenue leaks into one action feed.
 - Automation conflict detection now checks recursive triggers, duplicate actions, field-level competing updates, overlapping communication audiences, and blocks activation on critical conflicts.
+
+
+## Latest completed checkpoint
+- Postgres CRM repositories now persist contacts, companies, pipelines, stages, opportunities, tasks, and bookings.
+- Postgres workflow repository persists workflow versions and activation state.
+- Postgres communication repositories persist consent and outbound/inbound messages.
+- Persistent hierarchy repository supports child/descendant queries.
+- Persistent workflow-run repository tracks execution state, retries, cost, and errors.
+- Hierarchy rollup analytics aggregate descendant metrics into bureau/organization totals.
+- Extension Foundry compatibility checker and sandbox permission enforcement are implemented.
+- AGENTS.md and AI_START_HERE.md are mandatory repository entrypoints for coding AIs.
+- Main is synchronized after every coherent checkpoint.
