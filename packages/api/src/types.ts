@@ -30,6 +30,32 @@ export interface LegacyApiServices {
     url:string,
     tenantId?:string
   ):Promise<{subscriptionId:string}>;
+
+  saveReport(definition:ReportDefinition,tenantId?:string):Promise<void>;
+  listReports(tenantId?:string):Promise<ReportDefinition[]>;
+  saveGoal(goal:Goal,tenantId?:string):Promise<void>;
+  listGoals(tenantId?:string,scopeType?:string,scopeId?:string):Promise<Goal[]>;
+  metricSeries(input:{
+    metricKey:string;
+    from?:string;
+    to?:string;
+    scopeType?:string;
+    scopeId?:string;
+  },tenantId?:string):Promise<Array<{
+    value:number;
+    observedAt:string;
+    dimensions:Record<string,string>;
+  }>>;
+  saveTaxRequiredDocuments(input:{
+    clientEntityId:string;
+    taxYear:number;
+    documents:RequiredTaxDocument[];
+  },tenantId?:string):Promise<void>;
+  saveTaxReturn(state:TaxReturnLifecycleState,tenantId?:string):Promise<void>;
+  saveTaxSignature(auth:SignatureAuthorization,tenantId?:string):Promise<void>;
+  saveTaxBankProduct(app:BankProductApplication,tenantId?:string):Promise<void>;
+  saveTaxCredential(status:PreparerCredentialStatus,tenantId?:string):Promise<void>;
+  createTaxPortalRequest(request:ClientPortalRequest,tenantId?:string):Promise<void>;
 }
 
 export interface ApiAuthConfig {
