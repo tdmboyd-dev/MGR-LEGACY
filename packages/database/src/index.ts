@@ -6,3 +6,5 @@ export * from "./unit-of-work.js";
 export * from "./crm-repositories.js";
 export * from "./workflow-repository.js";
 export * from "./communications-repository.js";
+export * from "./hierarchy-repository.js";
+export * from "./workflow-run-repository.js";
