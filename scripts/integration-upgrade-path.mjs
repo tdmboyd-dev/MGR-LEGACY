@@ -14,7 +14,7 @@ const allDir=resolve(process.cwd(),"packages/database/migrations");
 
 try{
   const files=(await readdir(allDir)).filter(name=>/^\d+.*\.sql$/.test(name)).sort();
-  assert.equal(files.length,17,"expected 17 migration files");
+  assert.equal(files.length,18,"expected 18 migration files");
 
   const phaseOne=files.filter(name=>Number(name.slice(0,4))<=7);
   assert.equal(phaseOne.length,7,"expected migrations 0001-0007 in phase one");
