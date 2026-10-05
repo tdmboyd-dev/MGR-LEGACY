@@ -29,7 +29,8 @@ export class ConnectorRegistry {
 
   get(id:string,version?:string):ConnectorManifest|null{
     const candidates=[...this.manifests.values()].filter(item=>item.id===id && (!version || item.version===version));
-    return structuredClone(candidates.sort((a,b)=>b.version.localeCompare(a.version,{numeric:true}))[0] ?? null);
+    const selected=candidates.sort((a,b)=>b.version.localeCompare(a.version,undefined,{numeric:true}))[0];
+    return selected ? structuredClone(selected) : null;
   }
 
   list():ConnectorManifest[]{
