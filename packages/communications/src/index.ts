@@ -60,3 +60,4 @@ export * from "./comms-command.js";
 export * from "./provider-router.js";
 
 export * from "./provider-health.js";
+export * from "./managed-provider-router.js";
