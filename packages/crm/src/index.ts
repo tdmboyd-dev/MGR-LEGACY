@@ -6,3 +6,4 @@ export * from "./activity.js";
 export * from "./cases.js";
 export * from "./import-export.js";
 export * from "./bulk-merge.js";
+export * from "./playbooks.js";
