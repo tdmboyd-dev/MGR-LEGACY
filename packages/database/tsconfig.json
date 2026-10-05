@@ -31,6 +31,12 @@
     },
     {
       "path": "../adapters"
+    },
+    {
+      "path": "../analytics"
+    },
+    {
+      "path": "../tax-pack"
     }
   ],
   "include": [
