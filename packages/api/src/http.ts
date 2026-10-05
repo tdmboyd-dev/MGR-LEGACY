@@ -40,8 +40,16 @@ export function createLegacyServer(
 
       if(req.method==="POST" && url.pathname==="/v1/commands"){
         const body=await readJson(req);
-        if(tenant && body && typeof body==="object" && !body.scope){
-          body.metadata={...(body.metadata ?? {}),tenantId:body.metadata?.tenantId ?? tenant};
+        if(tenant && body && typeof body==="object"){
+          if(body.scope?.tenantId && String(body.scope.tenantId)!==tenant){
+            return json(res,403,{error:"Tenant scope does not match request tenant"});
+          }
+          if(body.actor?.tenantId && String(body.actor.tenantId)!==tenant){
+            return json(res,403,{error:"Actor tenant does not match request tenant"});
+          }
+          if(!body.scope){
+            body.metadata={...(body.metadata ?? {}),tenantId:tenant};
+          }
         }
         return json(res,200,await services.executeCommand(body));
       }
