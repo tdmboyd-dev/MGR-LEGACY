@@ -135,11 +135,11 @@ The reclaimed operator/agent scope is now first-class: Action Receipts, Truth Co
 The codebase is feature-built and currently typecheck/test green, but it is **not yet 100% production-finished**. The remaining work is mostly production proof, live-system adoption, and operational hardening rather than missing core feature modules.
 
 ### 1. Production database verification
-- run all 15 migrations against a real clean PostgreSQL database
+- [done] run all 17 migrations against a real clean PostgreSQL 16 database
 - run upgrade-path migration tests from earlier schema states
 - verify rollback/recovery procedures
 - verify foreign keys/indexes/constraints with representative production-scale data
-- add dedicated database integration tests (currently no database package test files)
+- [done] add real Postgres integration smoke covering migrations, command execution, Action Receipts, Truth summary, and idempotent replay
 
 ### 2. API integration and end-to-end verification
 - add API package integration tests (currently no API package test files)
@@ -213,7 +213,7 @@ The known Floot-assigned scope has been reclaimed directly into Legacy. Floot is
 
 MGR Legacy is 100% complete only when all of the following are true:
 
-1. all 17 migrations are proven against real PostgreSQL and upgrade paths,
+1. all 17 migrations are proven against real PostgreSQL; upgrade paths from earlier schema states still require dedicated proof,
 2. API/database integration and end-to-end tests pass,
 3. tenant/security boundaries are explicitly tested,
 4. real communication providers are proven including failover,
@@ -221,6 +221,6 @@ MGR Legacy is 100% complete only when all of the following are true:
 6. MGR Elite Hub consumes Legacy shared layers + Tax Pack with reconciled data,
 7. rollback/backfill/reconciliation paths are proven,
 8. backup/restore, observability, load, and security hardening are validated,
-9. Floot is reconciled when external access becomes available,
+9. Floot remains optional historical salvage only and is not a completion gate,
 10. source-of-truth docs match the deployed reality.
 
