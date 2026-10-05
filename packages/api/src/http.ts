@@ -73,6 +73,10 @@ export function createLegacyServer(
         return json(res,200,await services.listExtensions(tenant));
       }
 
+      if(req.method==="GET" && url.pathname==="/v1/connectors"){
+        return json(res,200,await services.listConnectors());
+      }
+
       if(req.method==="POST" && url.pathname==="/v1/analytics/reports"){
         await services.saveReport(await readJson(req),tenant);
         return json(res,201,{ok:true});
