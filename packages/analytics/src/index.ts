@@ -100,3 +100,7 @@ export class AttributionEngine {
 }
 
 export * from "./hierarchy-rollup.js";
+export * from "./reporting.js";
+export * from "./cohort-funnel.js";
+export * from "./goals-roi.js";
+export * from "./data-health.js";
