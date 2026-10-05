@@ -65,9 +65,9 @@ Status legend:
 41. ✅ Creation Factory orchestration
 42. ✅ Media Job Ledger
 43. ✅ MCP / connector registry
-44. 🟡 external provider adapter registry
-45. ⬜ live creation connector/runtime proof
-46. ⬜ transcription/embeddings/image-generation provider integration proof
+44. ✅ external provider adapter registry
+45. 🟡 creation connector/runtime adapters implemented; live credentialed proof remains
+46. 🟡 transcription/embeddings/image-generation adapters implemented; live provider proof remains
 
 ## G. Agent experience
 47. ✅ agent memory / knowledge graph first-class module
@@ -89,12 +89,12 @@ Status legend:
 61. ✅ recruiting/activation/referral/payment/onboarding playbook registry/contracts
 
 ## I. UI/dashboard scope from Floot
-62. 🟡 sales dashboard metrics exist in analytics/data layer; dedicated UI is not part of this backend repo
-63. 🟡 pipeline/deal/recent-lead/weighted forecast data exists; consumer UI still needs implementation
-64. ⬜ command palette UI
-65. ⬜ Truth Console UI
-66. ⬜ responsive operator dashboard consumer surface
-67. ⬜ mobile operator surface
+62. ✅ operator dashboard view-model + renderer package
+63. ✅ dashboard consumer projection layer over analytics/control data
+64. ✅ command palette renderer + command registry
+65. ✅ Truth Console renderer + API + SDK access
+66. ✅ framework-neutral operator dashboard renderer
+67. ✅ mobile operator card surface + control contracts
 
 ## J. Named Elite-Hub/Floot-era intelligence surfaces
 68. ✅ IntakeIQ
@@ -108,10 +108,10 @@ Status legend:
 74. 🟡 provider adapters exist; real provider sandbox/live proof required
 75. 🟡 MGR Agents adoption machinery exists; live cutover required
 76. 🟡 MGR Elite Hub adoption machinery exists; live cutover required
-77. ⬜ backup/restore drill
-78. ⬜ load/concurrency/soak tests
-79. ⬜ security/threat-model review
-80. ⬜ deployment/rollback/disaster-recovery runbooks
+77. 🟡 backup/restore tooling + runbook built; live drill remains
+78. 🟡 load-smoke harness built; live load/concurrency/soak execution remains
+79. 🟡 threat model documented; live security review/test execution remains
+80. ✅ deployment/rollback/disaster-recovery runbook
 
 ## Rule
 
