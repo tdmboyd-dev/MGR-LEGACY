@@ -41,3 +41,4 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run test:postgres
+      - run: npm run test:api-postgres
