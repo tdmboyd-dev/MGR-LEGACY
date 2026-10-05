@@ -5,3 +5,6 @@ export * from "./forecast.js";
 export * from "./deal-coach.js";
 export * from "./service-brain.js";
 export * from "./growth-loop.js";
+export * from "./evidence.js";
+export * from "./data-medic-repair.js";
+export * from "./production-sources.js";
