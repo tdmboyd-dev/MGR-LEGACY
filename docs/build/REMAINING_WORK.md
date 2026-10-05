@@ -6,7 +6,7 @@ Updated: 2026-10-05
 
 - `main` and `staging/legacy-foundation` were synchronized through the latest verified build checkpoint before this documentation refresh.
 - 13 implementation packages.
-- 15 PostgreSQL migrations (`0001` through `0015`).
+- 17 PostgreSQL migrations (`0001` through `0017`).
 - 25 test files.
 - 212 tracked files in the current tree.
 - 0 open GitHub issues.
@@ -129,6 +129,9 @@ Updated: 2026-10-05
 
 ## What is genuinely still left
 
+The reclaimed operator/agent scope is now first-class: Action Receipts, Truth Console, FlowSpec, Shadow Autopilot, Jev decision fabric, Context Mesh, Tool Map, Policy Compiler, Local Bridge, realtime/mobile controls, Creation Factory, provider adapters, operator UI/renderers, agent memory/voice/perception/focus/subagents, playbooks, IntakeIQ, ClientPulse, RevenueRadar, and FlowGenius.
+
+
 The codebase is feature-built and currently typecheck/test green, but it is **not yet 100% production-finished**. The remaining work is mostly production proof, live-system adoption, and operational hardening rather than missing core feature modules.
 
 ### 1. Production database verification
@@ -183,13 +186,11 @@ The tax/Elite Hub mapping and cutover machinery exists, but the actual Elite Hub
 - exercise rollback
 - retire duplicate CRM authority only after a proven rollback window
 
-### 7. Floot recovery/reconciliation
-Still externally blocked until the MGR Sales Dashboard project can be read/exported.
-- import under `legacy-import/floot/`
-- compare against canonical contracts
-- mine reusable code/research
-- preserve provenance
-- do not allow imported Floot code to overwrite canonical architecture
+### 7. Floot scope
+The known Floot-assigned scope has been reclaimed directly into Legacy. Floot is not required for completion.
+- `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md` is the canonical recovered-scope inventory
+- any future Floot export is optional historical salvage/provenance only
+- no product gate depends on Floot access
 
 ### 8. Operational production hardening
 - observability validation in a deployed environment
@@ -212,7 +213,7 @@ Still externally blocked until the MGR Sales Dashboard project can be read/expor
 
 MGR Legacy is 100% complete only when all of the following are true:
 
-1. all 15 migrations are proven against real PostgreSQL and upgrade paths,
+1. all 17 migrations are proven against real PostgreSQL and upgrade paths,
 2. API/database integration and end-to-end tests pass,
 3. tenant/security boundaries are explicitly tested,
 4. real communication providers are proven including failover,
