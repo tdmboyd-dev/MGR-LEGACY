@@ -3,6 +3,8 @@
   "references": [
     { "path": "./packages/contracts" },
     { "path": "./packages/core" },
+    { "path": "./packages/crm" },
+    { "path": "./packages/workflow" },
     { "path": "./packages/sdk" }
   ]
 }
