@@ -168,7 +168,7 @@ try{
     "SELECT count(*)::int AS count FROM entities WHERE tenant_id=$1 AND entity_type='person'",
     [tenantB]
   );
-  assert.equal(Number(rowsA.rows[0]?.count),1);
+  assert.equal(Number(rowsA.rows[0]?.count),2,"tenant A should contain the original contact plus the header-bound spoof-metadata contact");
   assert.equal(Number(rowsB.rows[0]?.count),0);
 
   console.log(JSON.stringify({
