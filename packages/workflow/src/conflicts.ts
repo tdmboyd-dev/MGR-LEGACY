@@ -67,7 +67,7 @@ export class AutomationConflictDetector {
         const aUpdates=new Set(a.nodes.map(updateSignature).filter((value):value is string=>Boolean(value)));
         const fieldCollisions=b.nodes
           .map(updateSignature)
-          .filter((value):value is string=>Boolean(value) && aUpdates.has(value));
+          .filter((value):value is string=>typeof value==="string" && aUpdates.has(value));
 
         if(fieldCollisions.length){
           conflicts.push({
