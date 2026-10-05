@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { Command, LegacyEvent, NextAction, WorkflowDefinition } from "@mgr/legacy-contracts";
 import type { Goal, ReportDefinition } from "@mgr/legacy-analytics";
-import type { BankProductApplication, ClientPortalRequest, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
+import type { BankProductApplication, ClientPortalRequest, FilingApproval, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxFact, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
 import { NextActionEngine, TruthConsoleProjector, type ActionReceipt, type ActionReceiptStatus } from "@mgr/legacy-core";
 import {
   PostgresAnalyticsRepository,
@@ -465,6 +465,46 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
   async createTaxPortalRequest(request:ClientPortalRequest,tenantId?:string):Promise<void>{
     const tenant=this.requireTenant(tenantId);
     await new PostgresTaxPackRepository(this.db).createPortalRequest({...request,tenantId:tenant});
+  }
+
+  async saveTaxFact(fact:TaxFact,tenantId?:string):Promise<void>{
+    const tenant=this.requireTenant(tenantId);
+    await new PostgresTaxPackRepository(this.db).saveTaxFact({...fact,tenantId:tenant});
+  }
+
+  async listTaxFacts(input:{clientEntityId:string;taxYear:number},tenantId?:string):Promise<TaxFact[]>{
+    return new PostgresTaxPackRepository(this.db).listTaxFacts({
+      tenantId:this.requireTenant(tenantId),
+      ...input
+    });
+  }
+
+  async reviewTaxFact(input:{
+    factId:string;reviewerId:string;decision:"accept"|"correct"|"reject";correctedValue?:unknown;reviewedAt?:string;
+  },tenantId?:string):Promise<TaxFact>{
+    return new PostgresTaxPackRepository(this.db).reviewTaxFact({
+      tenantId:this.requireTenant(tenantId),
+      ...input
+    });
+  }
+
+  async taxFactReadiness(input:{clientEntityId:string;taxYear:number},tenantId?:string){
+    const facts=await this.listTaxFacts(input,tenantId);
+    const unreviewed=facts.filter(f=>f.reviewStatus==="unreviewed").map(f=>f.canonicalField);
+    const rejected=facts.filter(f=>f.reviewStatus==="rejected").map(f=>f.canonicalField);
+    return {ready:unreviewed.length===0 && rejected.length===0,unreviewed,rejected};
+  }
+
+  async saveTaxFilingApproval(approval:FilingApproval,tenantId?:string):Promise<void>{
+    await new PostgresTaxPackRepository(this.db).saveFilingApproval(
+      this.requireTenant(tenantId),approval
+    );
+  }
+
+  async getTaxFilingApproval(returnId:string,tenantId?:string):Promise<FilingApproval|null>{
+    return new PostgresTaxPackRepository(this.db).getFilingApproval(
+      this.requireTenant(tenantId),returnId
+    );
   }
 
   async listConnectors(){
