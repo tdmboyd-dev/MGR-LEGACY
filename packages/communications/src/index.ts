@@ -57,3 +57,4 @@ export interface ProviderAdapter {
 
 export * from "./service.js";
 export * from "./comms-command.js";
+export * from "./provider-router.js";
