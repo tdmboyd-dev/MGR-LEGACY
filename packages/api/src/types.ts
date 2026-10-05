@@ -1,4 +1,6 @@
 import type { Command, NextAction, WorkflowDefinition } from "@mgr/legacy-contracts";
+import type { Goal, ReportDefinition } from "@mgr/legacy-analytics";
+import type { BankProductApplication, ClientPortalRequest, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
 
 export interface CommandIngressInput {
   action:string;
