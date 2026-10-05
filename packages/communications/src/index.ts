@@ -54,3 +54,6 @@ export interface ProviderAdapter {
   send(message: Omit<Message, "id" | "sentAt">): Promise<{ providerMessageId: string; acceptedAt: string }>;
   health(): Promise<{ healthy: boolean; latencyMs?: number; details?: Record<string, unknown> }>;
 }
+
+export * from "./service.js";
+export * from "./comms-command.js";
