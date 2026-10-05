@@ -15,7 +15,8 @@
     "restore:db": "node scripts/restore-postgres.mjs",
     "load:smoke": "node scripts/load-smoke.mjs",
     "test:postgres": "npm run build && node scripts/integration-postgres.mjs",
-    "test:api-postgres": "npm run build && node scripts/integration-api.mjs"
+    "test:api-postgres": "npm run build && node scripts/integration-api.mjs",
+    "test:upgrade-path": "npm run build && node scripts/integration-upgrade-path.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.7.0",
