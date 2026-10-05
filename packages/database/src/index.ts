@@ -26,3 +26,5 @@ export * from "./postgres.js";
 export * from "./migrations.js";
 export * from "./shadow-ingest-repository.js";
 export * from "./extension-repository.js";
+export * from "./analytics-repository.js";
+export * from "./tax-pack-repository.js";
