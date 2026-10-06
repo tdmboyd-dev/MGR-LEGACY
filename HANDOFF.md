@@ -1,96 +1,66 @@
 # MGR Legacy — Continuation / Handoff
 
-Last updated: 2026-10-05
+Last updated: 2026-10-06
 
-## Active implementation lane
-`main` is the current verified source of truth. `staging/legacy-foundation` must be fast-forwarded to the same checkpoint after this documentation refresh.
+## Canonical state
 
-## Cost-control rule for GitHub Actions
-Normal pushes MUST NOT run GitHub Actions.
+`main` is the source of truth. Normal pushes must not consume GitHub Actions minutes; use the existing manual/targeted verification workflows only when a meaningful proof is needed.
 
-Current CI triggers after verification:
-- manual `workflow_dispatch`
-- pull requests targeting `main`
+MGR Legacy is the authoritative shared business data/workflow/action layer. MGR-API-MCP is the client-neutral AI/MCP edge. Creation OS remains the creation/media authority.
 
-Push-triggered CI was enabled only for one deliberate verification batch and then removed after the Node 22 install/typecheck/test run passed.
+## Verified repository-owned hardening
 
-## Current verified checkpoint
-- dependency install: passed
-- TypeScript typecheck: passed
-- full `npm test`: passed
-- unit/type verification commit: `1095b359c3c4d65bdab24ec52da1e06f9db29cc2`
-- real PostgreSQL integration verification commit: `d379bc1662a4e666ba3fc3345a9c04ea11697070`
-- API/Postgres E2E verification commit: `67a9cdecf0bb92a73435a7d57d43132ac03daf82`
-- repository migrations: `0001` through `0017`
-- Floot is no longer a dependency or completion gate.
+The repository now includes and has passed the available automated proof for:
 
-## Floot scope reclamation
-The known MGR Sales Dashboard/Floot assignment has been reclaimed directly into MGR Legacy and is tracked in:
-- `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md`
+- PostgreSQL 16 clean migration execution through migration `0018_tax_fact_graph.sql`
+- upgrade-path migration execution from the earlier schema state
+- authenticated API/PostgreSQL integration
+- tenant-isolation and tenant-spoof rejection
+- malformed JSON and oversized-payload handling
+- command idempotency and concurrent-delivery behavior
+- backup/restore recovery
+- Tax Fact Graph persistence, field-level confidence/review lineage and explicit preparer filing approval
+- governed browser/desktop tax-software adapter contracts with reviewed-fact and target-verification guards
+- Action Receipts / Truth Console authority
+- MGR-API-MCP cross-process timeout-after-commit reconciliation, duplicate delivery and edge restart proof
+- authenticated remote MCP boundary and client-neutral ChatGPT plugin packaging
 
-New first-class modules include:
-- Action Receipts
-- Truth Console
-- Shadow Autopilot
-- FlowSpec
-- Jev decision fabric
-- Context Mesh
-- Tool Map
-- Policy Compiler
-- privacy/untrusted-memory isolation
-- managed secret references
-- command palette
-- agent memory graph
-- voice/perception contracts
-- focus/accountability engine
-- governed subagents/collections
-- dead-letter recovery
-- Local Bridge / exact-target computer control
-- realtime + mobile/Telegram control contracts
-- model/cost routing
-- Creation Factory + Media Job Ledger
-- MCP/connector registry
-- external provider registry
-- TEVV harness
-- operator UI package/renderers
-- provider integration package for voice/transcription, embeddings, image generation, and creation jobs
-- CRM playbook registry
-- IntakeIQ
-- ClientPulse
-- RevenueRadar
-- FlowGenius
+Latest successful PostgreSQL hardening run recorded in this work: GitHub Actions run `37299843446`.
 
-## Persistent control/runtime additions
-- migration `0016_operator_control_plane.sql`: Action Receipts + autonomy profiles
-- migration `0017_reclaimed_runtime.sql`: creation jobs + workflow dead letters + connector manifests
-- Postgres repositories for receipts/autonomy, media jobs, dead letters, and connector manifests
-- canonical API commands automatically write success/failure Action Receipts
-- Truth Console/receipt API routes and SDK methods are available
+## Consumer adoption now wired
 
-## Operations/hardening tooling
-- `scripts/verify-migrations.mjs`
-- `scripts/backup-postgres.mjs`
-- `scripts/restore-postgres.mjs`
-- `scripts/load-smoke.mjs`
-- `docs/operations/PRODUCTION_RUNBOOK.md`
-- `docs/security/THREAT_MODEL.md`
+### MGR Elite Hub
 
-## What is still not production-proven
-Core and reclaimed modules are built and current CI is green, but completion still requires evidence that cannot be honestly fabricated in this repository alone:
-- clean-database execution of all 17 migrations is proven on PostgreSQL 16
-- upgrade-path migration verification from earlier schema states remains
-- API/database integration smoke is proven against PostgreSQL 16; broader route-by-route E2E coverage remains
-- basic authenticated tenant-isolation smoke is proven; broader permission/security matrix remains
-- real provider credentialed sends/generation/transcription/embedding tests and outage/failover drills
-- deployed queue/worker soak/recovery tests
-- live backup/restore drill
-- load/concurrency results
-- MGR Agents live backfill/dual-write/reconciliation/cutover
-- MGR Elite Hub live backfill/dual-write/reconciliation/cutover
-- security review/TEVV execution in the deployed environment
+Elite Hub has a real Legacy tax client and authenticated Tax Fact review/filing-approval routes. Tax facts, review state and filing approvals are no longer intended to create a second authoritative tax-fact ledger in Elite Hub.
 
-Floot recovery is optional historical salvage only; it is not on the completion critical path.
+### MGR Agents
 
-## Source-of-truth rule
-Read `AGENTS.md`, `AI_START_HERE.md`, this file, `docs/build/BUILD_LIST.md`, `docs/build/REMAINING_WORK.md`, and `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md` before further implementation.
+`src/lib/legacy/bridge.ts` exists in MGR Agents and the actual CRM mutation tools are now wired into it for contact create/update, deal create/update and activity logging. Shadow mode can mirror real tool traffic for reconciliation without making Legacy authoritative prematurely.
 
+The cutover rule remains strict: do not retire the existing MGR Agents or Elite Hub stores until real backfill/dual-write parity and rollback are proven with their deployed data.
+
+## What cannot be completed by repository code alone
+
+These are external proof/credential/real-data gates, not missing core modules:
+
+- real provider credentials and live/sandbox email/SMS/voice delivery/callback/failover proof
+- deployed worker/queue soak and real monitoring/alert sinks
+- production-scale load and security/penetration testing
+- real MGR Agents historical backfill, parity reconciliation, read cutover and rollback window
+- real Elite Hub historical backfill/shared-layer cutover and rollback window
+- IRS/MeF credentials, certificates, ATS/production authorization and live tax-provider/bank approvals
+- public MCP hosting/OAuth configuration and the final hosted ChatGPT MCP session
+
+Do not fabricate these receipts. Record them only when the external systems actually produce evidence.
+
+## Resume order
+
+Read:
+1. `AGENTS.md`
+2. `AI_START_HERE.md`
+3. this file
+4. `docs/build/BUILD_LIST.md`
+5. `docs/build/REMAINING_WORK.md`
+6. `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md`
+
+When a repository-owned gap is found, implement/test/fix it before reporting. Keep `main` and these source-of-truth files current.
