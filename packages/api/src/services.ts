@@ -262,6 +262,40 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
         );
         return {subject:{entityType:"opportunity",entityId:id},after:{id,...p}};
       }
+      case "crm.update_opportunity":
+      case "crm.update_deal":{
+        const id=String(p.id ?? p.dealId ?? command.target?.entityId ?? "");
+        if(!id) throw new Error("deal id is required");
+        const current=await tx.query<any>(
+          "SELECT * FROM opportunities WHERE tenant_id=$1 AND id=$2 LIMIT 1",
+          [tenantId,id]
+        );
+        if(!current.rows[0]) throw new Error("Opportunity not found");
+        const before=current.rows[0];
+        const customFields={...(before.custom_fields ?? {})};
+        if(p.notes!==undefined) customFields.notes=p.notes;
+        if(p.ownerId!==undefined) customFields.sourceOwnerId=p.ownerId;
+        await tx.query(
+          `UPDATE opportunities
+           SET stage_id=COALESCE($3,stage_id),value=COALESCE($4,value),
+               status=COALESCE($5,status),probability=COALESCE($6,probability),
+               custom_fields=$7::jsonb,updated_at=now()
+           WHERE tenant_id=$1 AND id=$2`,
+          [
+            tenantId,id,
+            p.stageId!==undefined?String(p.stageId):null,
+            p.value!==undefined?Number(p.value):null,
+            p.status!==undefined?String(p.status):null,
+            p.probability!==undefined?Number(p.probability):null,
+            JSON.stringify(customFields)
+          ]
+        );
+        const updated=await tx.query<any>(
+          "SELECT * FROM opportunities WHERE tenant_id=$1 AND id=$2 LIMIT 1",
+          [tenantId,id]
+        );
+        return {subject:{entityType:"opportunity",entityId:id},before,after:updated.rows[0]};
+      }
       case "crm.log_activity":{
         const id=String(p.id ?? randomUUID());
         const subjectId=String(p.contactId ?? p.subjectId ?? "");
