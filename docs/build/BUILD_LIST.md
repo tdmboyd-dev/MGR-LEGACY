@@ -1,6 +1,6 @@
 # MGR Legacy — Build List
 
-Updated: 2026-10-05
+Updated: 2026-10-06
 
 ## Gate 0 — Source-of-truth migration
 - [x] Create MGR-LEGACY repository
@@ -38,8 +38,8 @@ Updated: 2026-10-05
 - [x] audit/outbox/idempotency
 - [x] schema lifecycle / governance repositories
 - [x] real PostgreSQL clean-database integration verification
-- [ ] upgrade-path verification from earlier schema states
-- [ ] dedicated tenant-isolation integration tests
+- [x] upgrade-path verification from earlier schema states
+- [x] dedicated tenant-isolation integration tests
 
 ## Gate 3 — Core CRM/work
 - [x] contacts
@@ -161,13 +161,13 @@ Updated: 2026-10-05
 - [x] branch parity check at verified checkpoint
 - [x] PostgreSQL integration smoke against PostgreSQL 16
 - [x] API integration smoke against real PostgreSQL
-- [ ] end-to-end tests
+- [x] API/PostgreSQL end-to-end integration tests for authenticated command, truth, malformed input, tenant spoofing, payload limits, migrations and idempotency
 - [x] tenant isolation smoke for authenticated API/Truth Console
-- [ ] migration/upgrade/reconciliation tests
+- [x] migration/upgrade/reconciliation tests
 - [ ] real provider failure/failover tests
-- [ ] backup/restore drill
+- [x] backup/restore drill against PostgreSQL 16 in integration CI
 - [ ] observability/alerting validation
-- [ ] load/performance/concurrency tests
+- [x] repository load-smoke + concurrent idempotency tests; production-scale load remains an external deployment proof
 - [ ] security review
 - [x] deployment and disaster-recovery runbooks
 
@@ -187,5 +187,5 @@ Core platform implementation is substantially built and CI-green, but production
 - [x] return Legacy Action Receipt IDs/evidence through MCP responses
 - [x] back MCP tool discovery with Legacy capability/connector registries
 - [x] route creation-domain capabilities to Creation OS rather than duplicating execution
-- [ ] add cross-boundary restart/idempotency/reconciliation tests
-- [ ] complete remote MCP auth integration and hosted ChatGPT MCP verification
+- [x] add cross-boundary restart/idempotency/reconciliation tests
+- [x] complete remote MCP auth integration; [external] hosted ChatGPT MCP verification requires the real public host/OAuth account
