@@ -252,12 +252,13 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
         const id=String(p.id ?? randomUUID());
         await tx.query(
           `INSERT INTO opportunities
-           (id,tenant_id,pipeline_id,stage_id,title,value,currency,status,probability,custom_fields)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb)`,
+           (id,tenant_id,contact_entity_id,pipeline_id,stage_id,title,value,currency,status,probability,custom_fields)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb)`,
           [
-            id,tenantId,String(p.pipelineId),String(p.stageId),String(p.title ?? "Opportunity"),
-            Number(p.value ?? 0),String(p.currency ?? "USD"),String(p.status ?? "open"),
-            Number(p.probability ?? 50),JSON.stringify({sourceContactId:p.contactId,sourceOwnerId:p.userId ?? p.ownerId})
+            id,tenantId,p.contactId?String(p.contactId):null,String(p.pipelineId),String(p.stageId),
+            String(p.title ?? "Opportunity"),Number(p.value ?? 0),String(p.currency ?? "USD"),
+            String(p.status ?? "open"),Number(p.probability ?? 50),
+            JSON.stringify({sourceContactId:p.contactId,sourceOwnerId:p.userId ?? p.ownerId})
           ]
         );
         return {subject:{entityType:"opportunity",entityId:id},after:{id,...p}};
