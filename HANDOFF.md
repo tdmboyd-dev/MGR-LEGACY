@@ -64,3 +64,8 @@ Read:
 6. `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md`
 
 When a repository-owned gap is found, implement/test/fix it before reporting. Keep `main` and these source-of-truth files current.
+
+
+## Ecosystem review — October 27, 2026
+
+Additive source-pinned ecosystem context: [human handoff](docs/ecosystem/HUMAN-HANDOFF.md). This review branch preserves the default-branch baseline and existing work orders. Domain runtime/production acceptance is separate.

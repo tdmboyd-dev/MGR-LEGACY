@@ -254,6 +254,7 @@ export function createLegacyServer(
       const message=error instanceof Error?error.message:String(error);
       if(error instanceof PayloadTooLargeError) return json(res,413,{error:error.message});
       if(error instanceof SyntaxError) return json(res,400,{error:"Invalid JSON"});
+      if(message==="Tenant mismatch") return json(res,403,{error:message});
       if(/is required|Invalid|Unsupported|cannot|must/i.test(message)) return json(res,400,{error:message});
       if(/not found/i.test(message)) return json(res,404,{error:message});
       if(/already in progress|conflict|duplicate/i.test(message)) return json(res,409,{error:message});

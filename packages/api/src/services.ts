@@ -439,6 +439,16 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
     return tenant;
   }
 
+  private bindTenant<T extends object>(input:T,tenantId?:string):T & {tenantId:string}{
+    const trustedTenantId=this.requireTenant(tenantId);
+    if(!input || typeof input!=="object" || Array.isArray(input)){
+      throw new Error("Invalid request object");
+    }
+    const supplied=(input as {tenantId?:unknown}).tenantId;
+    if(supplied!==undefined && supplied!==trustedTenantId) throw new Error("Tenant mismatch");
+    return {...input,tenantId:trustedTenantId};
+  }
+
   async saveReport(definition:ReportDefinition,tenantId?:string):Promise<void>{
     const tenant=this.requireTenant(tenantId);
     await new PostgresAnalyticsRepository(this.db).saveReport({...definition,tenantId:tenant});
@@ -463,8 +473,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
     metricKey:string;from?:string;to?:string;scopeType?:string;scopeId?:string;
   },tenantId?:string){
     return new PostgresAnalyticsRepository(this.db).metricSeries({
-      tenantId:this.requireTenant(tenantId),
-      ...input
+      ...this.bindTenant(input,tenantId)
     });
   }
 
@@ -472,7 +481,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
     clientEntityId:string;taxYear:number;documents:RequiredTaxDocument[];
   },tenantId?:string):Promise<void>{
     await new PostgresTaxPackRepository(this.db).saveRequiredDocuments({
-      tenantId:this.requireTenant(tenantId),...input
+      ...this.bindTenant(input,tenantId)
     });
   }
 
@@ -509,8 +518,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
 
   async listTaxFacts(input:{clientEntityId:string;taxYear:number},tenantId?:string):Promise<TaxFact[]>{
     return new PostgresTaxPackRepository(this.db).listTaxFacts({
-      tenantId:this.requireTenant(tenantId),
-      ...input
+      ...this.bindTenant(input,tenantId)
     });
   }
 
@@ -518,8 +526,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
     factId:string;reviewerId:string;decision:"accept"|"correct"|"reject";correctedValue?:unknown;reviewedAt?:string;
   },tenantId?:string):Promise<TaxFact>{
     return new PostgresTaxPackRepository(this.db).reviewTaxFact({
-      tenantId:this.requireTenant(tenantId),
-      ...input
+      ...this.bindTenant(input,tenantId)
     });
   }
 
@@ -550,7 +557,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
     correlationId?:string;actorId?:string;action?:string;status?:ActionReceiptStatus;limit?:number;
   },tenantId?:string):Promise<ActionReceipt[]>{
     return new PostgresActionReceiptRepository(this.db).list({
-      tenantId:this.requireTenant(tenantId),...input
+      ...this.bindTenant(input,tenantId)
     });
   }
 

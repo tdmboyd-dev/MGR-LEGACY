@@ -10,11 +10,12 @@ export interface BootstrapResult {
 }
 
 export async function bootstrapLegacyApi():Promise<BootstrapResult>{
+  const token=process.env.LEGACY_API_TOKEN;
+  if(!token?.trim()) throw new Error("LEGACY_API_TOKEN is required");
   const databaseUrl=process.env.LEGACY_DATABASE_URL ?? process.env.DATABASE_URL;
   if(!databaseUrl) throw new Error("LEGACY_DATABASE_URL or DATABASE_URL is required");
 
   const port=Number(process.env.LEGACY_PORT ?? process.env.PORT ?? 8787);
-  const token=process.env.LEGACY_API_TOKEN;
   const defaultTenantId=process.env.LEGACY_DEFAULT_TENANT_ID;
   const ssl=String(process.env.LEGACY_DATABASE_SSL ?? "false").toLowerCase()==="true";
 

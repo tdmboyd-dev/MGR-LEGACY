@@ -1,0 +1,37 @@
+# MGR-LEGACY — human ecosystem handoff
+
+October 27, 2026. Source baseline `6f60bbdb83af29bfb3777c68bf013a3b384f76e8` on `main`; this is an additive review-branch document, not a replacement work order.
+
+## What this project is and why it exists
+
+Shared relationships, workflows, communications and authoritative business receipts.
+
+Its ecosystem role is **business-records**. Placement decision: **domain**. Tevin coordinates this domain through a scoped adapter; repository discovery does not establish a working connection.
+
+## What exists, what changed and what remains
+
+Deny missing token; stop startup before database operations; reject five body-tenant override paths.
+
+This cycle: 56/56 passed for TypeScript build + Node suite. This is not whole-product acceptance.
+
+Next required outcome: Trusted per-principal tenant/object/action policy; cross-tenant upsert conflict checks; real outbox/provider replay proof and production-data cutover.
+
+## How it should work for the owner
+
+Input: Trusted service request, tenant-owned business object, canonical action and approval context.
+
+Output: Business graph mutations/reads, workflows, Action Receipts and Truth Console projections.
+
+Authority boundary: Shared bearer containment is not full actor/role authorization. Real tax filing, messaging and cutover remain separate effects.
+
+## Highest-value improvement
+
+One customer graph and durable event/outbox truth reused by apps instead of copied CRMs; measure parity and duplicate-effect rate.
+
+This is a proposed improvement and measurement target, not a claimed 100x result.
+
+## Recovery and proof boundary
+
+Use the existing repository work order, handoff, queues and canonical scorecard first. This packet adds ecosystem context. No main-branch merge, production deployment, live trade, message delivery, signature, paid generation or physical-device acceptance is implied. Preserve domain data; a source revert cannot undo an external effect. Full semantic reading of every repository file is not claimed by this handoff.
+
+See [AI handoff](AI-HANDOFF.md) and [Tevin usage](TEVIN-USAGE.md).
