@@ -1,0 +1,39 @@
+{
+  "scope": "Real PostgreSQL isolated-schema atomicity/concurrency, synthetic records; no filing, provider or production acceptance",
+  "checks": [
+    {
+      "name": "failed history insert rolls back tax fact change",
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\n20 !== 10\n"
+    },
+    {
+      "name": "missing schema target preserves active version",
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'retired'\n- 'active'\n"
+    },
+    {
+      "name": "missing workflow target preserves active version",
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'retired'\n- 'active'\n"
+    },
+    {
+      "name": "concurrent fact corrections preserve serial history and original value",
+      "passed": true
+    },
+    {
+      "name": "foreign tenant cannot review a fact or add review history",
+      "passed": true
+    },
+    {
+      "name": "concurrent schema activations leave exactly one active version",
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\n2 !== 1\n"
+    },
+    {
+      "name": "concurrent workflow activations leave exactly one active version",
+      "passed": true
+    }
+  ],
+  "passed": 3,
+  "total": 7
+}

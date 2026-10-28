@@ -6,7 +6,8 @@ import type {
   PreferenceRecord,
   PreferenceRepository
 } from "@mgr/legacy-core";
-import type { SqlExecutor } from "./sql.js";
+import type { SqlExecutor,SqlDatabase } from "./sql.js";
+import { inTransaction } from "./transaction.js";
 
 export class PostgresOwnershipRepository implements OwnershipRepository {
   constructor(private readonly db:SqlExecutor){}
@@ -61,7 +62,7 @@ export class PostgresPreferenceRepository implements PreferenceRepository {
 }
 
 export class PostgresObjectSchemaRepository implements ObjectSchemaRepository {
-  constructor(private readonly db:SqlExecutor){}
+  constructor(private readonly db:SqlDatabase){}
   async save(value:ObjectSchemaVersion):Promise<void>{
     await this.db.query(
       `INSERT INTO object_schema_versions
@@ -84,14 +85,20 @@ export class PostgresObjectSchemaRepository implements ObjectSchemaRepository {
     } : null;
   }
   async activate(tenantId:string,objectKey:string,version:number):Promise<void>{
-    await this.db.query(
+    await inTransaction(this.db,async tx=>{
+    // Serialize this tenant/object across versions, then read after the lock.
+    await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[JSON.stringify(['object-schema',tenantId,objectKey])]);
+    const target=await tx.query('SELECT version FROM object_schema_versions WHERE tenant_id=$1 AND object_key=$2 AND version=$3 FOR UPDATE',[tenantId,objectKey,version]);
+    if(target.rowCount!==1)throw new Error("Object schema version not found");
+    await tx.query(
       "UPDATE object_schema_versions SET status='retired',retired_at=now() WHERE tenant_id=$1 AND object_key=$2 AND status='active'",
       [tenantId,objectKey]
     );
-    const result=await this.db.query(
+    const result=await tx.query(
       "UPDATE object_schema_versions SET status='active',activated_at=now(),retired_at=NULL WHERE tenant_id=$1 AND object_key=$2 AND version=$3 RETURNING version",
       [tenantId,objectKey,version]
     );
     if(result.rowCount!==1) throw new Error("Object schema version not found");
+    });
   }
 }

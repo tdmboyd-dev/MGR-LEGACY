@@ -57,3 +57,8 @@ Rollback: Preserve original source/data; revert only owned source change; reconc
 The new source catalog lists this repository as catalogued, with runtimeVerified=false and no executable tools. Local read-only discovery through ONE/API-MCP has separate integration proof. No discovery response authorizes execution or proves this domain is deployed. Candidate existing tool: `mgr_truth_summary`; validate configured transport and scopes.
 
 Highest-value measured upgrade: One customer graph and durable event/outbox truth reused by apps instead of copied CRMs; measure parity and duplicate-effect rate.
+
+
+## October 28 atomic governance continuation
+
+On repair/completion-2026-10-28, tax review/current state+history and schema/workflow activation are now transactional. Reproduced partial-write, missing-target retirement and concurrent-active-version failures are repaired. Fresh TypeScript and67/67 unit tests pass; real isolated PostgreSQL atomic/failure/concurrency9/9 and existing scoped integration26/26 pass. See evidence/completion-2026-10-28/RESULTS.md for the exact before/after, source ledger, compatibility boundary, cleanup and remaining queue. No general workflow, live-provider, cutover or production completion claimed. Main is preserved; this branch retains prior audit fixes.

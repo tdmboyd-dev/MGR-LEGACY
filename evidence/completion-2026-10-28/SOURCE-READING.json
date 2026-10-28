@@ -1,0 +1,45 @@
+{
+  "scope": "Full relevant files only; broader repository source not freshly audited",
+  "files": [
+    {
+      "path": "packages/database/src/tax-pack-repository.ts",
+      "sha256": "7937d08b950707acad2889ae784c2029d02214cf40ecd1c3ef90d2b2a0c1a18d",
+      "reading": "full"
+    },
+    {
+      "path": "packages/database/src/core-governance-repositories.ts",
+      "sha256": "71a6e80fc81dc0fcdf9245860fd0c9f499849f322bf75b69ec01e9a7fefb30fa",
+      "reading": "full"
+    },
+    {
+      "path": "packages/database/src/workflow-repository.ts",
+      "sha256": "722d02b4c1e6a1bd83698a0caa0f356bb76ead96855f858fde53bc49474fb806",
+      "reading": "full"
+    },
+    {
+      "path": "packages/database/src/sql.ts",
+      "sha256": "aaa13263bd865bd7be486a4766330ea6ef8dca2ec82ffa0a89d3115beed047d0",
+      "reading": "full"
+    },
+    {
+      "path": "packages/database/src/transaction.ts",
+      "sha256": "c3f64a299ff64028abeaadf69c43fac7a6314696ccb0f89e3faf2de4e2f4d186",
+      "reading": "full"
+    },
+    {
+      "path": "packages/database/src/postgres.ts",
+      "sha256": "d34e4f28eb93e2ccc4eb4699f7fdd3c0d2c453b1343abb1b2ec2d1fecc744114",
+      "reading": "full"
+    },
+    {
+      "path": "packages/database/src/unit-of-work.ts",
+      "sha256": "b46934b3287aaaf19698667734c1c57a0b8fab8a77d1f7bf149ba12dd15df1a1",
+      "reading": "full"
+    },
+    {
+      "path": "scripts/integration-atomic-governance.mjs",
+      "sha256": "73ecc576ccd6b2fa035b1155ab34396fe9be99631ae62d3e4215a4c48ec73825",
+      "reading": "full"
+    }
+  ]
+}

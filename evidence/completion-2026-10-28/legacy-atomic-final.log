@@ -1,0 +1,43 @@
+{
+  "scope": "Real PostgreSQL isolated-schema atomicity/concurrency, synthetic records; no filing, provider or production acceptance",
+  "checks": [
+    {
+      "name": "failed history insert rolls back tax fact change",
+      "passed": true
+    },
+    {
+      "name": "missing schema target preserves active version",
+      "passed": true
+    },
+    {
+      "name": "missing workflow target preserves active version",
+      "passed": true
+    },
+    {
+      "name": "concurrent fact corrections preserve serial history and original value",
+      "passed": true
+    },
+    {
+      "name": "foreign tenant cannot review a fact or add review history",
+      "passed": true
+    },
+    {
+      "name": "concurrent schema activations leave exactly one active version",
+      "passed": true
+    },
+    {
+      "name": "concurrent workflow activations leave exactly one active version",
+      "passed": true
+    },
+    {
+      "name": "schema activation write failure rolls back retirement",
+      "passed": true
+    },
+    {
+      "name": "workflow activation write failure rolls back retirement",
+      "passed": true
+    }
+  ],
+  "passed": 9,
+  "total": 9
+}

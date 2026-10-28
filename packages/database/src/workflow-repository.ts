@@ -1,9 +1,10 @@
 import type { WorkflowDefinition } from "@mgr/legacy-contracts";
 import type { WorkflowRepository } from "@mgr/legacy-workflow";
-import type { SqlExecutor } from "./sql.js";
+import type { SqlDatabase } from "./sql.js";
+import { inTransaction } from "./transaction.js";
 
 export class PostgresWorkflowRepository implements WorkflowRepository {
-  constructor(private readonly db:SqlExecutor,private readonly tenantId:string){}
+  constructor(private readonly db:SqlDatabase,private readonly tenantId:string){}
 
   async save(definition:WorkflowDefinition):Promise<void>{
     await this.db.query(
@@ -35,17 +36,22 @@ export class PostgresWorkflowRepository implements WorkflowRepository {
   }
 
   async activate(workflowId:string,version:number):Promise<void>{
-    await this.db.query(
+    await inTransaction(this.db,async tx=>{
+    await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[JSON.stringify(['workflow',this.tenantId,workflowId])]);
+    const target=await tx.query('SELECT version FROM workflow_definitions WHERE tenant_id=$1 AND workflow_id=$2 AND version=$3 FOR UPDATE',[this.tenantId,workflowId,version]);
+    if(target.rowCount!==1)throw new Error("Workflow version not found");
+    await tx.query(
       `UPDATE workflow_definitions SET status='retired'
        WHERE tenant_id=$1 AND workflow_id=$2 AND status='active'`,
       [this.tenantId,workflowId]
     );
-    const result=await this.db.query(
+    const result=await tx.query(
       `UPDATE workflow_definitions SET status='active'
        WHERE tenant_id=$1 AND workflow_id=$2 AND version=$3 RETURNING workflow_id`,
       [this.tenantId,workflowId,version]
     );
     if(result.rowCount!==1) throw new Error("Workflow version not found");
+    });
   }
 
   async retire(workflowId:string,version:number):Promise<void>{

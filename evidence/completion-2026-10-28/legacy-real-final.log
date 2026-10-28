@@ -1,0 +1,77 @@
+{
+  "scope": "Real PostgreSQL isolated-schema atomicity/concurrency, synthetic records; no filing, provider or production acceptance",
+  "checks": [
+    {
+      "name": "failed history insert rolls back tax fact change",
+      "passed": true
+    },
+    {
+      "name": "missing schema target preserves active version",
+      "passed": true
+    },
+    {
+      "name": "missing workflow target preserves active version",
+      "passed": true
+    },
+    {
+      "name": "concurrent fact corrections preserve serial history and original value",
+      "passed": true
+    },
+    {
+      "name": "foreign tenant cannot review a fact or add review history",
+      "passed": true
+    },
+    {
+      "name": "concurrent schema activations leave exactly one active version",
+      "passed": true
+    },
+    {
+      "name": "concurrent workflow activations leave exactly one active version",
+      "passed": true
+    }
+  ],
+  "passed": 7,
+  "total": 7
+}
+{
+  "ok": true,
+  "database": "real PostgreSQL",
+  "checks": [
+    "real PostgreSQL contact creation",
+    "tenant-scoped durable entity readback",
+    "contact read grant cannot read another entity type",
+    "receipt read cannot impersonate another actor",
+    "receipt read cannot inspect ungranted action",
+    "receipt read requires an explicit granted action",
+    "receipt read binds authenticated actor",
+    "foreign tenant header denied",
+    "foreign actor header denied",
+    "foreign actor body denied",
+    "partial canonical actor cannot bypass principal binding",
+    "ungranted action denied",
+    "changed payload same key conflicts",
+    "changed target same key conflicts",
+    "exact request replay returns saved receipt",
+    "20 concurrent exact requests one receipt",
+    "foreign object read denied",
+    "foreign object update denied",
+    "foreign activity subject denied",
+    "global ID upsert cannot overwrite foreign template",
+    "atomic entity event and outbox exactly once",
+    "discarded response recovered by durable replay",
+    "event ledger exact duplicate accepted changed payload rejected",
+    "outbox exact duplicate accepted changed payload rejected",
+    "outbox duplicate never creates second publication",
+    "new server and database pool preserve contact and receipt"
+  ],
+  "passed": 26,
+  "total": 26,
+  "tenantId": "316e28a9-b996-4d0f-a768-3fd760230934",
+  "entityId": "62574d63-8c89-47f6-a909-bb5fc76fb2a8",
+  "receiptId": "b9cc6e57-b7de-4c78-be7a-5e99a7d423cd",
+  "evidence": {
+    "entities": 1,
+    "events": 1,
+    "outbox": 1
+  }
+}

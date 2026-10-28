@@ -1,0 +1,83 @@
+
+> @mgr/legacy@0.1.0 test
+> npm run build && node --test packages/*/dist/**/*.test.js
+
+
+> @mgr/legacy@0.1.0 build
+> tsc -b
+
+✔ cutover gate blocks imperfect reconciliation (3.4014ms)
+✔ cutover rejects nonfinite, impossible and missing parity evidence (0.5257ms)
+✔ MGR Agents contact maps without losing legacy metadata (4.759ms)
+✔ Elite Hub lifecycle stage maps into Tax Pack stage (0.6871ms)
+✔ reconciliation reports missing destination ids (1.9657ms)
+✔ rolls office revenue into bureau totals (2.0865ms)
+✔ metric engine aggregates sums (3.7884ms)
+✔ linear attribution splits credit equally (0.6061ms)
+✔ service authorization denies missing, empty and whitespace configuration (2.1689ms)
+✔ service authorization accepts only the configured bearer (0.4116ms)
+✔ bootstrap refuses missing credential before database setup (2.7063ms)
+✔ body tenant override is rejected before any database query (1.8951ms)
+✔ matching or absent body tenant preserves trusted tenant and valid writes (0.8107ms)
+✔ unanswered negative message escalates and replies (2.8532ms)
+✔ consent guard defaults to deny (17.4772ms)
+✔ consent guard allows explicitly granted channel (8.4327ms)
+✔ consent quiet hours honor the recipient time zone and invalid settings deny (56.4528ms)
+✔ managed router fails over and records provider health (4.9201ms)
+✔ lost provider response never sends again through backup (6.9402ms)
+✔ circuit opens after threshold and later allows half-open probe (3.8225ms)
+✔ provider router picks fastest healthy provider (9.7935ms)
+✔ shadow autopilot graduates only with strong evidence (5.0524ms)
+✔ truth console summarizes action receipts (0.719ms)
+✔ waiting workflow source marks overdue retry urgent (2.2391ms)
+✔ open provider circuit becomes top priority incident (1.1285ms)
+✔ outbox publisher records success and failure (17.7966ms)
+✔ event ledger scopes duplicate keys and all reads to tenants (5.0952ms)
+✔ missing hierarchy targets and malformed expiry cannot authorize (0.9632ms)
+✔ invalid evidence cannot graduate autonomy and empty evaluation is not proof (0.9115ms)
+✔ TODAY ranks urgent revenue leak above low-priority distant task (7.992ms)
+✔ TODAY combines conversations, automations, and compliance into one ranked feed (17.0683ms)
+✔ deal room detects stale unsigned risky opportunity (6.7029ms)
+✔ opportunity cannot move into another pipeline's stage (5.9692ms)
+✔ compatibility blocks unsupported permissions (2.1072ms)
+✔ sandbox denies ungranted action (1.2343ms)
+✔ extension registry rejects duplicate versions (2.6146ms)
+✔ provider registry resolves highest priority matching provider (2.2377ms)
+✔ revenue leak scanner ranks recoverable urgent revenue first (2.0397ms)
+✔ signal graph computes confidence weighted numeric score (2.534ms)
+✔ deal coach identifies stale single-threaded risk (2.8257ms)
+✔ service brain escalates high SLA risk (0.569ms)
+✔ growth loop finds referral and review opportunities (0.6159ms)
+✔ operator dashboard projects action KPIs (3.8033ms)
+✔ truth console renderer escapes content (58.3316ms)
+✔ command palette renderer emits command metadata (0.5013ms)
+✔ embedding adapter normalizes provider response (68.5798ms)
+✔ image adapter normalizes provider response (1.2368ms)
+✔ empty provider responses never become artifacts or embeddings (4.0388ms)
+✔ office is not activation-ready with unresolved compliance issues (2.0244ms)
+✔ low-confidence and mandatory tax facts are routed to human review (5.8357ms)
+✔ review preserves correction lineage and unlocks preparation (7.264ms)
+✔ filing is blocked until an explicit preparer approval exists (0.6005ms)
+✔ tax software writes require reviewed facts and target verification (2.9654ms)
+✔ target label drift blocks writes (0.5293ms)
+✔ retry planner uses capped exponential backoff (3.3ms)
+✔ checkpoint ledger returns due resume candidates (29.4202ms)
+✔ durable runner checkpoints retryable failure and waits (12.3758ms)
+✔ critical flows cannot be autonomous (1.8961ms)
+✔ resume worker processes due workflow (3.9441ms)
+✔ runtime executes dependency chain once (9.0877ms)
+✔ self audit flags unhealthy workflows (0.9028ms)
+✔ cycles cannot simulate or execute as a successful empty run (3.4838ms)
+✔ unimplemented conditions fail closed instead of executing unconditional effects (0.4038ms)
+✔ approval gate checks trusted role and a positive approval threshold (2.3547ms)
+✔ schedule respects named timezone rather than silently using UTC (62.8318ms)
+✔ simulator traverses workflow in dependency order (5.2689ms)
+✔ conflict detector catches duplicate action under same trigger (1.2857ms)
+ℹ tests 67
+ℹ suites 0
+ℹ pass 67
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3030.2871

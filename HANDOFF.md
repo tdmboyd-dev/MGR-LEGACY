@@ -80,3 +80,8 @@ Executed: 67 unit tests; 26 scoped real PostgreSQL checks; PostgreSQL/API/concur
 Bootstrap requires `LEGACY_API_TOKEN`, `LEGACY_DATABASE_URL`, `LEGACY_SERVICE_ACTOR_ID`, `LEGACY_ALLOWED_TENANT_IDS`, `LEGACY_ALLOWED_ACTIONS`; host defaults to loopback. Scoped receipt reads require a granted action filter and bind the service actor. EventLedger read methods now require tenant ID first. Unknown legacy key digests conflict while preserving old responses. Historical outbox duplicates require reviewed migration.
 
 Open implementation gaps include branch/wait/subflow integration, tenant-scoped worker ports, atomic activation/review, general tenant SQL references and durable communications reconciliation. Keep live/dangerous tools disabled until their own proof. Follow the next sequence in the verified integration report.
+
+
+## October 28 atomic governance continuation
+
+On repair/completion-2026-10-28, tax review/current state+history and schema/workflow activation are now transactional. Reproduced partial-write, missing-target retirement and concurrent-active-version failures are repaired. Fresh TypeScript and67/67 unit tests pass; real isolated PostgreSQL atomic/failure/concurrency9/9 and existing scoped integration26/26 pass. See evidence/completion-2026-10-28/RESULTS.md for the exact before/after, source ledger, compatibility boundary, cleanup and remaining queue. No general workflow, live-provider, cutover or production completion claimed. Main is preserved; this branch retains prior audit fixes.

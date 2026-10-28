@@ -37,3 +37,8 @@ This is a proposed improvement and measurement target, not a claimed 100x result
 Use the existing repository work order, handoff, queues and canonical scorecard first. This packet adds ecosystem context. No main-branch merge, production deployment, live trade, message delivery, signature, paid generation or physical-device acceptance is implied. Preserve domain data; a source revert cannot undo an external effect. Full semantic reading of every repository file is not claimed by this handoff.
 
 See [AI handoff](AI-HANDOFF.md) and [Tevin usage](TEVIN-USAGE.md).
+
+
+## October 28 atomic governance continuation
+
+On repair/completion-2026-10-28, tax review/current state+history and schema/workflow activation are now transactional. Reproduced partial-write, missing-target retirement and concurrent-active-version failures are repaired. Fresh TypeScript and67/67 unit tests pass; real isolated PostgreSQL atomic/failure/concurrency9/9 and existing scoped integration26/26 pass. See evidence/completion-2026-10-28/RESULTS.md for the exact before/after, source ledger, compatibility boundary, cleanup and remaining queue. No general workflow, live-provider, cutover or production completion claimed. Main is preserved; this branch retains prior audit fixes.

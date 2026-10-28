@@ -196,3 +196,8 @@ Core platform implementation is substantially built and CI-green, but production
 ## October 27 evidence correction
 
 67/67 local unit tests and 26/26 scoped real PostgreSQL checks passed; migrations now run through 0020. These denominators certify those suites, not every catalog feature. Source reading covers all 201 original product TypeScript files plus new source/tests and all 20 migrations. See the verified integration report for permissions, strict replay, outbox migration, preserved v18 upgrade, backup/restore and remaining worker/provider/cutover gates.
+
+
+## October 28 atomic governance continuation
+
+On repair/completion-2026-10-28, tax review/current state+history and schema/workflow activation are now transactional. Reproduced partial-write, missing-target retirement and concurrent-active-version failures are repaired. Fresh TypeScript and67/67 unit tests pass; real isolated PostgreSQL atomic/failure/concurrency9/9 and existing scoped integration26/26 pass. See evidence/completion-2026-10-28/RESULTS.md for the exact before/after, source ledger, compatibility boundary, cleanup and remaining queue. No general workflow, live-provider, cutover or production completion claimed. Main is preserved; this branch retains prior audit fixes.
