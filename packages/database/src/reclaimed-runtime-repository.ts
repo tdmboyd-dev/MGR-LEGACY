@@ -1,3 +1,4 @@
+import { tenantCheckedQuery } from "./tenant-safe-query.js";
 import type { CreationJob, MediaJobLedger } from "@mgr/legacy-core";
 import type { DeadLetterItem, DeadLetterStore } from "@mgr/legacy-workflow";
 import type { ConnectorManifest } from "@mgr/legacy-extensions";
@@ -7,7 +8,7 @@ export class PostgresMediaJobLedger implements MediaJobLedger {
   constructor(private readonly db:SqlExecutor){}
 
   async save(job:CreationJob):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO creation_jobs (
         job_id,tenant_id,job_type,prompt,inputs,provider,model,status,created_at,started_at,
         completed_at,cost,outputs,evidence,error
@@ -15,7 +16,8 @@ export class PostgresMediaJobLedger implements MediaJobLedger {
       ON CONFLICT (job_id) DO UPDATE SET
         provider=EXCLUDED.provider,model=EXCLUDED.model,status=EXCLUDED.status,
         started_at=EXCLUDED.started_at,completed_at=EXCLUDED.completed_at,cost=EXCLUDED.cost,
-        outputs=EXCLUDED.outputs,evidence=EXCLUDED.evidence,error=EXCLUDED.error`,
+        outputs=EXCLUDED.outputs,evidence=EXCLUDED.evidence,error=EXCLUDED.error
+       WHERE creation_jobs.tenant_id=EXCLUDED.tenant_id`,
       [
         job.jobId,job.tenantId,job.type,job.prompt,JSON.stringify(job.inputs),job.provider ?? null,
         job.model ?? null,job.status,job.createdAt,job.startedAt ?? null,job.completedAt ?? null,
@@ -57,12 +59,13 @@ export class PostgresDeadLetterStore implements DeadLetterStore {
   constructor(private readonly db:SqlExecutor){}
 
   async add(item:DeadLetterItem):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO workflow_dead_letters
        (id,tenant_id,workflow_id,run_id,node_id,error,payload,attempts,failed_at,status)
        VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8,$9,$10)
        ON CONFLICT (id) DO UPDATE SET error=EXCLUDED.error,payload=EXCLUDED.payload,
-       attempts=EXCLUDED.attempts,status=EXCLUDED.status`,
+       attempts=EXCLUDED.attempts,status=EXCLUDED.status
+       WHERE workflow_dead_letters.tenant_id=EXCLUDED.tenant_id`,
       [
         item.id,item.tenantId,item.workflowId,item.runId,item.nodeId ?? null,item.error,
         JSON.stringify(item.payload),item.attempts,item.failedAt,item.status

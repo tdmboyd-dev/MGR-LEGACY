@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
-import { rm } from "node:fs/promises";
+import { rm, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { PostgresDatabase, MigrationRunner } from "../packages/database/dist/index.js";
@@ -74,7 +74,7 @@ try{
 
   assert.equal(Number(baseline.rows[0]?.count),1,"baseline data must survive restore");
   assert.equal(Number(mutation.rows[0]?.count),0,"post-backup mutation must disappear after restore");
-  assert.equal(Number(migrations.rows[0]?.count),18,"all migration records must survive restore");
+  assert.equal(Number(migrations.rows[0]?.count),(await readdir(resolve("packages/database/migrations"))).filter(name=>/^\d+.*\.sql$/.test(name)).length,"all migration records must survive restore");
 
   console.log(JSON.stringify({
     ok:true,

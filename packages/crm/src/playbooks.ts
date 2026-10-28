@@ -18,7 +18,7 @@ export interface Playbook {
 
 export class PlaybookRegistry {
   private readonly playbooks=new Map<string,Playbook>();
-  register(playbook:Playbook):void{this.playbooks.set(playbook.id,structuredClone(playbook));}
+  register(playbook:Playbook):void{this.playbooks.set(JSON.stringify([playbook.tenantId,playbook.id]),structuredClone(playbook));}
   list(tenantId:string,type?:PlaybookType):Playbook[]{
     return [...this.playbooks.values()]
       .filter(p=>p.tenantId===tenantId && (!type || p.type===type))

@@ -14,7 +14,7 @@ const allDir=resolve(process.cwd(),"packages/database/migrations");
 
 try{
   const files=(await readdir(allDir)).filter(name=>/^\d+.*\.sql$/.test(name)).sort();
-  assert.equal(files.length,18,"expected 18 migration files");
+  assert.ok(files.length>=19,"expected digest migration included");
 
   const phaseOne=files.filter(name=>Number(name.slice(0,4))<=7);
   assert.equal(phaseOne.length,7,"expected migrations 0001-0007 in phase one");
@@ -42,10 +42,10 @@ try{
 
   const fullRunner=new MigrationRunner(db,allDir);
   const secondApplied=await fullRunner.runPending();
-  assert.equal(secondApplied.length,11,"expected migrations 0008-0018 in phase two");
+  assert.equal(secondApplied.length,files.length-phaseOne.length,"expected remaining migrations in phase two");
 
   const applied=await fullRunner.applied();
-  assert.equal(applied.size,18);
+  assert.equal(applied.size,files.length);
 
   const entity=await db.query(
     "SELECT id,tenant_id,display_name,attributes FROM entities WHERE id=$1 AND tenant_id=$2",

@@ -1,3 +1,4 @@
+import { tenantCheckedQuery } from "./tenant-safe-query.js";
 import type {
   InboxRepository,
   InboxThreadSummary,
@@ -63,33 +64,36 @@ export class PostgresTemplateSequenceRepository {
   constructor(private readonly db:SqlExecutor){}
 
   async saveTemplate(template:MessageTemplate):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO message_templates
        (id,tenant_id,name,channel,subject,body,variables,active)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
        ON CONFLICT (id)
        DO UPDATE SET name=EXCLUDED.name,channel=EXCLUDED.channel,subject=EXCLUDED.subject,body=EXCLUDED.body,
-       variables=EXCLUDED.variables,active=EXCLUDED.active,updated_at=now()`,
+       variables=EXCLUDED.variables,active=EXCLUDED.active,updated_at=now()
+       WHERE message_templates.tenant_id=EXCLUDED.tenant_id`,
       [template.id,template.tenantId,template.name,template.channel,template.subject ?? null,template.body,template.variables,template.active]
     );
   }
 
   async saveSequence(sequence:SequenceDefinition):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO communication_sequences (id,tenant_id,name,steps,active)
        VALUES ($1,$2,$3,$4::jsonb,$5)
-       ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name,steps=EXCLUDED.steps,active=EXCLUDED.active,updated_at=now()`,
+       ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name,steps=EXCLUDED.steps,active=EXCLUDED.active,updated_at=now()
+       WHERE communication_sequences.tenant_id=EXCLUDED.tenant_id`,
       [sequence.id,sequence.tenantId,sequence.name,JSON.stringify(sequence.steps),sequence.active]
     );
   }
 
   async saveEnrollment(enrollment:SequenceEnrollment):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO sequence_enrollments
        (id,sequence_id,tenant_id,contact_id,current_step,next_run_at,status,replied)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
        ON CONFLICT (id) DO UPDATE SET current_step=EXCLUDED.current_step,next_run_at=EXCLUDED.next_run_at,
-       status=EXCLUDED.status,replied=EXCLUDED.replied,updated_at=now()`,
+       status=EXCLUDED.status,replied=EXCLUDED.replied,updated_at=now()
+       WHERE sequence_enrollments.tenant_id=EXCLUDED.tenant_id`,
       [enrollment.id,enrollment.sequenceId,enrollment.tenantId,enrollment.contactId,enrollment.currentStep,
        enrollment.nextRunAt,enrollment.status,enrollment.replied]
     );

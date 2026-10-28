@@ -1,3 +1,4 @@
+import {validateWorkflow} from "./graph.js";
 import type { WorkflowDefinition } from "@mgr/legacy-contracts";
 
 export interface WorkflowExecutionContext {
@@ -31,6 +32,9 @@ export class WorkflowRuntime {
   }
 
   async run(workflow: WorkflowDefinition, context: WorkflowExecutionContext): Promise<NodeExecutionResult[]> {
+    const validation=validateWorkflow(workflow);
+    if(!validation.valid || !workflow.nodes.length)throw new Error(`Invalid workflow: ${validation.errors.join("; ") || "no nodes"}`);
+    if(context.workflowId!==workflow.workflowId || context.workflowVersion!==workflow.version)throw new Error("Workflow execution context mismatch");
     const inbound = new Map<string, number>();
     const outgoing = new Map<string, string[]>();
     for (const edge of workflow.edges) {

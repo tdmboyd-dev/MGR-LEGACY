@@ -69,3 +69,14 @@ When a repository-owned gap is found, implement/test/fix it before reporting. Ke
 ## Ecosystem review — October 27, 2026
 
 Additive source-pinned ecosystem context: [human handoff](docs/ecosystem/HUMAN-HANDOFF.md). This review branch preserves the default-branch baseline and existing work orders. Domain runtime/production acceptance is separate.
+
+
+## October 27 - scoped real service and source hardening
+
+Active branch: `audit/ecosystem-2026-10-27`; owner asked to preserve default branches. Read [verified integration report](docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md) before relying on older completion claims. All 201 original product TypeScript files and 20 migrations were read, plus new source/tests. This does not certify remaining research/archive documents.
+
+Executed: 67 unit tests; 26 scoped real PostgreSQL checks; PostgreSQL/API/concurrency regressions; exact v18-to-v20 preservation; v7-to-v20 upgrade; actual backup/restore. Parent ecosystem evidence owns complete Tevin/MCP workflow acceptance. Generated local fixture credentials remain outside this repo. Production stores were not overwritten.
+
+Bootstrap requires `LEGACY_API_TOKEN`, `LEGACY_DATABASE_URL`, `LEGACY_SERVICE_ACTOR_ID`, `LEGACY_ALLOWED_TENANT_IDS`, `LEGACY_ALLOWED_ACTIONS`; host defaults to loopback. Scoped receipt reads require a granted action filter and bind the service actor. EventLedger read methods now require tenant ID first. Unknown legacy key digests conflict while preserving old responses. Historical outbox duplicates require reviewed migration.
+
+Open implementation gaps include branch/wait/subflow integration, tenant-scoped worker ports, atomic activation/review, general tenant SQL references and durable communications reconciliation. Keep live/dangerous tools disabled until their own proof. Follow the next sequence in the verified integration report.

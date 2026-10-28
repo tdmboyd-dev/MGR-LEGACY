@@ -22,6 +22,7 @@ const ORDER:ExecutionMode[]=["observe","recommend","draft","ask","limited","auto
 export class ShadowAutopilot {
   evaluate(current:ExecutionMode,signals:AutonomySignals):GraduationDecision{
     const reasons:string[]=[];
+    if(Object.values(signals).some(value=>!Number.isFinite(value)||value<0)) reasons.push("Invalid autonomy evidence");
     const total=signals.successfulRuns+signals.failedRuns+signals.blockedRuns;
     const successRate=total===0 ? 0 : signals.successfulRuns/total;
 

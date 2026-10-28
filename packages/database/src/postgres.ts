@@ -37,7 +37,7 @@ export class PostgresDatabase implements SqlDatabase {
     this.pool=new Pool({
       connectionString,
       max:options.max ?? 20,
-      ssl:options.ssl ? {rejectUnauthorized:false} : undefined
+      ssl:options.ssl ? {rejectUnauthorized:true} : undefined
     });
   }
 
@@ -51,8 +51,8 @@ export class PostgresDatabase implements SqlDatabase {
 
   async begin():Promise<SqlTransaction>{
     const client=await this.pool.connect();
-    await client.query("BEGIN");
-    return new PgTransaction(client);
+    try{ await client.query("BEGIN"); return new PgTransaction(client); }
+    catch(error){ client.release(); throw error; }
   }
 
   async close():Promise<void>{

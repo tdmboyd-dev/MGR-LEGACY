@@ -33,6 +33,7 @@ export class BackfillRunner<T extends {id?:string}> {
     const failures:Array<{id?:string;error:string}>=[];
     const maxPages=input.maxPages ?? Number.POSITIVE_INFINITY;
     let pageCount=0;
+    const seenCursors=new Set<string>();
 
     while(pageCount<maxPages){
       const page=await this.source.page(cursor,input.pageSize ?? 500);
@@ -54,6 +55,8 @@ export class BackfillRunner<T extends {id?:string}> {
 
       cursor=page.nextCursor;
       if(!cursor) break;
+      if(seenCursors.has(cursor)) throw new Error("Backfill source repeated a cursor; refusing an endless migration");
+      seenCursors.add(cursor);
     }
 
     return {processed,succeeded,failed,cursor,failures};

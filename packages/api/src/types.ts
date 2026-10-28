@@ -8,10 +8,12 @@ export interface CommandIngressInput {
   action:string;
   payload:Record<string,unknown>;
   metadata?:Record<string,unknown>;
+  target?:Command["target"];
 }
 
 export interface LegacyApiServices {
   health():Promise<Record<string,unknown>>;
+  getEntity?(id:string,tenantId:string):Promise<unknown>;
   executeCommand(input:CommandIngressInput|Command):Promise<unknown>;
   today(ownerId:string,tenantId?:string):Promise<NextAction[]>;
   stageWorkflow(
@@ -97,4 +99,5 @@ export interface LegacyApiServices {
 
 export interface ApiAuthConfig {
   bearerToken?:string;
+  principal?:{actorId:string;tenantIds:string[];actions:string[]};
 }

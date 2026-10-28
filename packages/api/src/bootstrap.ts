@@ -1,4 +1,4 @@
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, resolve } from "node:path";
 import { PostgresDatabase, MigrationRunner } from "@mgr/legacy-database";
 import { createLegacyServer } from "./http.js";
@@ -12,6 +12,10 @@ export interface BootstrapResult {
 export async function bootstrapLegacyApi():Promise<BootstrapResult>{
   const token=process.env.LEGACY_API_TOKEN;
   if(!token?.trim()) throw new Error("LEGACY_API_TOKEN is required");
+  const actorId=process.env.LEGACY_SERVICE_ACTOR_ID;
+  const tenantIds=(process.env.LEGACY_ALLOWED_TENANT_IDS ?? "").split(",").filter(Boolean);
+  const actions=(process.env.LEGACY_ALLOWED_ACTIONS ?? "").split(",").filter(Boolean);
+  if(!actorId || !tenantIds.length || !actions.length) throw new Error("LEGACY_SERVICE_ACTOR_ID, LEGACY_ALLOWED_TENANT_IDS and LEGACY_ALLOWED_ACTIONS are required");
   const databaseUrl=process.env.LEGACY_DATABASE_URL ?? process.env.DATABASE_URL;
   if(!databaseUrl) throw new Error("LEGACY_DATABASE_URL or DATABASE_URL is required");
 
@@ -25,18 +29,18 @@ export async function bootstrapLegacyApi():Promise<BootstrapResult>{
   const migrations=await new MigrationRunner(db,migrationsDir).runPending();
 
   const services=new DefaultLegacyApiServices(db,defaultTenantId);
-  const server=createLegacyServer(services,{bearerToken:token});
+  const server=createLegacyServer(services,{bearerToken:token,principal:{actorId,tenantIds,actions}});
 
   await new Promise<void>((resolvePromise,reject)=>{
     server.once("error",reject);
-    server.listen(port,()=>{
+    server.listen(port,process.env.LEGACY_HOST ?? "127.0.0.1",()=>{
       server.off("error",reject);
       resolvePromise();
     });
   });
 
   const shutdown=async()=>{
-    server.close();
+    await new Promise<void>(resolveClose=>server.close(()=>resolveClose()));
     await db.close();
   };
 
@@ -46,7 +50,7 @@ export async function bootstrapLegacyApi():Promise<BootstrapResult>{
   return {port,migrations};
 }
 
-if(import.meta.url===`file://${process.argv[1]}`){
+if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
   bootstrapLegacyApi()
     .then(({port,migrations})=>{
       console.log(JSON.stringify({

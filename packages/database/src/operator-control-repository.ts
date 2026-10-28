@@ -1,3 +1,4 @@
+import { tenantCheckedQuery } from "./tenant-safe-query.js";
 import type {
   ActionReceipt,
   ActionReceiptStatus,
@@ -11,7 +12,7 @@ export class PostgresActionReceiptRepository implements ActionReceiptStore {
   constructor(private readonly db:SqlExecutor){}
 
   async append(receipt:ActionReceipt):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO action_receipts (
         receipt_id,tenant_id,correlation_id,causation_id,actor_type,actor_id,scope_type,scope_id,
         action,target_type,target_id,execution_mode,status,argument_summary,policy_decision,policy_reason,
@@ -28,7 +29,8 @@ export class PostgresActionReceiptRepository implements ActionReceiptStore {
         completed_at=EXCLUDED.completed_at,
         outcome=EXCLUDED.outcome,
         error=EXCLUDED.error,
-        rollback_receipt_id=EXCLUDED.rollback_receipt_id`,
+        rollback_receipt_id=EXCLUDED.rollback_receipt_id
+       WHERE action_receipts.tenant_id=EXCLUDED.tenant_id`,
       [
         receipt.receiptId,receipt.tenantId,receipt.correlationId,receipt.causationId ?? null,
         receipt.actor.actorType,receipt.actor.actorId,receipt.scope.scopeType,receipt.scope.scopeId,

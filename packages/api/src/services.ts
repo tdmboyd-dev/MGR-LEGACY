@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { CommandSchema } from "@mgr/legacy-contracts";
 import type { Command, LegacyEvent, NextAction, WorkflowDefinition } from "@mgr/legacy-contracts";
 import type { Goal, ReportDefinition } from "@mgr/legacy-analytics";
 import type { BankProductApplication, ClientPortalRequest, FilingApproval, PreparerCredentialStatus, RequiredTaxDocument, SignatureAuthorization, TaxFact, TaxReturnLifecycleState } from "@mgr/legacy-tax-pack";
-import { NextActionEngine, TruthConsoleProjector, type ActionReceipt, type ActionReceiptStatus } from "@mgr/legacy-core";
+import { commandRequestDigest, NextActionEngine, TruthConsoleProjector, type ActionReceipt, type ActionReceiptStatus } from "@mgr/legacy-core";
 import {
   PostgresAnalyticsRepository,
   PostgresConnectorManifestRepository,
@@ -23,7 +24,7 @@ import { WorkflowSimulator, WorkflowVersionService } from "@mgr/legacy-workflow"
 import type { CommandIngressInput, LegacyApiServices } from "./types.js";
 
 function isCanonicalCommand(input:CommandIngressInput|Command):input is Command{
-  return "commandId" in input && "scope" in input && "actor" in input;
+  return !!input && typeof input==="object" && "commandId" in input && "scope" in input && "actor" in input;
 }
 
 function tenantFrom(input:CommandIngressInput|Command,defaultTenantId?:string):string|undefined{
@@ -48,6 +49,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
   }
 
   async executeCommand(input:CommandIngressInput|Command):Promise<unknown>{
+    if(!input || typeof input!=="object" || Array.isArray(input) || !input.payload || typeof input.payload!=="object" || Array.isArray(input.payload)) throw new Error("Invalid command payload");
     if(!isCanonicalCommand(input) && input.metadata?.shadow===true){
       const repo=new PostgresShadowIngestRepository(this.db);
       const id=await repo.append({
@@ -78,21 +80,28 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
           },
           scope:{
             tenantId,
-            scopeType:"organization",
+            scopeType:(input.metadata?.scopeType ?? "organization") as Command["scope"]["scopeType"],
             scopeId:String(input.metadata?.scopeId ?? tenantId)
           },
-          target:input.payload.id
+          target:input.target ?? (input.payload.id
             ? {entityType:"custom",entityId:String(input.payload.id)}
-            : undefined,
+            : undefined),
           payload:input.payload,
           idempotencyKey:String(input.metadata?.idempotencyKey ?? `${input.action}:${input.metadata?.sourceId ?? randomUUID()}`),
           correlationId:String(input.metadata?.correlationId ?? randomUUID())
         };
 
-    return this.executeCanonical(command);
+    return this.executeCanonical(CommandSchema.parse(command));
   }
 
   private async executeCanonical(command:Command):Promise<unknown>{
+    if(command.actor.tenantId!==command.scope.tenantId) throw new Error("Tenant mismatch");
+    const requestDigest=commandRequestDigest(command);
+    const replay=(existing:{response?:unknown;requestDigest?:string})=>{
+      if(existing.requestDigest!==requestDigest) throw new Error("Idempotency conflict: request differs or legacy digest unavailable");
+      if(!existing.response) throw new Error("Command already in progress");
+      return {...(existing.response as Record<string,unknown>),replayed:true};
+    };
     const tx=await this.db.begin();
     const receipt:ActionReceipt={
       receiptId:randomUUID(),
@@ -107,7 +116,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
       argumentSummary:command.payload,
       policyDecision:"allowed",
       approvals:[],
-      evidence:{commandId:command.commandId,idempotencyKey:command.idempotencyKey},
+      evidence:{commandId:command.commandId,idempotencyKey:command.idempotencyKey,requestDigest},
       startedAt:new Date().toISOString(),
       reversible:true
     };
@@ -120,16 +129,23 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
     try{
       const existing=await idempotency.get(command.scope.tenantId,command.idempotencyKey);
       if(existing?.response){
+        const response=replay(existing);
         await tx.commit();
-        return {...(existing.response as any),replayed:true};
+        return response;
       }
 
       const reserved=await idempotency.reserve(
         command.scope.tenantId,
         command.idempotencyKey,
-        command.commandId
+        command.commandId,requestDigest
       );
-      if(!reserved) throw new Error("Command already in progress");
+      if(!reserved){
+        const concurrent=await idempotency.get(command.scope.tenantId,command.idempotencyKey);
+        if(!concurrent) throw new Error("Command already in progress");
+        const response=replay(concurrent);
+        await tx.commit();
+        return response;
+      }
 
       const mutation=await this.applyAction(tx,command);
       const event:LegacyEvent={
@@ -146,7 +162,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
         before:mutation.before,
         after:mutation.after,
         data:mutation.data ?? {},
-        evidence:{commandId:command.commandId}
+        evidence:{commandId:command.commandId,requestDigest}
       };
 
       await events.append(event);
@@ -250,6 +266,10 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
       case "crm.create_opportunity":
       case "crm.create_deal":{
         const id=String(p.id ?? randomUUID());
+        if(!p.pipelineId || !p.stageId) throw new Error("pipelineId and stageId are required");
+        const stage=await tx.query("SELECT id FROM pipeline_stages WHERE tenant_id=$1 AND id=$2 AND pipeline_id=$3",[tenantId,p.stageId,p.pipelineId]);
+        if(!stage.rows[0]) throw new Error("Pipeline stage not found");
+        if(p.contactId){ const contact=await tx.query("SELECT id FROM entities WHERE tenant_id=$1 AND id=$2 AND entity_type='person'",[tenantId,p.contactId]); if(!contact.rows[0]) throw new Error("Contact not found"); }
         await tx.query(
           `INSERT INTO opportunities
            (id,tenant_id,contact_entity_id,pipeline_id,stage_id,title,value,currency,status,probability,custom_fields)
@@ -273,6 +293,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
         );
         if(!current.rows[0]) throw new Error("Opportunity not found");
         const before=current.rows[0];
+        if(p.stageId){ const stage=await tx.query("SELECT id FROM pipeline_stages WHERE tenant_id=$1 AND id=$2 AND pipeline_id=$3",[tenantId,p.stageId,before.pipeline_id]); if(!stage.rows[0]) throw new Error("Pipeline stage not found"); }
         const customFields={...(before.custom_fields ?? {})};
         if(p.notes!==undefined) customFields.notes=p.notes;
         if(p.ownerId!==undefined) customFields.sourceOwnerId=p.ownerId;
@@ -301,6 +322,9 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
         const id=String(p.id ?? randomUUID());
         const subjectId=String(p.contactId ?? p.subjectId ?? "");
         if(!subjectId) throw new Error("activity subject id is required");
+        if(p.subjectType && p.subjectType!=="person") throw new Error("Unsupported activity subject type");
+        const contact=await tx.query("SELECT id FROM entities WHERE tenant_id=$1 AND id=$2 AND entity_type='person'",[tenantId,subjectId]);
+        if(!contact.rows[0]) throw new Error("Contact not found");
         await tx.query(
           `INSERT INTO activities
            (id,tenant_id,subject_type,subject_id,activity_type,title,notes,occurred_at,metadata)
@@ -324,6 +348,12 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
       default:
         throw new Error(`Unsupported command action: ${command.action}`);
     }
+  }
+
+  async getEntity(id:string,tenantId:string):Promise<unknown>{
+    const result=await this.db.query("SELECT id,entity_type,display_name,lifecycle_state,attributes FROM entities WHERE tenant_id=$1 AND id=$2 AND entity_type='person'",[tenantId,id]);
+    if(!result.rows[0]) throw new Error("Entity not found");
+    return result.rows[0];
   }
 
   async today(ownerId:string,tenantId?:string):Promise<NextAction[]>{
@@ -534,7 +564,7 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
     const facts=await this.listTaxFacts(input,tenantId);
     const unreviewed=facts.filter(f=>f.reviewStatus==="unreviewed").map(f=>f.canonicalField);
     const rejected=facts.filter(f=>f.reviewStatus==="rejected").map(f=>f.canonicalField);
-    return {ready:unreviewed.length===0 && rejected.length===0,unreviewed,rejected};
+    return {ready:facts.length>0 && unreviewed.length===0 && rejected.length===0,unreviewed,rejected};
   }
 
   async saveTaxFilingApproval(approval:FilingApproval,tenantId?:string):Promise<void>{

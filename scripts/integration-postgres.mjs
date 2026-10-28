@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
+import { readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { PostgresDatabase, MigrationRunner } from "../packages/database/dist/index.js";
 import { DefaultLegacyApiServices } from "../packages/api/dist/services.js";
@@ -14,7 +15,7 @@ try{
   const appliedNow=await runner.runPending();
   const applied=await runner.applied();
 
-  assert.equal(applied.size,18,"expected all 18 migrations to be applied");
+  assert.equal(applied.size,(await readdir(resolve("packages/database/migrations"))).filter(name=>/^\d+.*\.sql$/.test(name)).length,"expected all migration files applied");
 
   const tenantId=randomUUID();
   await db.query(

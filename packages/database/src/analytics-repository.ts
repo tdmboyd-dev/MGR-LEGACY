@@ -1,3 +1,4 @@
+import { tenantCheckedQuery } from "./tenant-safe-query.js";
 import type { Goal, ReportDefinition } from "@mgr/legacy-analytics";
 import type { SqlExecutor } from "./sql.js";
 
@@ -5,11 +6,12 @@ export class PostgresAnalyticsRepository {
   constructor(private readonly db:SqlExecutor){}
 
   async saveReport(definition:ReportDefinition):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO saved_reports (id,tenant_id,name,definition)
        VALUES ($1,$2,$3,$4::jsonb)
        ON CONFLICT (id)
-       DO UPDATE SET name=EXCLUDED.name,definition=EXCLUDED.definition,updated_at=now()`,
+       DO UPDATE SET name=EXCLUDED.name,definition=EXCLUDED.definition,updated_at=now()
+       WHERE saved_reports.tenant_id=EXCLUDED.tenant_id`,
       [definition.id,definition.tenantId,definition.name,JSON.stringify(definition)]
     );
   }
@@ -23,14 +25,15 @@ export class PostgresAnalyticsRepository {
   }
 
   async saveGoal(goal:Goal):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO goals
        (id,tenant_id,scope_type,scope_id,metric_key,target,period_start,period_end)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
        ON CONFLICT (id)
        DO UPDATE SET scope_type=EXCLUDED.scope_type,scope_id=EXCLUDED.scope_id,
        metric_key=EXCLUDED.metric_key,target=EXCLUDED.target,
-       period_start=EXCLUDED.period_start,period_end=EXCLUDED.period_end,updated_at=now()`,
+       period_start=EXCLUDED.period_start,period_end=EXCLUDED.period_end,updated_at=now()
+       WHERE goals.tenant_id=EXCLUDED.tenant_id`,
       [
         goal.id,goal.tenantId,goal.scopeType,goal.scopeId,goal.metricKey,
         goal.target,goal.periodStart,goal.periodEnd

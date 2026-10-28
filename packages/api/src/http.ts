@@ -45,9 +45,37 @@ export function createLegacyServer(
       if(!authorize(req,auth)) return json(res,401,{error:"Unauthorized"});
 
       const tenant=tenantId(req);
+      const principal=auth.principal;
+      if(principal){
+        if(!tenant || !principal.tenantIds.includes(tenant)) return json(res,403,{error:"Tenant forbidden"});
+        const actorHeader=req.headers["x-actor-id"];
+        if(actorHeader && actorHeader!==principal.actorId) return json(res,403,{error:"Actor forbidden"});
+        const permittedRead=req.method==="GET" && (url.pathname.startsWith("/v1/truth/") || url.pathname.startsWith("/v1/entities/"));
+        if(!(req.method==="POST" && url.pathname==="/v1/commands") && !permittedRead) return json(res,403,{error:"Route forbidden"});
+        if(permittedRead && !principal.actions.includes("crm.read_contact")) return json(res,403,{error:"Action forbidden"});
+        if(permittedRead && url.pathname.startsWith("/v1/truth/")){
+          const requestedActor=url.searchParams.get("actorId");
+          const requestedAction=url.searchParams.get("action");
+          if(requestedActor && requestedActor!==principal.actorId) return json(res,403,{error:"Actor forbidden"});
+          if(!requestedAction || !principal.actions.includes(requestedAction)) return json(res,403,{error:"Granted action filter is required"});
+          url.searchParams.set("actorId",principal.actorId);
+        }
+      }
+      if(req.method==="GET" && url.pathname.startsWith("/v1/entities/") && services.getEntity && tenant){
+        return json(res,200,await services.getEntity(decodeURIComponent(url.pathname.slice("/v1/entities/".length)),tenant));
+      }
 
       if(req.method==="POST" && url.pathname==="/v1/commands"){
         const body=await readJson(req);
+        if(!body || typeof body!=="object" || Array.isArray(body)) return json(res,400,{error:"Invalid command body"});
+        if(principal){
+          if(!principal.actions.includes(body.action)) return json(res,403,{error:"Action forbidden"});
+          if(body.metadata?.shadow) return json(res,403,{error:"Shadow ingest forbidden"});
+          if((body.actor?.actorId && body.actor.actorId!==principal.actorId) || (body.metadata?.userId && body.metadata.userId!==principal.actorId)) return json(res,403,{error:"Actor forbidden"});
+          if(body.metadata?.tenantId && body.metadata.tenantId!==tenant) return json(res,403,{error:"Tenant forbidden"});
+          if(body.commandId || body.scope || body.actor){ if(!body.commandId || !body.scope || !body.actor || body.actor.actorId!==principal.actorId || body.actor.actorType!=="service" || body.actor.impersonatedBy) return json(res,403,{error:"Actor forbidden"}); }
+          else body.metadata={...(body.metadata ?? {}),userId:principal.actorId,tenantId:tenant};
+        }
         if(tenant && body && typeof body==="object"){
           if(body.scope?.tenantId && String(body.scope.tenantId)!==tenant){
             return json(res,403,{error:"Tenant scope does not match request tenant"});
@@ -258,7 +286,7 @@ export function createLegacyServer(
       if(/is required|Invalid|Unsupported|cannot|must/i.test(message)) return json(res,400,{error:message});
       if(/not found/i.test(message)) return json(res,404,{error:message});
       if(/already in progress|conflict|duplicate/i.test(message)) return json(res,409,{error:message});
-      return json(res,500,{error:message});
+      return json(res,500,{error:"Internal service error"});
     }
   });
 }

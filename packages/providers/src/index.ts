@@ -55,7 +55,7 @@ async function requestJson(
   });
   if(!response.ok){
     const text=await response.text().catch(()=>"");
-    throw new Error(`Provider request failed: HTTP ${response.status}${text? ` - ${text.slice(0,300)}`:""}`);
+    throw new Error(`Provider request failed: HTTP ${response.status}`);
   }
   return response.json();
 }
@@ -74,6 +74,7 @@ export class HttpVoiceProvider implements VoiceProvider {
       this.config.headers ?? {},
       input
     );
+    if(typeof (body.text ?? body.transcript)!=="string" || !(body.text ?? body.transcript).trim()) throw new Error("Provider returned no transcript");
     return {
       text:String(body.text ?? body.transcript ?? ""),
       confidence:Number(body.confidence ?? 1)
@@ -88,7 +89,9 @@ export class HttpVoiceProvider implements VoiceProvider {
       this.config.headers ?? {},
       input
     );
-    return {uri:String(body.uri ?? body.url ?? "")};
+    const uri=body.uri ?? body.url;
+    if(typeof uri!=="string" || !uri.trim())throw new Error("Provider returned no speech artifact");
+    return {uri};
   }
 }
 
@@ -107,6 +110,7 @@ export class HttpEmbeddingProvider implements EmbeddingProvider {
       input
     );
     const vectors=(body.vectors ?? body.data?.map((item:any)=>item.embedding) ?? []) as number[][];
+    if(!Array.isArray(vectors)||vectors.length!==input.texts.length||vectors.some(v=>!Array.isArray(v)||!v.length||v.some(n=>!Number.isFinite(n)))||new Set(vectors.map(v=>v.length)).size>1)throw new Error("Provider returned invalid embeddings");
     return {
       vectors,
       model:String(body.model ?? input.model ?? "unknown"),
@@ -133,6 +137,7 @@ export class HttpImageGenerationProvider implements ImageGenerationProvider {
       input
     );
     const raw=body.images ?? body.data ?? [];
+    if(!Array.isArray(raw)||!raw.length||raw.some(item=>typeof (item.uri ?? item.url ?? item.b64_json)!=="string"||!(item.uri ?? item.url ?? item.b64_json).trim()))throw new Error("Provider returned no image artifacts");
     return {
       images:raw.map((item:any)=>({
         uri:String(item.uri ?? item.url ?? item.b64_json ?? ""),
@@ -168,6 +173,9 @@ export class HttpCreationProvider implements CreationProvider {
       this.config.headers ?? {},
       job
     );
+    const raw=body.outputs ?? body.data ?? [];
+    if(body.status && body.status!=="succeeded")throw new Error("Provider has not confirmed creation completion");
+    if(!Array.isArray(raw)||!raw.length||raw.some(item=>typeof (item.uri ?? item.url)!=="string"||!(item.uri ?? item.url).trim()))throw new Error("Provider returned no creation artifacts");
     return {
       ...job,
       provider:this.providerKey,
@@ -175,7 +183,7 @@ export class HttpCreationProvider implements CreationProvider {
       status:"succeeded",
       completedAt:new Date().toISOString(),
       cost:body.cost===undefined ? job.cost : Number(body.cost),
-      outputs:(body.outputs ?? body.data ?? []).map((item:any)=>({
+      outputs:raw.map((item:any)=>({
         kind:String(item.kind ?? job.type),
         uri:String(item.uri ?? item.url ?? ""),
         sha256:item.sha256,

@@ -1,5 +1,7 @@
 # MGR Legacy — Complete Capability Map
 
+This is a target catalog, not an acceptance scorecard. Actual proof and product gaps are in `docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md`.
+
 Legend:
 - **CORE** = shared MGR capability
 - **NATIVE+** = MGR-native synthesis/upgrade

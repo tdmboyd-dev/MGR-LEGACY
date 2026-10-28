@@ -55,12 +55,14 @@ export class TaxFactGraph {
     const mandatory=new Set(this.policy.mandatoryReviewFields);
 
     for(const candidate of candidates){
-      if(candidate.confidence<0 || candidate.confidence>1) throw new Error("Tax fact confidence must be between 0 and 1");
+      if(!Number.isFinite(candidate.confidence) || candidate.confidence<0 || candidate.confidence>1) throw new Error("Tax fact confidence must be between 0 and 1");
       const reviewStatus:TaxFactReviewStatus=
         candidate.confidence>=this.policy.autoAcceptThreshold && !mandatory.has(candidate.canonicalField)
           ? "accepted"
           : "unreviewed";
       const fact:TaxFact={...structuredClone(candidate),reviewStatus};
+      const existing=this.facts.get(fact.id);
+      if(existing && existing.tenantId!==fact.tenantId) throw new Error("Tenant mismatch");
       this.facts.set(fact.id,fact);
       (reviewStatus==="accepted"?accepted:reviewQueue).push(structuredClone(fact));
     }
@@ -108,6 +110,7 @@ export class TaxFactGraph {
 
   assertReadyForPreparation(tenantId:string,clientEntityId:string,taxYear:number):void{
     const facts=this.listForClient(tenantId,clientEntityId,taxYear);
+    if(!facts.length)throw new Error("Tax facts are required for preparation");
     const unresolved=facts.filter(f=>f.reviewStatus==="unreviewed");
     if(unresolved.length) throw new Error(`Tax facts require review: ${unresolved.map(f=>f.canonicalField).join(", ")}`);
     const rejected=facts.filter(f=>f.reviewStatus==="rejected");

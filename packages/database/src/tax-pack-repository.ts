@@ -1,3 +1,4 @@
+import { tenantCheckedQuery } from "./tenant-safe-query.js";
 import type {
   BankProductApplication,
   ClientPortalRequest,
@@ -48,13 +49,14 @@ export class PostgresTaxPackRepository {
   }
 
   async saveSignature(auth:SignatureAuthorization):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO signature_authorizations
        (id,tenant_id,client_entity_id,return_id,form_type,status,signed_at,signer_id,evidence)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb)
        ON CONFLICT (id)
        DO UPDATE SET status=EXCLUDED.status,signed_at=EXCLUDED.signed_at,
-       signer_id=EXCLUDED.signer_id,evidence=EXCLUDED.evidence,updated_at=now()`,
+       signer_id=EXCLUDED.signer_id,evidence=EXCLUDED.evidence,updated_at=now()
+       WHERE signature_authorizations.tenant_id=EXCLUDED.tenant_id`,
       [
         auth.id,auth.tenantId,auth.clientEntityId,auth.returnId,auth.formType,auth.status,
         auth.signedAt ?? null,auth.signerId ?? null,JSON.stringify(auth.evidence)
@@ -63,14 +65,15 @@ export class PostgresTaxPackRepository {
   }
 
   async saveBankProduct(app:BankProductApplication):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO bank_product_applications
        (id,tenant_id,client_entity_id,return_id,provider_key,product_type,status,expected_refund,advance_amount,fees,funded_amount,updated_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
        ON CONFLICT (id)
        DO UPDATE SET status=EXCLUDED.status,expected_refund=EXCLUDED.expected_refund,
        advance_amount=EXCLUDED.advance_amount,fees=EXCLUDED.fees,funded_amount=EXCLUDED.funded_amount,
-       updated_at=EXCLUDED.updated_at`,
+       updated_at=EXCLUDED.updated_at
+       WHERE bank_product_applications.tenant_id=EXCLUDED.tenant_id`,
       [
         app.id,app.tenantId,app.clientEntityId,app.returnId,app.providerKey,app.productType,
         app.status,app.expectedRefund,app.advanceAmount ?? null,app.fees,app.fundedAmount ?? null,app.updatedAt
@@ -94,7 +97,7 @@ export class PostgresTaxPackRepository {
   }
 
   async saveTaxFact(fact:TaxFact):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO tax_facts
        (id,tenant_id,client_entity_id,tax_year,form_type,canonical_field,value,confidence,source,extraction,
         review_status,reviewed_by,reviewed_at,original_value)
@@ -102,7 +105,8 @@ export class PostgresTaxPackRepository {
        ON CONFLICT (id)
        DO UPDATE SET value=EXCLUDED.value,confidence=EXCLUDED.confidence,source=EXCLUDED.source,
        extraction=EXCLUDED.extraction,review_status=EXCLUDED.review_status,reviewed_by=EXCLUDED.reviewed_by,
-       reviewed_at=EXCLUDED.reviewed_at,original_value=EXCLUDED.original_value,updated_at=now()`,
+       reviewed_at=EXCLUDED.reviewed_at,original_value=EXCLUDED.original_value,updated_at=now()
+       WHERE tax_facts.tenant_id=EXCLUDED.tenant_id`,
       [
         fact.id,fact.tenantId,fact.clientEntityId,fact.taxYear,fact.formType,fact.canonicalField,
         JSON.stringify(fact.value),fact.confidence,JSON.stringify(fact.source),JSON.stringify(fact.extraction),

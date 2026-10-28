@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { HttpEmbeddingProvider, HttpImageGenerationProvider } from "./index.js";
+import { HttpEmbeddingProvider, HttpImageGenerationProvider, HttpVoiceProvider } from "./index.js";
 
 const fakeFetch:typeof fetch=async(input)=>{
   const url=String(input);
@@ -25,4 +25,11 @@ test("image adapter normalizes provider response",async()=>{
   },fakeFetch);
   const result=await provider.generate({prompt:"test"});
   assert.equal(result.images[0]?.uri,"https://example.test/a.png");
+});
+
+test("empty provider responses never become artifacts or embeddings",async()=>{
+ const empty:typeof fetch=async()=>Response.json({});
+ await assert.rejects(()=>new HttpImageGenerationProvider({providerKey:"p",baseUrl:"https://fixture.invalid",imagePath:"image"},empty).generate({prompt:"test"}),/no image artifacts/);
+ await assert.rejects(()=>new HttpEmbeddingProvider({providerKey:"p",baseUrl:"https://fixture.invalid",embeddingsPath:"embed"},empty).embed({texts:["test"]}),/invalid embeddings/);
+ await assert.rejects(()=>new HttpVoiceProvider({providerKey:"p",baseUrl:"https://fixture.invalid",speechPath:"speech"},empty).synthesize({text:"test"}),/no speech artifact/);
 });

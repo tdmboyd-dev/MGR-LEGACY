@@ -38,6 +38,7 @@ export class CommunicationService {
 
   async send(input:CommunicationSendInput):Promise<Message> {
     const consent=await this.consent.get(input.tenantId,input.contactId,input.channel);
+    if(consent && (consent.tenantId!==input.tenantId || consent.contactId!==input.contactId || consent.channel!==input.channel)) throw new Error("Send blocked: consent identity mismatch");
     const decision=this.guard.canSend(consent);
     if(!decision.allowed) throw new Error(`Send blocked: ${decision.reason}`);
 
