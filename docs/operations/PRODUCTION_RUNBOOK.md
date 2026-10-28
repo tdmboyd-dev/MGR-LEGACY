@@ -9,6 +9,8 @@ Updated: 2026-10-05
 - `LEGACY_DATABASE_URL` or `DATABASE_URL`
 - optional `LEGACY_DATABASE_SSL=true`
 - `LEGACY_API_TOKEN` for protected API access
+- `LEGACY_SERVICE_ACTOR_ID`, `LEGACY_ALLOWED_TENANT_IDS`, `LEGACY_ALLOWED_ACTIONS` for an explicit scoped service grant
+- `LEGACY_HOST` defaults to `127.0.0.1`; a public deployment requires a separately qualified network boundary
 - `LEGACY_DEFAULT_TENANT_ID` only when a deployment intentionally uses one default tenant
 
 ## Build and verification
@@ -111,3 +113,8 @@ Recovery order:
 7. autonomous execution modes
 
 Keep autonomous execution at observe/recommend until post-recovery verification passes.
+
+
+## October 27 strict service boundary
+
+Read the verified integration report before deployment. Scoped truth reads require an explicit granted `action` filter and bind the configured actor. Event-ledger read methods require tenant ID first. Unknown old idempotency digests fail closed, preserving stored responses. Historical outbox duplicates stop migration 0020 for investigation; no records are automatically deleted. SSL now verifies the server certificate when enabled. Internal worker/admin APIs remain trusted-process ports rather than qualified remote capabilities.

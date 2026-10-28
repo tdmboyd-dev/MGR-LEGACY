@@ -1,5 +1,7 @@
 # Floot Reclaim — Complete Build Queue
 
+
+October 27 evidence correction: read [the verified integration report](../ecosystem/LEGACY-VERIFIED-INTEGRATION.md) for current acceptance. Older completion checkmarks include contracts/helpers; broad worker, conditional workflow and live-provider behavior remains unfinished. Scoped real PostgreSQL checks pass 26/26 and unit tests 67/67. The narrow local contact service is connected; full Tevin proof is recorded by the parent ecosystem run.
 Updated: 2026-10-05
 
 Floot is no longer a dependency or completion gate. This file preserves the complete scope previously assigned to the MGR Sales Dashboard / Floot effort and maps every item into MGR Legacy.

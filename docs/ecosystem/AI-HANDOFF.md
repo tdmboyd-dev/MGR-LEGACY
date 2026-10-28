@@ -1,5 +1,7 @@
 # MGR-LEGACY — AI ecosystem handoff
 
+
+October 27 evidence correction: read [the verified integration report](LEGACY-VERIFIED-INTEGRATION.md) for current acceptance. Older completion checkmarks include contracts/helpers; broad worker, conditional workflow and live-provider behavior remains unfinished. Scoped real PostgreSQL checks pass 26/26 and unit tests 67/67. The narrow local contact service is connected; full Tevin proof is recorded by the parent ecosystem run.
 Baseline: `6f60bbdb83af29bfb3777c68bf013a3b384f76e8`. Existing default: `main`. Repository: https://github.com/tdmboyd-dev/MGR-LEGACY.
 
 Read existing AGENTS/work order/current handoff first. This file is integration context, not an additional work order or grant.

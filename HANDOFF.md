@@ -73,7 +73,7 @@ Additive source-pinned ecosystem context: [human handoff](docs/ecosystem/HUMAN-H
 
 ## October 27 - scoped real service and source hardening
 
-Active branch: `audit/ecosystem-2026-10-27`; owner asked to preserve default branches. Read [verified integration report](docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md) before relying on older completion claims. All 201 original product TypeScript files and 20 migrations were read, plus new source/tests. This does not certify remaining research/archive documents.
+Active branch: `audit/ecosystem-2026-10-27`; owner asked to preserve default branches. Read [verified integration report](docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md) before relying on older completion claims. All 201 original product TypeScript files and 20 migrations were read, plus new source/tests. The remaining tracked repository text was subsequently read too; installed dependencies, generated output and runtime/binary files are outside the reading claim. Reading does not certify full product acceptance.
 
 Executed: 67 unit tests; 26 scoped real PostgreSQL checks; PostgreSQL/API/concurrency regressions; exact v18-to-v20 preservation; v7-to-v20 upgrade; actual backup/restore. Parent ecosystem evidence owns complete Tevin/MCP workflow acceptance. Generated local fixture credentials remain outside this repo. Production stores were not overwritten.
 

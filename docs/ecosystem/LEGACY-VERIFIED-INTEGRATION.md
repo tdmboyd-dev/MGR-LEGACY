@@ -28,7 +28,7 @@ The PostgreSQL instance uses synthetic fixture data, loopback, generated credent
 
 ## Source reading
 
-All 201 original product TypeScript files, including tests, were semantically read end to end. New source/tests were also read. All 20 SQL migrations and mandatory architecture/build/handoff documents were read. The SHA-256 ledger distinguishes full, partial and unread content. Remaining research/archive/provenance documents are not silently counted as read. This is not certification of every repository file.
+All 201 original product TypeScript files, including tests, were semantically read end to end. New source/tests were also read. All 20 SQL migrations and mandatory architecture/build/handoff documents were read. The SHA-256 ledger distinguishes full, partial and unread content. All remaining tracked repository text (documentation, configuration, manifests, lockfile and scripts) was subsequently read as well. The ledger excludes installed dependencies, generated outputs and runtime/binary files. Reading is not a claim that every capability is complete.
 
 ## What exists versus what remains
 
