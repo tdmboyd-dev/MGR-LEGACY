@@ -13,6 +13,7 @@ export interface CommandIngressInput {
 
 export interface LegacyApiServices {
   health():Promise<Record<string,unknown>>;
+  readEvents?(input:import('@mgr/legacy-database').EventFeedQuery):Promise<{events:import('@mgr/legacy-contracts').LegacyEvent[];after:string}>;
   getEntity?(id:string,tenantId:string):Promise<unknown>;
   executeCommand(input:CommandIngressInput|Command):Promise<unknown>;
   today(ownerId:string,tenantId?:string):Promise<NextAction[]>;
@@ -99,5 +100,5 @@ export interface LegacyApiServices {
 
 export interface ApiAuthConfig {
   bearerToken?:string;
-  principal?:{actorId:string;tenantIds:string[];actions:string[]};
+  principal?:{actorId:string;tenantIds:string[];actions:string[];eventReadScopes?:Array<{tenantId:string;scopeType:string;scopeId:string;subjectType:string;subjectId?:string;eventTypes:string[];expiresAt:number}>};
 }

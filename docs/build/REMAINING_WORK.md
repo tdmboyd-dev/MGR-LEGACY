@@ -1,32 +1,22 @@
 # MGR Legacy — Exact Remaining Work
 
+Current qualification and proof scopes live in [HANDOFF.md](../../HANDOFF.md). Canonical focused66ONE/73Legacy/113API and27chain checks pass; full joined qualification/security/publication remain pending. Earlier21chain/55ONE receipts retain their isolated source scope. [BUILD_LIST.md](BUILD_LIST.md) retains every original build gate. Core implementation is substantial; repository-owned work remains.
 
-October 27 evidence correction: read [the verified integration report](../ecosystem/LEGACY-VERIFIED-INTEGRATION.md) for current acceptance. Older completion checkmarks include contracts/helpers; broad worker, conditional workflow and live-provider behavior remains unfinished. Scoped real PostgreSQL checks pass 26/26 and unit tests 67/67. The narrow local contact service is connected; full Tevin proof is recorded by the parent ecosystem run.
-Updated: 2026-10-06
+## Remaining ordinary event work
 
-## Repository-owned completion state
+1. Qualify the newly wired normal ONE host/server/WorkTools routes in the full joined run and register controlled actual domain/edge hosts and tenant scopes explicitly.
+2. Implement downstream field-authority/staleness reconciliation, ledger quota/retention and operational error/latency observability.
+3. Define cursor rebase and credential-rotation behavior, then qualify broader workflows, migration parity and recovery. The bounded chain does not cover every domain writer, privileged sequence manipulation or Legacy restore.
 
-The core Legacy implementation and the hardening work that can be proven from repository-controlled CI are built.
+## Other ordinary repository work
 
-Completed repository-owned proof includes:
-
-- PostgreSQL migrations through `0018_tax_fact_graph.sql`
-- clean PostgreSQL 16 migration execution
-- upgrade-path migration execution
-- authenticated API/PostgreSQL integration
-- tenant isolation and spoof rejection
-- malformed/oversized request handling
-- idempotent replay and concurrent-delivery checks
-- backup/restore drill
-- load-smoke harness
-- Action Receipts and Truth Console
-- Tax Fact Graph, review lineage and explicit filing approval
-- governed tax-software adapter contracts
-- MGR API/MCP authenticated boundary plus cross-process duplicate/timeout/restart reconciliation
-- MGR Agents CRM mutation bridge wired to real contact/deal/activity tool paths
-- Elite Hub Tax Fact/filing-approval bridge wired to Legacy
-
-Latest successful Legacy PostgreSQL hardening run recorded here: `37299843446`.
+- Integrate conditional branch/join, persisted waits/subflows and general workflow semantics; unsupported conditional edges must fail closed.
+- Implement persisted workflow compensation/rollback through the existing runtime, checkpoint and Action Receipt contracts. Bind the tenant/run/workflow version, completed original actions and explicitly authorized compensation; retain durable progress and original-to-compensation receipt linkage. Qualify partial failure, cancellation, duplicate/restart recovery, conflicts and uncertain original/compensation outcomes before retry. Do not compensate an unknown external effect blindly or describe database transaction rollback, cutover-state switching or a reversed repair plan as completed workflow compensation. Real provider/payment effects remain separately gated.
+- Complete tenant-scoped worker ports and general tenant SQL reference enforcement, then qualify durable runner recovery across broader jobs.
+- Complete durable communications reconciliation and callback/failover behavior; primitives do not establish delivery.
+- Validate production-source intelligence adapters, analytics data/performance, extension threat model and webhook/runtime integration.
+- Expand Agents and Elite Hub adoption beyond the bounded connected paths; retain exact backfill, dual-write, parity and rollback gates below.
+- Continue `FLOOT_RECLAIM_BUILD_QUEUE.md` and `SHARED_ADOPTION_PLAN.md` where applicable, using `../ecosystem/LEGACY-VERIFIED-INTEGRATION.md` and `../../evidence/completion-2026-10-28/RESULTS.md` for original evidence boundaries.
 
 ## Remaining work that requires real external systems
 
@@ -70,6 +60,6 @@ These are not honest candidates for fake repository completion.
 
 ## Rule
 
-Do not describe any external item above as complete until the real system produces evidence. Do not reopen repository-owned items merely because an older document still says they are planned; reconcile the document instead.
+Do not describe any external item above as complete until the real system produces evidence. Do not reopen a proven bounded item from stale prose, and do not close broader repository-owned work from a helper or local receipt.
 
 Floot is optional historical salvage and is not a product dependency.

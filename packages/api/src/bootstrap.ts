@@ -23,13 +23,18 @@ export async function bootstrapLegacyApi():Promise<BootstrapResult>{
   const defaultTenantId=process.env.LEGACY_DEFAULT_TENANT_ID;
   const ssl=String(process.env.LEGACY_DATABASE_SSL ?? "false").toLowerCase()==="true";
 
+  // Explicit host-controlled read grants; absent means events are unavailable.
+  // Values contain authority scopes, never read from a request or inferred from CRM grants.
+  const eventReadScopes=process.env.LEGACY_EVENT_READ_SCOPES_JSON?JSON.parse(process.env.LEGACY_EVENT_READ_SCOPES_JSON):[];
+  if(!Array.isArray(eventReadScopes))throw Error('Invalid event read scopes');
+
   const db=new PostgresDatabase(databaseUrl,{ssl});
   const here=dirname(fileURLToPath(import.meta.url));
   const migrationsDir=resolve(here,"../../database/migrations");
   const migrations=await new MigrationRunner(db,migrationsDir).runPending();
 
   const services=new DefaultLegacyApiServices(db,defaultTenantId);
-  const server=createLegacyServer(services,{bearerToken:token,principal:{actorId,tenantIds,actions}});
+  const server=createLegacyServer(services,{bearerToken:token,principal:{actorId,tenantIds,actions,eventReadScopes}});
 
   await new Promise<void>((resolvePromise,reject)=>{
     server.once("error",reject);

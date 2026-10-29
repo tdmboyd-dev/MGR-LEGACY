@@ -9,6 +9,7 @@ import {
   PostgresConnectorManifestRepository,
   PostgresAuditStore,
   PostgresEventLedger,
+  readEventFeed,
   PostgresExtensionRepository,
   PostgresIdempotencyStore,
   PostgresOperationalTodayRepository,
@@ -37,6 +38,8 @@ export class DefaultLegacyApiServices implements LegacyApiServices {
     private readonly db:PostgresDatabase,
     private readonly defaultTenantId?:string
   ) {}
+
+  readEvents(input:import('@mgr/legacy-database').EventFeedQuery){return readEventFeed(this.db,input);}
 
   async health():Promise<Record<string,unknown>>{
     const started=Date.now();

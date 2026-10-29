@@ -1,6 +1,6 @@
 import type { LegacyEvent } from "@mgr/legacy-contracts";
 import type { EventLedger } from "@mgr/legacy-core";
-import type { SqlExecutor } from "./sql.js";
+import type { SqlExecutor, SqlDatabase } from "./sql.js";
 
 interface EventRow {
   event_id: string;
@@ -107,4 +107,33 @@ export class PostgresEventLedger implements EventLedger {
     );
     return result.rows.map(mapRow);
   }
+}
+
+
+export interface EventFeedQuery {tenantId:string;actorId:string;scopeType:string;scopeId:string;subjectType:string;subjectId?:string;eventTypes:string[];after:string;limit:number}
+/** Bounded read over the SAME durable event ledger. SHARE waits for existing
+ * INSERT transactions before selecting sequence order, preventing an earlier
+ * uncommitted bigserial row from appearing behind the returned cursor. It briefly
+ * blocks new ledger writers globally; timeouts deny rather than skip a gap.
+ * Direct privileged SQL that manually reserves/inserts old sequence numbers is
+ * outside this service contract. No new ledger/counter/migration is introduced.
+ */
+export async function readEventFeed(db:SqlDatabase,input:EventFeedQuery){
+ const token=(x:unknown)=>typeof x==='string'&&!!x&&x.length<=512&&!/[\u0000-\u001f]/.test(x);
+ if(!db||typeof db.begin!=='function'||![input.tenantId,input.actorId,input.scopeType,input.scopeId,input.subjectType].every(token)||input.subjectId!==undefined&&!token(input.subjectId)||!Array.isArray(input.eventTypes)||!input.eventTypes.length||input.eventTypes.length>10||input.eventTypes.some(x=>!token(x))||!/^(0|[1-9][0-9]{0,18})$/.test(input.after)||BigInt(input.after)>9223372036854775807n||!Number.isSafeInteger(input.limit)||input.limit<1||input.limit>100)throw Error('Invalid event feed query');
+ const tx=await db.begin();
+ try{
+  await tx.query("SET LOCAL lock_timeout='2000ms'");await tx.query("SET LOCAL statement_timeout='2000ms'");
+  await tx.query('LOCK TABLE event_ledger IN SHARE MODE');
+  const params=[input.tenantId,input.actorId,input.scopeType,input.scopeId,input.subjectType,input.subjectId??null,input.eventTypes,input.after,input.limit];
+  const where='tenant_id=$1 AND actor_id=$2 AND scope_type=$3 AND scope_id=$4 AND subject_type=$5 AND ($6::text IS NULL OR subject_id=$6) AND event_type=ANY($7::text[]) AND sequence_no>$8::bigint';
+  // Admit size metadata before transferring any raw payload into this process.
+  // The conservative1KiB allowance covers the canonical nested identity wrapper.
+  const sizes=await tx.query<{event_id:string;encoded_bytes:number}>(`SELECT event_id,octet_length(row_to_json(e)::text) encoded_bytes FROM event_ledger e WHERE ${where} ORDER BY sequence_no LIMIT $9`,params);
+  let projected=0;const ids:string[]=[];for(const row of sizes.rows){if(row.encoded_bytes+1024>48000){if(ids.length)break;throw Error('Invalid event feed oversized event');}if(projected+row.encoded_bytes+1024>48000)break;ids.push(row.event_id);projected+=row.encoded_bytes+1024;}
+  const rows=ids.length?await tx.query<EventRow&{sequence_no:string}>(`SELECT * FROM event_ledger WHERE ${where} AND event_id=ANY($10::uuid[]) ORDER BY sequence_no LIMIT $9`,[...params,ids]):{rows:[],rowCount:0};
+  let bytes=0,last=input.after;const events:LegacyEvent[]=[];
+  for(const row of rows.rows){const event=mapRow(row),size=Buffer.byteLength(JSON.stringify(event));if(size>48000)throw Error('Invalid event feed oversized event');if(bytes+size>48000)break;events.push(event);bytes+=size;last=String(row.sequence_no);}
+  await tx.commit();return{events,after:last};
+ }catch(error){await tx.rollback();throw error;}
 }

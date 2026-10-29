@@ -1,6 +1,6 @@
 # MGR Legacy — Build List
 
-Updated: 2026-10-06
+Read [the root handoff](../../HANDOFF.md) for current source/proof status: applied event packet and normal ONE route wiring pass canonical focused66ONE/73Legacy/113API and27chain checks; full joined qualification/security/publication remain pending. Existing checked entries record implemented contracts/helpers or their original bounded evidence; they do not certify all runtime journeys or production readiness. Migrations include 0020; older 0018 references are historical proof boundaries. The full ordinary/external backlog is [REMAINING_WORK.md](REMAINING_WORK.md).
 
 ## Gate 0 — Source-of-truth migration
 - [x] Create MGR-LEGACY repository
@@ -57,9 +57,10 @@ Updated: 2026-10-06
 ## Gate 4 — Workflow runtime
 - [x] trigger/action contracts and dependency ordering
 - [ ] conditional branch/join execution (unsupported edges fail closed)
-- [x] scheduling/waits
+- [x] scheduling/wait primitives; full workflow integration remains open
 - [x] subflow contracts/helpers
 - [ ] persisted subflow orchestration
+- [ ] persisted workflow compensation/rollback orchestration and recovery; a rollback-strategy field, receipt link or separate cutover/repair helper is not this acceptance (see REMAINING_WORK.md)
 - [x] retries
 - [x] approvals
 - [x] versioning/staging/activation
@@ -143,7 +144,7 @@ Updated: 2026-10-06
 ### MGR Agents
 - [x] source mapping/adoption helpers
 - [x] backfill/dual-write/reconciliation/cutover/rollback machinery
-- [ ] connect actual MGR Agents CRM/tool paths
+- [x] connect bounded MGR Agents contact/deal/activity tool paths; wider adoption remains open
 - [ ] run real backfill + reconciliation
 - [ ] cut reads/writes after parity
 - [ ] retire duplicate authoritative CRM only after rollback window
@@ -173,11 +174,6 @@ Updated: 2026-10-06
 - [ ] security review
 - [x] deployment and disaster-recovery runbooks
 
-## Current verdict
-
-Core platform implementation is substantially built and CI-green, but production completion is still blocked by live-system adoption and production-grade integration/hardening evidence. See `docs/build/REMAINING_WORK.md` for the exact remaining work.
-
-
 ## Gate 12 — MGR API/MCP shared edge integration
 - [x] Locate and audit `tdmboyd-dev/MGR-API-MCP`
 - [x] Define service boundary: API-MCP=edge/Brain, Legacy=business system of record, Creation OS=creation engine
@@ -193,11 +189,8 @@ Core platform implementation is substantially built and CI-green, but production
 - [x] complete remote MCP auth integration; [external] hosted ChatGPT MCP verification requires the real public host/OAuth account
 
 
-## October 27 evidence correction
-
-67/67 local unit tests and 26/26 scoped real PostgreSQL checks passed; migrations now run through 0020. These denominators certify those suites, not every catalog feature. Source reading covers all 201 original product TypeScript files plus new source/tests and all 20 migrations. See the verified integration report for permissions, strict replay, outbox migration, preserved v18 upgrade, backup/restore and remaining worker/provider/cutover gates.
 
 
-## October 28 atomic governance continuation
+## Event-read continuation
 
-On repair/completion-2026-10-28, tax review/current state+history and schema/workflow activation are now transactional. Reproduced partial-write, missing-target retirement and concurrent-active-version failures are repaired. Fresh TypeScript and67/67 unit tests pass; real isolated PostgreSQL atomic/failure/concurrency9/9 and existing scoped integration26/26 pass. See evidence/completion-2026-10-28/RESULTS.md for the exact before/after, source ledger, compatibility boundary, cleanup and remaining queue. No general workflow, live-provider, cutover or production completion claimed. Main is preserved; this branch retains prior audit fixes.
+The scoped producer, signed cursor, byte admission and MCP consumer are implemented in the reviewed packet. Remaining: controlled actual host/tenant registration and full joined qualification, downstream field truth/freshness, quota/retention, observability, restore/rotation cursor policy and broader migration/workflow acceptance. Preserve tenant-scoped worker ports/SQL references and durable communications reconciliation as ordinary work; transactional governance repairs do not close them.

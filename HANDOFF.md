@@ -1,43 +1,36 @@
 # MGR Legacy — Continuation / Handoff
 
-Last updated: 2026-10-06
+## Current event-read status — 2026-10-29
 
-## Canonical state
+The reviewed event-read packet and normal ONE server/WorkTools route wiring are applied to the canonical working checkouts. Current canonical focused receipts pass **66/66 ONE**, **73/73 Legacy** and **113/113 API-MCP** checks. The canonical PostgreSQL16.15 → Legacy loopback HTTP → official authenticated MCP protocol → ONE SQLite chain passes **27/27**. Earlier isolated **21/21** chain and **55/55** ONE receipts retain only their original source scope. These scopes overlap: do not add counts or infer full-product acceptance. Full joined qualification/security and publication of the new candidate remain parent-owned and pending.
 
-`main` is the source of truth. Normal pushes must not consume GitHub Actions minutes; use the existing manual/targeted verification workflows only when a meaningful proof is needed.
+The current27-check canonical chain was rerun after the API-MCP malformed-UTF8 decoder correction; the final source-bound receipt is in canonical ONE `evidence/gateway-integration-2026-10-29/legacy-events-owner-http-utf8-final/`. API typecheck and113 tests pass, including four malformed byte sequences denied and exact valid split Unicode preserved. Its actual disposable PostgreSQL stop/status3/pidfile/data-removal receipt is retained. The previous27 run remains dated evidence for the earlier edge source.
 
-MGR Legacy is the authoritative shared business data/workflow/action layer. MGR-API-MCP is the client-neutral AI/MCP edge. Creation OS remains the creation/media authority.
+The chain uses disposable synthetic identities/data and injected fetch into the actual MCP authenticated handler, not public MCP hosting. Exact source hashes, failed attempts, final receipts and owned fixture cleanup are in [the integration report](C:/Users/cool/Documents/Codex/Projects/MGR-ONE/evidence/gateway-integration-2026-10-28/legacy-events/REPORT.md). Parent must qualify the applied canonical sources before any current-release claim. No package or child closure follows from these receipts.
 
-## Verified repository-owned hardening
+## Authority and implemented boundaries
 
-The repository now includes and has passed the available automated proof for:
+MGR Legacy is the shared authoritative business data/workflow/action layer; MGR-API-MCP is the client-neutral transport edge; Creation OS owns creation/media execution. Preserve one entity graph, event truth and business receipt authority. Normal push-triggered Actions remain disabled; use deliberate manual/PR verification. Parent controls review and publication; do not switch branches to follow an obsolete checkpoint.
 
-- PostgreSQL 16 clean migration execution through migration `0018_tax_fact_graph.sql`
-- upgrade-path migration execution from the earlier schema state
-- authenticated API/PostgreSQL integration
-- tenant-isolation and tenant-spoof rejection
-- malformed JSON and oversized-payload handling
-- command idempotency and concurrent-delivery behavior
-- backup/restore recovery
-- Tax Fact Graph persistence, field-level confidence/review lineage and explicit preparer filing approval
-- governed browser/desktop tax-software adapter contracts with reviewed-fact and target-verification guards
-- Action Receipts / Truth Console authority
-- MGR-API-MCP cross-process timeout-after-commit reconciliation, duplicate delivery and edge restart proof
-- authenticated remote MCP boundary and client-neutral ChatGPT plugin packaging
+Legacy owns the event ledger and authenticated `GET /v1/events`. Its principal needs `events.read` and explicit `eventReadScopes` (tenant, scope, subject, event types and expiry), configured through `LEGACY_EVENT_READ_SCOPES_JSON`; missing registration grants no rows. MCP `mgr_legacy_events` additionally needs current `tools:read` and `legacy:events:read`. Actor/tenant and current domain grants are enforced independently. ONE uses the registered MCP tool; the edge owns no second event store or cursor database.
 
-Latest successful PostgreSQL hardening run recorded in this work: GitHub Actions run `37299843446`.
+Signed cursors bind the full actor/tenant selector and types. Ordered reads take a bounded SHARE lock that can briefly block global ledger inserts (2-second lock/statement deadlines). Byte preflight preserves a valid prefix and rejects an oversized first row without skipping. Privileged sequence bypass, destructive restore/deletion, cursor rebase and credential rotation need explicit operational policy.
 
-## Consumer adoption now wired
+Tax review/state/history and schema/workflow activation have transactional repairs. Prior exact atomic/failure/concurrency proof and retained failures are in `evidence/completion-2026-10-28/RESULTS.md`; broader scoped service, migration/upgrade and backup/restore evidence is in `docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md`. Those receipts keep their original scope and do not establish full capability acceptance.
 
-### MGR Elite Hub
+MGR Agents has a Legacy bridge on contact/deal/activity mutation paths, and Elite Hub has Tax Fact review/filing-approval client routes. These bounded connections do not complete all shared-layer adoption. Never retire either original store until real backfill/dual-write parity, cutover-critical reconciliation and rollback are proven.
 
-Elite Hub has a real Legacy tax client and authenticated Tax Fact review/filing-approval routes. Tax facts, review state and filing approvals are no longer intended to create a second authoritative tax-fact ledger in Elite Hub.
+## Remaining ordinary event work
 
-### MGR Agents
+1. Qualify the newly wired normal ONE host/server/WorkTools routes in the full joined run and register controlled actual domain/edge hosts and tenant scopes explicitly.
+2. Implement downstream field-authority/staleness reconciliation, ledger quota/retention and operational error/latency observability.
+3. Define cursor rebase and credential-rotation behavior, then qualify broader workflows, migration parity and recovery. The bounded chain does not cover every domain writer, privileged sequence manipulation or Legacy restore.
 
-`src/lib/legacy/bridge.ts` exists in MGR Agents and the actual CRM mutation tools are now wired into it for contact create/update, deal create/update and activity logging. Shadow mode can mirror real tool traffic for reconciliation without making Legacy authoritative prematurely.
+## Full unfinished-work continuation
 
-The cutover rule remains strict: do not retire the existing MGR Agents or Elite Hub stores until real backfill/dual-write parity and rollback are proven with their deployed data.
+Use `docs/build/BUILD_LIST.md` for all gate identities and `docs/build/REMAINING_WORK.md` for the actionable ordinary and external backlog. Preserve conditional branch/join/wait/subflow/compensation semantics, tenant-scoped worker ports and SQL references, durable communications reconciliation, production-source adapters, extension threat-model/live integration and broader consumer adoption as unfinished until their own acceptance. `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md` retains salvage scope; Floot is optional and not a product dependency.
+
+Source-inspected compensation boundary (2026-10-29): `FlowSpec.rollbackStrategy`, Action Receipt rollback linkage and separate cutover/Data Medic rollback helpers exist. `WorkflowRuntime` and `DurableWorkflowRunner` do not orchestrate/persist compensating actions; their current tests cover other bounded behavior. Gate 4 and REMAINING_WORK.md now retain this original unfinished obligation explicitly. This is a source inspection, not newly executed compensation/provider acceptance. Exact reading and source hashes: canonical ONE `evidence/gateway-integration-2026-10-29/legacy-compensation-inventory.md` / `.json`.
 
 ## What cannot be completed by repository code alone
 
@@ -53,35 +46,8 @@ These are external proof/credential/real-data gates, not missing core modules:
 
 Do not fabricate these receipts. Record them only when the external systems actually produce evidence.
 
-## Resume order
-
-Read:
-1. `AGENTS.md`
-2. `AI_START_HERE.md`
-3. this file
-4. `docs/build/BUILD_LIST.md`
-5. `docs/build/REMAINING_WORK.md`
-6. `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md`
-
-When a repository-owned gap is found, implement/test/fix it before reporting. Keep `main` and these source-of-truth files current.
 
 
-## Ecosystem review — October 27, 2026
+## Resume
 
-Additive source-pinned ecosystem context: [human handoff](docs/ecosystem/HUMAN-HANDOFF.md). This review branch preserves the default-branch baseline and existing work orders. Domain runtime/production acceptance is separate.
-
-
-## October 27 - scoped real service and source hardening
-
-Active branch: `audit/ecosystem-2026-10-27`; owner asked to preserve default branches. Read [verified integration report](docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md) before relying on older completion claims. All 201 original product TypeScript files and 20 migrations were read, plus new source/tests. The remaining tracked repository text was subsequently read too; installed dependencies, generated output and runtime/binary files are outside the reading claim. Reading does not certify full product acceptance.
-
-Executed: 67 unit tests; 26 scoped real PostgreSQL checks; PostgreSQL/API/concurrency regressions; exact v18-to-v20 preservation; v7-to-v20 upgrade; actual backup/restore. Parent ecosystem evidence owns complete Tevin/MCP workflow acceptance. Generated local fixture credentials remain outside this repo. Production stores were not overwritten.
-
-Bootstrap requires `LEGACY_API_TOKEN`, `LEGACY_DATABASE_URL`, `LEGACY_SERVICE_ACTOR_ID`, `LEGACY_ALLOWED_TENANT_IDS`, `LEGACY_ALLOWED_ACTIONS`; host defaults to loopback. Scoped receipt reads require a granted action filter and bind the service actor. EventLedger read methods now require tenant ID first. Unknown legacy key digests conflict while preserving old responses. Historical outbox duplicates require reviewed migration.
-
-Open implementation gaps include branch/wait/subflow integration, tenant-scoped worker ports, atomic activation/review, general tenant SQL references and durable communications reconciliation. Keep live/dangerous tools disabled until their own proof. Follow the next sequence in the verified integration report.
-
-
-## October 28 atomic governance continuation
-
-On repair/completion-2026-10-28, tax review/current state+history and schema/workflow activation are now transactional. Reproduced partial-write, missing-target retirement and concurrent-active-version failures are repaired. Fresh TypeScript and67/67 unit tests pass; real isolated PostgreSQL atomic/failure/concurrency9/9 and existing scoped integration26/26 pass. See evidence/completion-2026-10-28/RESULTS.md for the exact before/after, source ledger, compatibility boundary, cleanup and remaining queue. No general workflow, live-provider, cutover or production completion claimed. Main is preserved; this branch retains prior audit fixes.
+Read AGENTS.md → AI_START_HERE.md → this handoff → BUILD_LIST.md → REMAINING_WORK.md → the verified integration report and relevant original queue. Preserve original source/recovery folders and actual failed/cleanup receipts. No live production migration, provider send, signing or cutover is authorized by a local test receipt.

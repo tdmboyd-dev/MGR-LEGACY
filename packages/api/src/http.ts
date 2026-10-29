@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { authorize } from "./auth.js";
+import {eventFeed} from "./event-feed.js";
 import type { ApiAuthConfig, LegacyApiServices } from "./types.js";
 
 class PayloadTooLargeError extends Error {}
@@ -43,6 +44,8 @@ export function createLegacyServer(
       }
 
       if(!authorize(req,auth)) return json(res,401,{error:"Unauthorized"});
+
+      if(req.method==='GET'&&url.pathname==='/v1/events')return json(res,200,await eventFeed(req,url,auth,services));
 
       const tenant=tenantId(req);
       const principal=auth.principal;
@@ -282,6 +285,7 @@ export function createLegacyServer(
       const message=error instanceof Error?error.message:String(error);
       if(error instanceof PayloadTooLargeError) return json(res,413,{error:error.message});
       if(error instanceof SyntaxError) return json(res,400,{error:"Invalid JSON"});
+      if(message==="Event feed forbidden")return json(res,403,{error:message});
       if(message==="Tenant mismatch") return json(res,403,{error:message});
       if(/is required|Invalid|Unsupported|cannot|must/i.test(message)) return json(res,400,{error:message});
       if(/not found/i.test(message)) return json(res,404,{error:message});

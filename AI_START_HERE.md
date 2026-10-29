@@ -52,18 +52,8 @@ See `docs/native/NATIVE_SYSTEMS.md` for the full designs.
 - MGR Elite Hub consumes Legacy shared CRM/automation/comms/analytics plus the Tax & Service Bureau Pack.
 - Future MGR apps use the same shared platform instead of copying CRM code.
 
-## Source-of-truth rule
-`main` must stay current with every coherent completed checkpoint.
+## Current continuation
 
-Staging is only for active work that is not yet ready to represent as the latest coherent repository state.
+Read [HANDOFF.md](HANDOFF.md) for the single current status, exact proof boundaries and continuation order. The event packet and normal ONE routes are applied; canonical focused66ONE/73Legacy/113API and27chain checks pass. Full joined qualification/security/publication remain pending. [BUILD_LIST.md](docs/build/BUILD_LIST.md) retains gate identities and [REMAINING_WORK.md](docs/build/REMAINING_WORK.md) retains all ordinary and external work. Capability names above describe architecture, not accepted hosted features.
 
-## Before writing code
-Read `AGENTS.md` and `HANDOFF.md`.
-
-## After writing code
-Update `HANDOFF.md`, affected build/research docs, and synchronize the coherent state back to `main`.
-
-
-## Verified checkpoint - October 27
-
-Read `docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md` for actual local acceptance and remaining implementation. Broad capability names describe targets/primitives, not completed hosted product. Bootstrap requires explicit actor/tenant/action grants; event reads require tenant scope; conditional workflow edges fail closed until their semantics are integrated. This checkpoint remains on the owner-requested audit branch.
+AGENTS.md defines operating rules. Preserve source authority, owner decisions and original recovery/evidence. Parent owns integration/publication on the current repair branch; do not follow superseded staging/audit branch orders. Update these same authoritative documents when actual acceptance changes.
