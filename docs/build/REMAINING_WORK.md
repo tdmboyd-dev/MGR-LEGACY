@@ -1,6 +1,6 @@
 # MGR Legacy — Exact Remaining Work
 
-Current qualification and proof scopes live in [HANDOFF.md](../../HANDOFF.md). Canonical focused66ONE/73Legacy/113API and27chain checks pass; ONE joined2362/2362 qualification is complete under the declared disjoint scheduling scope; finalONEsecurity/publication remains pending. Earlier21chain/55ONE receipts retain their isolated source scope. [BUILD_LIST.md](BUILD_LIST.md) retains every original build gate. Core implementation is substantial; repository-owned work remains.
+Current qualification and proof scopes live in [HANDOFF.md](../../HANDOFF.md). Canonical focused66ONE/73Legacy/113API and27chain checks pass; ONE joined2362/2362 qualification is complete under the declared disjoint scheduling scope; ONEsource4846e45 is committed/remote-verified with unchanged-policy security classification complete. Earlier21chain/55ONE receipts retain their isolated source scope. [BUILD_LIST.md](BUILD_LIST.md) retains every original build gate. Core implementation is substantial; repository-owned work remains.
 
 ## Remaining ordinary event work
 

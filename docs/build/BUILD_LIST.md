@@ -1,6 +1,6 @@
 # MGR Legacy — Build List
 
-Read [the root handoff](../../HANDOFF.md) for current source/proof status: applied event packet and normal ONE route wiring pass canonical focused66ONE/73Legacy/113API and27chain checks; ONE joined2362/2362 qualification is complete under the declared disjoint scheduling scope; finalONEsecurity/publication remains pending. Existing checked entries record implemented contracts/helpers or their original bounded evidence; they do not certify all runtime journeys or production readiness. Migrations include 0020; older 0018 references are historical proof boundaries. The full ordinary/external backlog is [REMAINING_WORK.md](REMAINING_WORK.md).
+Read [the root handoff](../../HANDOFF.md) for current source/proof status: applied event packet and normal ONE route wiring pass canonical focused66ONE/73Legacy/113API and27chain checks; ONE joined2362/2362 qualification is complete under the declared disjoint scheduling scope; ONEsource4846e45 is committed/remote-verified with unchanged-policy security classification complete. Existing checked entries record implemented contracts/helpers or their original bounded evidence; they do not certify all runtime journeys or production readiness. Migrations include 0020; older 0018 references are historical proof boundaries. The full ordinary/external backlog is [REMAINING_WORK.md](REMAINING_WORK.md).
 
 ## Gate 0 — Source-of-truth migration
 - [x] Create MGR-LEGACY repository
