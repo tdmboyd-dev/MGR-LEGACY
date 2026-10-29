@@ -54,6 +54,6 @@ See `docs/native/NATIVE_SYSTEMS.md` for the full designs.
 
 ## Current continuation
 
-Read [HANDOFF.md](HANDOFF.md) for the single current status, exact proof boundaries and continuation order. The event packet and normal ONE routes are applied; canonical focused66ONE/73Legacy/113API and27chain checks pass. Full joined qualification/security/publication remain pending. [BUILD_LIST.md](docs/build/BUILD_LIST.md) retains gate identities and [REMAINING_WORK.md](docs/build/REMAINING_WORK.md) retains all ordinary and external work. Capability names above describe architecture, not accepted hosted features.
+Read [HANDOFF.md](HANDOFF.md) for the single current status, exact proof boundaries and continuation order. The event packet and normal ONE routes are applied; canonical focused66ONE/73Legacy/113API and27chain checks pass. ONE joined2362/2362 qualification is complete under its declared disjoint scheduling scope; finalONEsecurity/publication remains pending. [BUILD_LIST.md](docs/build/BUILD_LIST.md) retains gate identities and [REMAINING_WORK.md](docs/build/REMAINING_WORK.md) retains all ordinary and external work. Capability names above describe architecture, not accepted hosted features.
 
 AGENTS.md defines operating rules. Preserve source authority, owner decisions and original recovery/evidence. Parent owns integration/publication on the current repair branch; do not follow superseded staging/audit branch orders. Update these same authoritative documents when actual acceptance changes.

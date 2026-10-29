@@ -1,10 +1,10 @@
 # MGR Legacy — Exact Remaining Work
 
-Current qualification and proof scopes live in [HANDOFF.md](../../HANDOFF.md). Canonical focused66ONE/73Legacy/113API and27chain checks pass; full joined qualification/security/publication remain pending. Earlier21chain/55ONE receipts retain their isolated source scope. [BUILD_LIST.md](BUILD_LIST.md) retains every original build gate. Core implementation is substantial; repository-owned work remains.
+Current qualification and proof scopes live in [HANDOFF.md](../../HANDOFF.md). Canonical focused66ONE/73Legacy/113API and27chain checks pass; ONE joined2362/2362 qualification is complete under the declared disjoint scheduling scope; finalONEsecurity/publication remains pending. Earlier21chain/55ONE receipts retain their isolated source scope. [BUILD_LIST.md](BUILD_LIST.md) retains every original build gate. Core implementation is substantial; repository-owned work remains.
 
 ## Remaining ordinary event work
 
-1. Qualify the newly wired normal ONE host/server/WorkTools routes in the full joined run and register controlled actual domain/edge hosts and tenant scopes explicitly.
+1. The normal ONE host/server/WorkTools routes are included in the2362-test local qualification. Register controlled deployed domain/edge hosts and actual tenant scopes explicitly.
 2. Implement downstream field-authority/staleness reconciliation, ledger quota/retention and operational error/latency observability.
 3. Define cursor rebase and credential-rotation behavior, then qualify broader workflows, migration parity and recovery. The bounded chain does not cover every domain writer, privileged sequence manipulation or Legacy restore.
 
