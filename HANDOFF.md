@@ -2,7 +2,7 @@
 
 ## Tevin contact readback on November 3
 
-The shared API contact action now requires the POST acknowledgment to match the exact Legacy truth receipt and saved entity readback. The gateway refuses missing or contradictory evidence without retrying the write. This is published in MGR-API-MCP at 4484d9fb47300b51698ab94447a33dc6845c380d and tested with injected transport responses. Legacy retains ownership of its contacts and receipts. Tevin now supports optional loopback owner registration at MGR-ONE commit 2943667358a828b01ddb315fbdc5acd129f50f6d. The local transport verification used a controlled Legacy responder. Permanent endpoint setup and a fresh owner-bound PostgreSQL journey remain open.
+The shared API contact action now requires the POST acknowledgment to match the exact Legacy truth receipt and saved entity readback. The gateway refuses missing or contradictory evidence without retrying the write. This is published in MGR-API-MCP at 4484d9fb47300b51698ab94447a33dc6845c380d and tested with injected transport responses. Legacy retains ownership of its contacts and receipts. Tevin now supports optional loopback owner registration at MGR-ONE commit 2943667358a828b01ddb315fbdc5acd129f50f6d. The local transport verification used a controlled Legacy responder. The follow-up Tevin integration at 41e56846006b42c51f348fde54b9b82cda95b6ea passed the real isolated PostgreSQL 16.15 journey using the scoped audit service at dd8353bd26234b20940243891d12a7e0da978056. The earlier main-based attempt remained unconfirmed because main lacks entity readback. Scoped service deployment adoption and permanent endpoint configuration remain open.
 
 Last updated: 2026-10-06
 
