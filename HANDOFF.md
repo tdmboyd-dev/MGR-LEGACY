@@ -86,3 +86,7 @@ Executed: 67 unit tests; 26 scoped real PostgreSQL checks; PostgreSQL/API/concur
 Bootstrap requires `LEGACY_API_TOKEN`, `LEGACY_DATABASE_URL`, `LEGACY_SERVICE_ACTOR_ID`, `LEGACY_ALLOWED_TENANT_IDS`, `LEGACY_ALLOWED_ACTIONS`; host defaults to loopback. Scoped receipt reads require a granted action filter and bind the service actor. EventLedger read methods now require tenant ID first. Unknown legacy key digests conflict while preserving old responses. Historical outbox duplicates require reviewed migration.
 
 Open implementation gaps include branch/wait/subflow integration, tenant-scoped worker ports, atomic activation/review, general tenant SQL references and durable communications reconciliation. Keep live/dangerous tools disabled until their own proof. Follow the next sequence in the verified integration report.
+
+## Legacy and shared catalog receiving recheck
+
+The current local scoped Legacy checkout passed the joined Tevin contact test on disposable PostgreSQL 16.15. The approved contact remained a single saved record after restart and replay. A separate ONE catalog receiving defect was corrected and the authenticated catalog recheck passed. Permanent endpoint configuration and deployment remain open.
