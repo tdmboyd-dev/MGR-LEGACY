@@ -26,7 +26,7 @@ export class CustomerGraph {
     const from = this.getEntity(relationship.tenantId, relationship.from.entityType, relationship.from.entityId);
     const to = this.getEntity(relationship.tenantId, relationship.to.entityType, relationship.to.entityId);
     if (!from || !to) throw new Error("Relationship endpoints must exist in the same tenant");
-    this.relationships.set(relationship.id, structuredClone(relationship));
+    this.relationships.set(JSON.stringify([relationship.tenantId,relationship.id]), structuredClone(relationship));
   }
 
   neighbors(tenantId: string, ref: EntityRef): Relationship[] {

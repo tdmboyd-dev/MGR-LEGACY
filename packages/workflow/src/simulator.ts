@@ -19,7 +19,7 @@ export interface SimulationResult {
 export class WorkflowSimulator {
   simulate(workflow: WorkflowDefinition): SimulationResult {
     const validation = validateWorkflow(workflow);
-    if (!validation.valid) return { ...validation, steps: [], possibleLoop: false };
+    if (!validation.valid) return { ...validation, steps: [], possibleLoop: validation.errors.some(error=>/cycle/i.test(error)) };
 
     const adjacency = new Map<string, string[]>();
     for (const edge of workflow.edges) {

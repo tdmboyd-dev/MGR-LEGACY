@@ -1,3 +1,4 @@
+import {validateWorkflow} from "./graph.js";
 import type { WorkflowDefinition } from "@mgr/legacy-contracts";
 import type { ExecutionCheckpoint, RetryPolicy } from "./durability.js";
 import { RetryPlanner } from "./durability.js";
@@ -45,6 +46,9 @@ export class DurableWorkflowRunner {
     context: WorkflowExecutionContext,
     policy: RetryPolicy
   ): Promise<DurableRunResult> {
+    const validation=validateWorkflow(workflow);
+    if(!validation.valid || !workflow.nodes.length)throw new Error(`Invalid workflow: ${validation.errors.join("; ") || "no nodes"}`);
+    if(context.workflowId!==workflow.workflowId || context.workflowVersion!==workflow.version)throw new Error("Workflow execution context mismatch");
     await this.runs.updateStatus(context.tenantId, context.runId, "running");
 
     const existing = await this.checkpoints.listRun(context.runId);

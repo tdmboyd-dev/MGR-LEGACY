@@ -59,7 +59,16 @@ export class PostgresEventLedger implements EventLedger {
   constructor(private readonly db: SqlExecutor) {}
 
   async append(event: LegacyEvent): Promise<void> {
-    await this.db.query(
+    if(event.actor.tenantId!==event.scope.tenantId)throw new Error("Tenant mismatch");
+    const values=[
+        event.eventId, event.scope.tenantId, event.scope.scopeType, event.scope.scopeId,
+        event.eventType, event.eventVersion, event.occurredAt,
+        event.actor.actorType, event.actor.actorId, event.subject.entityType, event.subject.entityId,
+        event.source, event.correlationId, event.causationId ?? null, event.idempotencyKey,
+        JSON.stringify(event.before ?? null), JSON.stringify(event.after ?? null),
+        JSON.stringify(event.data), JSON.stringify(event.evidence)
+      ];
+    const inserted=await this.db.query(
       `INSERT INTO event_ledger (
         event_id, tenant_id, scope_type, scope_id, event_type, event_version, occurred_at,
         actor_type, actor_id, subject_type, subject_id, source, correlation_id, causation_id,
@@ -67,37 +76,34 @@ export class PostgresEventLedger implements EventLedger {
       ) VALUES (
         $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16::jsonb,$17::jsonb,$18::jsonb,$19::jsonb
       ) ON CONFLICT (tenant_id, idempotency_key) DO NOTHING`,
-      [
-        event.eventId, event.scope.tenantId, event.scope.scopeType, event.scope.scopeId,
-        event.eventType, event.eventVersion, event.occurredAt,
-        event.actor.actorType, event.actor.actorId, event.subject.entityType, event.subject.entityId,
-        event.source, event.correlationId, event.causationId ?? null, event.idempotencyKey,
-        JSON.stringify(event.before ?? null), JSON.stringify(event.after ?? null),
-        JSON.stringify(event.data), JSON.stringify(event.evidence)
-      ]
+      values
     );
+    if(inserted.rowCount===0){
+      const existing=await this.db.query<{event_id:string}>("SELECT event_id FROM event_ledger WHERE tenant_id=$2 AND idempotency_key=$15 AND ROW(event_id,tenant_id,scope_type,scope_id,event_type,event_version,occurred_at,actor_type,actor_id,subject_type,subject_id,source,correlation_id,causation_id,idempotency_key,before_state,after_state,data,evidence) IS NOT DISTINCT FROM ROW($1::uuid,$2::uuid,$3::text,$4::text,$5::text,$6::integer,$7::timestamptz,$8::text,$9::text,$10::text,$11::text,$12::text,$13::text,$14::text,$15::text,$16::jsonb,$17::jsonb,$18::jsonb,$19::jsonb)",values);
+      if(existing.rowCount!==1) throw new Error("Event idempotency conflict");
+    }
   }
 
-  async getById(eventId: string): Promise<LegacyEvent | null> {
+  async getById(tenantId:string,eventId: string): Promise<LegacyEvent | null> {
     const result = await this.db.query<EventRow>(
-      "SELECT * FROM event_ledger WHERE event_id = $1 LIMIT 1",
-      [eventId]
+      "SELECT * FROM event_ledger WHERE tenant_id=$1 AND event_id = $2 LIMIT 1",
+      [tenantId,eventId]
     );
     return result.rows[0] ? mapRow(result.rows[0]) : null;
   }
 
-  async listBySubject(entityType: string, entityId: string): Promise<LegacyEvent[]> {
+  async listBySubject(tenantId:string,entityType: string, entityId: string): Promise<LegacyEvent[]> {
     const result = await this.db.query<EventRow>(
-      "SELECT * FROM event_ledger WHERE subject_type = $1 AND subject_id = $2 ORDER BY sequence_no",
-      [entityType, entityId]
+      "SELECT * FROM event_ledger WHERE tenant_id=$1 AND subject_type = $2 AND subject_id = $3 ORDER BY sequence_no",
+      [tenantId,entityType, entityId]
     );
     return result.rows.map(mapRow);
   }
 
-  async listByCorrelation(correlationId: string): Promise<LegacyEvent[]> {
+  async listByCorrelation(tenantId:string,correlationId: string): Promise<LegacyEvent[]> {
     const result = await this.db.query<EventRow>(
-      "SELECT * FROM event_ledger WHERE correlation_id = $1 ORDER BY sequence_no",
-      [correlationId]
+      "SELECT * FROM event_ledger WHERE tenant_id=$1 AND correlation_id = $2 ORDER BY sequence_no",
+      [tenantId,correlationId]
     );
     return result.rows.map(mapRow);
   }

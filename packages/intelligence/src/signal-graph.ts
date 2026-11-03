@@ -16,7 +16,7 @@ export class SignalGraph {
   private readonly signals = new Map<string, Signal>();
 
   upsert(signal: Signal): void {
-    if (signal.confidence < 0 || signal.confidence > 1) throw new Error("Signal confidence must be 0..1");
+    if (!Number.isFinite(signal.confidence) || signal.confidence < 0 || signal.confidence > 1) throw new Error("Signal confidence must be 0..1");
     const key = `${signal.tenantId}:${signal.subjectType}:${signal.subjectId}:${signal.key}:${signal.source}`;
     this.signals.set(key, structuredClone(signal));
   }

@@ -4,6 +4,8 @@ MGR Legacy is the shared relationship, automation, communications, intelligence,
 
 It is **not** a copy of MGR Agents CRM, MGR Elite Hub CRM, or a conventional CRM. It consolidates the strongest reusable code and concepts from those systems, the completed competitive research, and a new set of MGR-native capability contracts.
 
+Read [the verified integration boundary](docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md) before treating the capability list as delivered product behavior. Many modules are reusable contracts or planning helpers; the verified Tevin lane is narrower.
+
 ## Product shape
 
 **Shared core**

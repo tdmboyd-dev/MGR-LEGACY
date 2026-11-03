@@ -48,7 +48,7 @@ export class ManagedProviderRouter {
     message:Parameters<ProviderAdapter["send"]>[0]
   ):Promise<{providerKey:string;providerMessageId:string;acceptedAt:string}>{
     const candidates=this.providers
-      .filter(item=>item.adapter.channel===channel)
+      .filter(item=>item.adapter.channel===channel && (!item.tenantId || item.tenantId===message.tenantId))
       .sort((a,b)=>a.priority-b.priority);
 
     const failures:string[]=[];
@@ -64,6 +64,7 @@ export class ManagedProviderRouter {
       }
 
       const started=Date.now();
+      let dispatched=false;
 
       try{
         const health=await candidate.adapter.health();
@@ -82,6 +83,7 @@ export class ManagedProviderRouter {
 
         if(!health.healthy) throw new Error("Provider health check failed");
 
+        dispatched=true;
         const result=await candidate.adapter.send(message);
         await this.healthStore.saveState(this.breaker.onSuccess(state));
 
@@ -104,6 +106,7 @@ export class ManagedProviderRouter {
           observedAt:new Date().toISOString()
         });
 
+        if(dispatched) throw new Error(`Provider ${candidate.key} delivery outcome requires reconciliation; refusing a duplicate send`);
         failures.push(candidate.key);
       }
     }

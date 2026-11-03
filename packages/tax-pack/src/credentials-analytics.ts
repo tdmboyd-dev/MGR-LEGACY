@@ -13,7 +13,7 @@ export class CredentialReadinessEngine {
     if(!status.ptinValid) blockers.push("PTIN invalid or missing");
     if(!status.efinLinked) blockers.push("EFIN not linked");
     if(!status.ceComplete) blockers.push("Continuing education incomplete");
-    if(status.expiresAt && new Date(status.expiresAt)<=new Date()) blockers.push("Credential expired");
+    if(status.expiresAt && (!Number.isFinite(Date.parse(status.expiresAt)) || new Date(status.expiresAt)<=new Date())) blockers.push("Credential expired");
     return {ready:blockers.length===0,blockers};
   }
 }

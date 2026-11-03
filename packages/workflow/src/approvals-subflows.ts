@@ -13,7 +13,10 @@ export interface ApprovalRequest {
 }
 
 export class ApprovalGate {
-  decide(request:ApprovalRequest,actorId:string,decision:"approve"|"deny"):ApprovalRequest{
+  decide(request:ApprovalRequest,actorId:string,decision:"approve"|"deny",actorRoles:string[]=[]):ApprovalRequest{
+    if(!actorId.trim())throw new Error("Approver identity is required");
+    if(!Number.isInteger(request.minimumApprovals)||request.minimumApprovals<1)throw new Error("Invalid approval threshold");
+    if(request.approverRoles.length && !request.approverRoles.some(role=>actorRoles.includes(role)))throw new Error("Approver role is not authorized");
     if(request.status!=="pending") throw new Error("Approval request is not pending");
     const approvals=[...request.approvals];
     const denials=[...request.denials];

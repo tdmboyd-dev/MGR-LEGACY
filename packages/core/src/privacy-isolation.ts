@@ -10,7 +10,7 @@ export interface PrivacyEnvelope<T=unknown> {
 
 export class PrivacyIsolation {
   readable<T>(item:PrivacyEnvelope<T>,now=new Date()):boolean{
-    if(item.expiresAt && new Date(item.expiresAt)<=now) return false;
+    if(item.expiresAt && (!Number.isFinite(Date.parse(item.expiresAt)) || new Date(item.expiresAt)<=now)) return false;
     return true;
   }
 

@@ -23,5 +23,11 @@ export function validateWorkflow(workflow: WorkflowDefinition): WorkflowValidati
   if (roots.length === 0 && workflow.nodes.length > 0) warnings.push("Workflow has no root node; possible cycle");
   if (roots.length > 1) warnings.push("Workflow has multiple root nodes");
 
+  const counts=new Map(workflow.nodes.map(n=>[n.nodeId,0]));
+  const outgoing=new Map<string,string[]>();
+  for(const e of workflow.edges){counts.set(e.to,(counts.get(e.to) ?? 0)+1);outgoing.set(e.from,[...(outgoing.get(e.from) ?? []),e.to]);if(e.condition && Object.keys(e.condition).length)errors.push("Conditional edges are not supported by the execution runtime");}
+  const queue=workflow.nodes.filter(n=>counts.get(n.nodeId)===0).map(n=>n.nodeId);let visited=0;
+  while(queue.length){const id=queue.shift()!;visited++;for(const next of outgoing.get(id) ?? []){counts.set(next,counts.get(next)!-1);if(counts.get(next)===0)queue.push(next);}}
+  if(visited!==nodeIds.size)errors.push("Workflow cycle detected");
   return { valid: errors.length === 0, errors, warnings };
 }

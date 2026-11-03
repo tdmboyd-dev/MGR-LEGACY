@@ -23,10 +23,11 @@ export class HttpProviderAdapter implements ProviderAdapter {
       body:JSON.stringify(this.config.mapPayload ? this.config.mapPayload(message) : message)
     });
     if(!response.ok) throw new Error(`Provider send failed: HTTP ${response.status}`);
-    const body=await response.json().catch(()=>({}));
+    const body=await response.json();
     const parsed=this.config.parseResponse
       ? this.config.parseResponse(body)
-      : {providerMessageId:String((body as any).id ?? (body as any).messageId ?? crypto.randomUUID())};
+      : {providerMessageId:String((body as any).id ?? (body as any).messageId ?? "")};
+    if(!parsed.providerMessageId?.trim()) throw new Error("Provider did not return a delivery receipt ID; outcome requires reconciliation");
     return {providerMessageId:parsed.providerMessageId,acceptedAt:parsed.acceptedAt ?? new Date().toISOString()};
   }
 

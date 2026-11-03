@@ -5,6 +5,7 @@ export interface IdempotencyRecord {
   key: string;
   commandId: string;
   response?: unknown;
+  requestDigest?:string;
 }
 
 export class PostgresIdempotencyStore {
@@ -12,22 +13,22 @@ export class PostgresIdempotencyStore {
 
   async get(tenantId: string, key: string): Promise<IdempotencyRecord | null> {
     const result = await this.db.query<{
-      tenant_id:string; idempotency_key:string; command_id:string; response:unknown;
+      tenant_id:string; idempotency_key:string; command_id:string; response:unknown; request_digest:string;
     }>(
-      "SELECT tenant_id, idempotency_key, command_id, response FROM idempotency_keys WHERE tenant_id = $1 AND idempotency_key = $2",
+      "SELECT tenant_id, idempotency_key, command_id, response, request_digest FROM idempotency_keys WHERE tenant_id = $1 AND idempotency_key = $2",
       [tenantId, key]
     );
     const row = result.rows[0];
-    return row ? { tenantId:row.tenant_id, key:row.idempotency_key, commandId:row.command_id, response:row.response } : null;
+    return row ? { tenantId:row.tenant_id, key:row.idempotency_key, commandId:row.command_id, response:row.response, requestDigest:row.request_digest } : null;
   }
 
-  async reserve(tenantId: string, key: string, commandId: string): Promise<boolean> {
+  async reserve(tenantId: string, key: string, commandId: string, requestDigest?:string): Promise<boolean> {
     const result = await this.db.query(
-      `INSERT INTO idempotency_keys (tenant_id, idempotency_key, command_id)
-       VALUES ($1,$2,$3)
+      `INSERT INTO idempotency_keys (tenant_id, idempotency_key, command_id, request_digest)
+       VALUES ($1,$2,$3,$4)
        ON CONFLICT (tenant_id, idempotency_key) DO NOTHING
        RETURNING idempotency_key`,
-      [tenantId, key, commandId]
+      [tenantId, key, commandId, requestDigest ?? null]
     );
     return result.rowCount === 1;
   }

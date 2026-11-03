@@ -2,9 +2,9 @@
 
 ## Tevin contact readback on November 3
 
-The shared API contact action now requires the POST acknowledgment to match the exact Legacy truth receipt and saved entity readback. The gateway refuses missing or contradictory evidence without retrying the write. This is published in MGR-API-MCP at 4484d9fb47300b51698ab94447a33dc6845c380d and tested with injected transport responses. Legacy retains ownership of its contacts and receipts. Tevin now supports optional loopback owner registration at MGR-ONE commit 2943667358a828b01ddb315fbdc5acd129f50f6d. The local transport verification used a controlled Legacy responder. The follow-up Tevin integration at 41e56846006b42c51f348fde54b9b82cda95b6ea passed the real isolated PostgreSQL 16.15 journey using the scoped audit service at dd8353bd26234b20940243891d12a7e0da978056. The earlier main-based attempt remained unconfirmed because main lacks entity readback. Scoped service deployment adoption and permanent endpoint configuration remain open.
+The shared API contact action now requires the POST acknowledgment to match the exact Legacy truth receipt and saved entity readback. The gateway refuses missing or contradictory evidence without retrying the write. This is published in MGR-API-MCP at 4484d9fb47300b51698ab94447a33dc6845c380d and tested with injected transport responses. Legacy retains ownership of its contacts and receipts. Tevin now supports optional loopback owner registration at MGR-ONE commit 2943667358a828b01ddb315fbdc5acd129f50f6d. The local transport verification used a controlled Legacy responder. The follow-up Tevin integration at 41e56846006b42c51f348fde54b9b82cda95b6ea passed the real isolated PostgreSQL 16.15 journey using the scoped audit service at dd8353bd26234b20940243891d12a7e0da978056. The earlier main-based attempt remained unconfirmed because main lacks entity readback. The dedicated integration branch now merges that scoped source into the Tevin receiving handoff. Fresh local verification passed 67 repository tests, 26 checks against isolated PostgreSQL 16.15, and both Tevin owner-service tests. The contact remained a single saved record after restart and replay. Main adoption, deployment and permanent endpoint configuration remain open.
 
-Last updated: 2026-10-06
+Last updated: 2026-11-03
 
 ## Canonical state
 
@@ -68,3 +68,19 @@ Read:
 6. `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md`
 
 When a repository-owned gap is found, implement/test/fix it before reporting. Keep `main` and these source-of-truth files current.
+
+
+## Ecosystem review — October 27, 2026
+
+Additive source-pinned ecosystem context: [human handoff](docs/ecosystem/HUMAN-HANDOFF.md). This review branch preserves the default-branch baseline and existing work orders. Domain runtime/production acceptance is separate.
+
+
+## October 27 - scoped real service and source hardening
+
+Active branch: `audit/ecosystem-2026-10-27`; owner asked to preserve default branches. Read [verified integration report](docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md) before relying on older completion claims. All 201 original product TypeScript files and 20 migrations were read, plus new source/tests. The remaining tracked repository text was subsequently read too; installed dependencies, generated output and runtime/binary files are outside the reading claim. Reading does not certify full product acceptance.
+
+Executed: 67 unit tests; 26 scoped real PostgreSQL checks; PostgreSQL/API/concurrency regressions; exact v18-to-v20 preservation; v7-to-v20 upgrade; actual backup/restore. Parent ecosystem evidence owns complete Tevin/MCP workflow acceptance. Generated local fixture credentials remain outside this repo. Production stores were not overwritten.
+
+Bootstrap requires `LEGACY_API_TOKEN`, `LEGACY_DATABASE_URL`, `LEGACY_SERVICE_ACTOR_ID`, `LEGACY_ALLOWED_TENANT_IDS`, `LEGACY_ALLOWED_ACTIONS`; host defaults to loopback. Scoped receipt reads require a granted action filter and bind the service actor. EventLedger read methods now require tenant ID first. Unknown legacy key digests conflict while preserving old responses. Historical outbox duplicates require reviewed migration.
+
+Open implementation gaps include branch/wait/subflow integration, tenant-scoped worker ports, atomic activation/review, general tenant SQL references and durable communications reconciliation. Keep live/dangerous tools disabled until their own proof. Follow the next sequence in the verified integration report.

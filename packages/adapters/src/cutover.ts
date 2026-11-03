@@ -41,12 +41,16 @@ export interface CutoverGateResult {
 export class CutoverGate {
   evaluate(input:CutoverGateInput):CutoverGateResult {
     const blockers:string[]=[];
+    if(!Number.isFinite(input.reconciledPercent)||input.reconciledPercent!==100) blockers.push("Reconciliation must be exactly 100%");
+    if(!Number.isInteger(input.mismatchCount)||input.mismatchCount<0) blockers.push("Invalid mismatch count");
+    if(!Number.isInteger(input.duplicateCount)||input.duplicateCount<0) blockers.push("Invalid duplicate count");
+    if(!Number.isFinite(input.errorRate)||input.errorRate<0||input.errorRate>1) blockers.push("Invalid migration error rate");
     if(input.reconciledPercent<100) blockers.push("Reconciliation is not 100%");
     if(input.mismatchCount>0) blockers.push("Unresolved record mismatches remain");
     if(input.duplicateCount>0) blockers.push("Duplicate destination records remain");
     if(input.errorRate>0.001) blockers.push("Migration error rate exceeds 0.1%");
-    if(!input.rollbackReady) blockers.push("Rollback plan is not verified");
-    if(!input.auditComplete) blockers.push("Migration audit evidence is incomplete");
+    if(input.rollbackReady!==true) blockers.push("Rollback plan is not verified");
+    if(input.auditComplete!==true) blockers.push("Migration audit evidence is incomplete");
     return {ready:blockers.length===0,blockers};
   }
 }

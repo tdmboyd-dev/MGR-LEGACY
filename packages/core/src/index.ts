@@ -34,3 +34,5 @@ export * from "./agent-memory.js";
 export * from "./voice-perception.js";
 export * from "./focus-engine.js";
 export * from "./subagents.js";
+
+export * from "./command-digest.js";

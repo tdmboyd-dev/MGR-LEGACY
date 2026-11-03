@@ -55,9 +55,11 @@ Updated: 2026-10-06
 - [ ] live MGR Agents parity/backfill/cutover proof
 
 ## Gate 4 — Workflow runtime
-- [x] triggers/conditions/actions
+- [x] trigger/action contracts and dependency ordering
+- [ ] conditional branch/join execution (unsupported edges fail closed)
 - [x] scheduling/waits
-- [x] subflows
+- [x] subflow contracts/helpers
+- [ ] persisted subflow orchestration
 - [x] retries
 - [x] approvals
 - [x] versioning/staging/activation
@@ -189,3 +191,8 @@ Core platform implementation is substantially built and CI-green, but production
 - [x] route creation-domain capabilities to Creation OS rather than duplicating execution
 - [x] add cross-boundary restart/idempotency/reconciliation tests
 - [x] complete remote MCP auth integration; [external] hosted ChatGPT MCP verification requires the real public host/OAuth account
+
+
+## October 27 evidence correction
+
+67/67 local unit tests and 26/26 scoped real PostgreSQL checks passed; migrations now run through 0020. These denominators certify those suites, not every catalog feature. Source reading covers all 201 original product TypeScript files plus new source/tests and all 20 migrations. See the verified integration report for permissions, strict replay, outbox migration, preserved v18 upgrade, backup/restore and remaining worker/provider/cutover gates.

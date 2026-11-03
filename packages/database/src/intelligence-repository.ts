@@ -1,3 +1,4 @@
+import { tenantCheckedQuery } from "./tenant-safe-query.js";
 import type { Signal } from "@mgr/legacy-intelligence";
 import type { SqlExecutor } from "./sql.js";
 
@@ -5,12 +6,13 @@ export class PostgresSignalRepository {
   constructor(private readonly db:SqlExecutor){}
 
   async upsert(signal:Signal):Promise<void>{
-    await this.db.query(
+    await tenantCheckedQuery(this.db,
       `INSERT INTO signals
        (id,tenant_id,subject_type,subject_id,signal_key,value,confidence,source,observed_at,expires_at,evidence)
        VALUES ($1,$2,$3,$4,$5,$6::jsonb,$7,$8,$9,$10,$11::jsonb)
        ON CONFLICT (id) DO UPDATE SET value=EXCLUDED.value,confidence=EXCLUDED.confidence,
-       observed_at=EXCLUDED.observed_at,expires_at=EXCLUDED.expires_at,evidence=EXCLUDED.evidence`,
+       observed_at=EXCLUDED.observed_at,expires_at=EXCLUDED.expires_at,evidence=EXCLUDED.evidence
+       WHERE signals.tenant_id=EXCLUDED.tenant_id`,
       [
         signal.id,signal.tenantId,signal.subjectType,signal.subjectId,signal.key,JSON.stringify(signal.value),
         signal.confidence,signal.source,signal.observedAt,signal.expiresAt ?? null,JSON.stringify(signal.evidence ?? {})

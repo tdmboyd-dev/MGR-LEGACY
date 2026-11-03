@@ -62,3 +62,8 @@ Read `AGENTS.md` and `HANDOFF.md`.
 
 ## After writing code
 Update `HANDOFF.md`, affected build/research docs, and synchronize the coherent state back to `main`.
+
+
+## Verified checkpoint - October 27
+
+Read `docs/ecosystem/LEGACY-VERIFIED-INTEGRATION.md` for actual local acceptance and remaining implementation. Broad capability names describe targets/primitives, not completed hosted product. Bootstrap requires explicit actor/tenant/action grants; event reads require tenant scope; conditional workflow edges fail closed until their semantics are integrated. This checkpoint remains on the owner-requested audit branch.

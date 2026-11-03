@@ -30,6 +30,6 @@ export class TevvSuite {
     for(const test of cases) results.push(await runner.run(test));
     const criticalFailure=results.some((result,index)=>cases[index]?.risk==="critical" && !result.passed);
     const score=results.length===0?0:results.reduce((sum,r)=>sum+r.score,0)/results.length;
-    return {passed:!criticalFailure && results.every(r=>r.passed),score,results};
+    return {passed:results.length>0 && !criticalFailure && results.every(r=>r.passed),score,results};
   }
 }

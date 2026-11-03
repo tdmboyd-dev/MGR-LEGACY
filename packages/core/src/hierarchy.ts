@@ -67,6 +67,8 @@ export class HierarchyGraph {
   }
 
   isWithinScope(nodeId: string, allowedScopeId: string): boolean {
+    const node=this.nodes.get(nodeId),scope=this.nodes.get(allowedScopeId);
+    if(!node || !scope || node.tenantId!==scope.tenantId)return false;
     if (nodeId === allowedScopeId) return true;
     return this.ancestors(nodeId).some((node) => node.id === allowedScopeId);
   }

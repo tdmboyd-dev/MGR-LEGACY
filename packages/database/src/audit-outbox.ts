@@ -35,9 +35,12 @@ export class PostgresOutbox {
   constructor(private readonly db: SqlExecutor) {}
 
   async enqueue(event: LegacyEvent, topic = "legacy.events"): Promise<void> {
-    await this.db.query(
-      "INSERT INTO outbox (event_id, topic, payload) VALUES ($1,$2,$3::jsonb)",
+    const result=await this.db.query(
+      `INSERT INTO outbox (event_id, topic, payload) VALUES ($1,$2,$3::jsonb)
+       ON CONFLICT (event_id,topic) DO UPDATE SET payload=outbox.payload
+       WHERE outbox.payload=EXCLUDED.payload RETURNING id`,
       [event.eventId, topic, JSON.stringify(event)]
     );
+    if(result.rowCount!==1) throw new Error("Outbox idempotency conflict");
   }
 }

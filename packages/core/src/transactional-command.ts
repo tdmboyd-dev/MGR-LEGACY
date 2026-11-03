@@ -1,10 +1,11 @@
+import {commandRequestDigest} from "./command-digest.js";
 import { randomUUID } from "node:crypto";
 import type { Command, LegacyEvent } from "@mgr/legacy-contracts";
 import type { PolicyContext, PolicyEngine } from "./policy.js";
 
 export interface IdempotencyPort {
-  get(tenantId:string, key:string): Promise<{ response?: unknown } | null>;
-  reserve(tenantId:string, key:string, commandId:string): Promise<boolean>;
+  get(tenantId:string, key:string): Promise<{ response?: unknown;requestDigest?:string } | null>;
+  reserve(tenantId:string, key:string, commandId:string,requestDigest?:string): Promise<boolean>;
   complete(tenantId:string, key:string, response:unknown): Promise<void>;
 }
 
@@ -66,18 +67,22 @@ export class TransactionalCommandService {
     const handler=this.handlers.get(command.action);
     if(!handler) throw new Error(`No handler registered for ${command.action}`);
 
+    if(command.actor.tenantId!==command.scope.tenantId) throw new Error("Tenant mismatch");
+    const requestDigest=commandRequestDigest(command);
+    const assertReplay=(record:{requestDigest?:string})=>{if(record.requestDigest!==requestDigest) throw new Error("Idempotency conflict: request differs or legacy digest unavailable");};
     return this.unitOfWork.run(async(tx)=>{
       const existing=await tx.idempotency.get(command.scope.tenantId,command.idempotencyKey);
       if(existing?.response) {
+        assertReplay(existing);
         return { ...(existing.response as object), replayed:true } as {
           accepted:boolean;approvalRequired:boolean;event?:LegacyEvent;reason?:string;replayed?:boolean
         };
       }
 
-      const reserved=await tx.idempotency.reserve(command.scope.tenantId,command.idempotencyKey,command.commandId);
+      const reserved=await tx.idempotency.reserve(command.scope.tenantId,command.idempotencyKey,command.commandId,requestDigest);
       if(!reserved) {
         const retry=await tx.idempotency.get(command.scope.tenantId,command.idempotencyKey);
-        if(retry?.response) return { ...(retry.response as object), replayed:true } as any;
+        if(retry?.response){ assertReplay(retry); return { ...(retry.response as object), replayed:true } as any; }
         throw new Error("Command with this idempotency key is already in progress");
       }
 
