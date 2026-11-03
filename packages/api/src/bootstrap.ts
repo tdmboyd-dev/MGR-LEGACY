@@ -26,18 +26,27 @@ export async function bootstrapLegacyApi():Promise<BootstrapResult>{
   const db=new PostgresDatabase(databaseUrl,{ssl});
   const here=dirname(fileURLToPath(import.meta.url));
   const migrationsDir=resolve(here,"../../database/migrations");
-  const migrations=await new MigrationRunner(db,migrationsDir).runPending();
-
   const services=new DefaultLegacyApiServices(db,defaultTenantId);
   const server=createLegacyServer(services,{bearerToken:token,principal:{actorId,tenantIds,actions}});
-
-  await new Promise<void>((resolvePromise,reject)=>{
-    server.once("error",reject);
-    server.listen(port,process.env.LEGACY_HOST ?? "127.0.0.1",()=>{
-      server.off("error",reject);
-      resolvePromise();
+  let migrations:string[];
+  let listeningPort:number;
+  try {
+    migrations=await new MigrationRunner(db,migrationsDir).runPending();
+    await new Promise<void>((resolvePromise,reject)=>{
+      server.once("error",reject);
+      server.listen(port,process.env.LEGACY_HOST ?? "127.0.0.1",()=>{
+        server.off("error",reject);
+        resolvePromise();
+      });
     });
-  });
+    const address=server.address();
+    if(!address || typeof address==="string") throw new Error("Legacy HTTP listener has no TCP address");
+    listeningPort=address.port;
+  } catch(error) {
+    if(server.listening) await new Promise<void>(done=>server.close(()=>done()));
+    await db.close();
+    throw error;
+  }
 
   const shutdown=async()=>{
     await new Promise<void>(resolveClose=>server.close(()=>resolveClose()));
@@ -47,7 +56,7 @@ export async function bootstrapLegacyApi():Promise<BootstrapResult>{
   process.once("SIGTERM",()=>{void shutdown();});
   process.once("SIGINT",()=>{void shutdown();});
 
-  return {port,migrations};
+  return {port:listeningPort,migrations};
 }
 
 if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).href){

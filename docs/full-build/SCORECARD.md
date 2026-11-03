@@ -8,6 +8,7 @@
 | Scoped Legacy integration | 26 passed on fresh isolated PostgreSQL 16.15 via `scripts/integration-scoped-postgres.mjs` |
 | Tevin owner-service integration | 2 passed at MGR-ONE `41e56846006b42c51f348fde54b9b82cda95b6ea`, including one saved contact after restart and replay |
 | Source identity | Legacy packages match scoped parent `dd8353bd26234b20940243891d12a7e0da978056` |
+| Standalone API bootstrap | Local PostgreSQL verified occupied-port failure exits, dynamic port works, and unauthenticated read returns 401 |
 | Main adoption, permanent endpoint, deployment | Open |
 
 ## October 27 acceptance snapshot
