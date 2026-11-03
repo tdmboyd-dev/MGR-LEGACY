@@ -1,5 +1,9 @@
 # MGR Legacy — Continuation / Handoff
 
+## Tevin contact readback on November 3
+
+The shared API contact action now requires the POST acknowledgment to match the exact Legacy truth receipt and saved entity readback. The gateway refuses missing or contradictory evidence without retrying the write. This is published in MGR-API-MCP at 4484d9fb47300b51698ab94447a33dc6845c380d and tested with injected transport responses. Legacy retains ownership of its contacts and receipts. Everyday Tevin service registration and a fresh owner-bound PostgreSQL journey remain open.
+
 Last updated: 2026-10-06
 
 ## Canonical state
