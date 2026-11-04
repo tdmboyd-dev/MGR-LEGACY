@@ -90,3 +90,7 @@ Open implementation gaps include branch/wait/subflow integration, tenant-scoped 
 ## Legacy and shared catalog receiving recheck
 
 The current local scoped Legacy checkout passed the joined Tevin contact test on disposable PostgreSQL 16.15. The approved contact remained a single saved record after restart and replay. A separate ONE catalog receiving defect was corrected and the authenticated catalog recheck passed. Permanent endpoint configuration and deployment remain open.
+
+## Complete Tevin manual readback
+
+Authenticated local Tevin readback verified all 19 indexed operating documents and 43 pages against Git revision 9a8f54e257304a33083946f5792f813dffe237e9, with zero jobs. [Pinned verification evidence](https://github.com/tdmboyd-dev/MGR-ONE/blob/fc84130c57c2781afd98e5bdfd05cf7a7ebe6970/evidence/tool-manual-transport-20261103/LEGACY-FULL-TEXT.json). This covers manual delivery. Runtime and production acceptance remain tracked separately.
