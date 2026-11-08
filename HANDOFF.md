@@ -64,3 +64,39 @@ Read:
 6. `docs/build/FLOOT_RECLAIM_BUILD_QUEUE.md`
 
 When a repository-owned gap is found, implement/test/fix it before reporting. Keep `main` and these source-of-truth files current.
+
+
+## Shared API/MCP connector resume update — 2026-11-08
+
+Documentation-only integration plan. Source baseline: `6f60bbdb83af29bfb3777c68bf013a3b384f76e8`. Review branch: `docs/mgr-connector-handoff-2026-11-08`. Existing content above is preserved. This update does not deploy, enable a connector, change credentials or certify live connectivity.
+
+### Verified inspection and existing ownership
+
+The current handoff records authenticated API/PostgreSQL and cross-process API/MCP reconciliation proof, alongside still-open deployed credentials/provider/cutover gates. `docs/architecture/API_MCP_INTEGRATION.md` already assigns Legacy business-system-of-record authority. Its older broad Creation OS routing prose must be read with the newer direct-domain Forge boundary; it does not require every domain call to go through Legacy or Creation OS.
+
+### Work on this application's side
+
+1. Reuse packages/api and existing command, authorization, idempotency, receipt and Truth Console contracts. Do not create another authoritative workflow/CRM ledger.
+2. Verify the actual deployed service URL/credential and actor/tenant propagation for /v1/commands, /v1/truth/summary, /v1/truth/receipts and /v1/connectors against current source before acceptance.
+3. Preserve domain authorization in addition to edge policy: approval must match action/target/payload, retries must return the same authoritative receipt, and uncertain commit outcomes must reconcile.
+4. Keep Agents/Elite Hub backfill, dual-write parity, read cutover and rollback gates separate from basic connector reachability. A healthy endpoint does not certify data migration.
+
+### Work on the shared MGR-API-MCP side
+
+1. Reuse existing Legacy client and dispatch code; configure the real service rather than rebuilding its API. Preserve JWT-derived actor/tenant, audience/scope checks and service-side denial.
+2. Return Legacy receipt/event/correlation IDs and safe projections. Gateway caches are not canonical business state; domain Forge and other standalone operations need no duplicate Legacy execution owner.
+
+Use one versioned capability contract: capability ID/schema version, authenticated actor/tenant/resource scope, request/trace ID, bounded deadline, typed domain payload and authoritative result/evidence. Mutation lanes additionally need exact approval where required, stable idempotency key plus canonical input digest, and status/readback before retrying an unknown outcome. Capability discovery is not permission. Endpoint/secret configuration is operator-controlled, never an arbitrary caller-supplied proxy destination.
+
+### Next acceptance gate and limits
+
+Reproduce current command/receipt contract, wrong-tenant/spoofed-actor and missing-approval denials, same-key conflict, timeout-after-commit, edge/service restart and duplicate delivery against the intended deployment. Real-provider and final client acceptance remain pending until fresh receipts exist.
+
+This pass inspected committed source/documents and checks preservation/readback of the documentation change only. It did not execute product tests, contact live domain services, deploy, or promote any existing completion-ledger status. At resume, reconcile fresh HEAD, active implementation branches and local work before coding; preserve unrelated concurrent changes. Historical proofs remain valid only for their recorded source/runtime scope. Readiness must distinguish source implementation, local test, real integration and live/owner acceptance.
+
+### Source pointers at the inspected baseline
+
+- [HANDOFF.md](https://github.com/tdmboyd-dev/MGR-LEGACY/blob/6f60bbdb83af29bfb3777c68bf013a3b384f76e8/HANDOFF.md)
+- [docs/architecture/API_MCP_INTEGRATION.md](https://github.com/tdmboyd-dev/MGR-LEGACY/blob/6f60bbdb83af29bfb3777c68bf013a3b384f76e8/docs/architecture/API_MCP_INTEGRATION.md)
+- [packages/api/src/http.ts](https://github.com/tdmboyd-dev/MGR-LEGACY/blob/6f60bbdb83af29bfb3777c68bf013a3b384f76e8/packages/api/src/http.ts)
+- [packages/api/src/auth.ts](https://github.com/tdmboyd-dev/MGR-LEGACY/blob/6f60bbdb83af29bfb3777c68bf013a3b384f76e8/packages/api/src/auth.ts)
